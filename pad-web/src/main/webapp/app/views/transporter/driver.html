@@ -1,0 +1,185 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_DRIVERS}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_DRIVERS}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="go('/addDriver')" class="btn btn-primary btn-md" style="margin-right: 10px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('first_name');"> {{translation.KEY_SCREEN_FIRST_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'first_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'first_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('last_name');"> {{translation.KEY_SCREEN_LAST_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'msisdn' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'msisdn' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('language_id');"> {{translation.KEY_SCREEN_LANGUAGE_LABEL}} <span
+                                ng-show="sortColumn == 'language_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'language_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('issuing_country_iso');"> {{translation.KEY_SCREEN_COUNTRY_ISSUE_LABEL}} <span
+                                ng-show="sortColumn == 'issuing_country_iso' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'issuing_country_iso' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('licence_number');"> {{translation.KEY_SCREEN_LICENCE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'licence_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'licence_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('email');"> {{translation.KEY_SCREEN_EMAIL_LABEL}} <span
+                                ng-show="sortColumn == 'email' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'email' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span
+                                ng-show="sortColumn == 'status' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'status' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="19%">
+                    <col width="10%">
+                    <col width="5%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}">{{row.firstName}}</td>
+                        <td title="{{translation.KEY_SCREEN_LAST_NAME_LABEL}}">{{row.lastName}}</td>
+                        <td title="{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}">{{row.msisdn}}</td>
+                        <td title="{{translation.KEY_SCREEN_LANGUAGE_LABEL}}">{{getLanguageName(row.languageId)}}</td>
+                        <td title="{{translation.KEY_SCREEN_COUNTRY_ISSUE_LABEL}}">{{getCountryNameByISOCode(row.issuingCountryISO)}}</td>
+                        <td title="{{translation.KEY_SCREEN_LICENCE_NUMBER_LABEL}}">{{row.licenceNumber}}</td>
+                        <td title="{{translation.KEY_SCREEN_EMAIL_LABEL}}">{{row.email}}</td>
+                        <td title="{{translation.KEY_SCREEN_STATUS_LABEL}}" class="text-center"><span class="label label-primary"
+                            ng-if="row.status == driverAssociationStatusConstants.DRIVER_ASSOCIATION_STATUS_PENDING">{{translation.KEY_SCREEN_PENDING_APPROVAL_LABEL |
+                                uppercase}}</span> <span class="label label-info" ng-if="row.status == driverAssociationStatusConstants.DRIVER_ASSOCIATION_STATUS_REJECTED">{{translation.KEY_SCREEN_REJECTED_LABEL
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == driverAssociationStatusConstants.DRIVER_ASSOCIATION_STATUS_APPROVED">{{translation.KEY_SCREEN_APPROVED_LABEL
+                                | uppercase}}</span> <span class="label label-success" ng-if="row.status == driverAssociationStatusConstants.DRIVER_ASSOCIATION_STATUS_DELETED">{{translation.KEY_SCREEN_DELETED_LABEL
+                                | uppercase}}</span></td>
+                        <td class="text-center nowrap">
+                            <button class="btn btn-danger btn-sm" ng-show="row.status === driverAssociationStatusConstants.DRIVER_ASSOCIATION_STATUS_APPROVED"
+                                ng-click="showConfirmationModal(row); $event.stopPropagation();" title="{{translation.KEY_SCREEN_REMOVE_LABEL}}">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="9" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DRIVER_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="9" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" ng-form="confirmationForm">
+            <fieldset>
+                <div class="modal-dialog modal-dialog-record" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeConfirmationDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="confirmationModalLabel">{{translation.KEY_SCREEN_REMOVE_DRIVER_ASSOCIATION_LABEL}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading font-size-18"></div>
+                                        <div class="panel-body">
+                                            <form name="confirmationForm" autocomplete="off" novalidate>
+                                                <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <b>{{translation.KEY_SCREEN_DRIVER_REMOVE_ALERT_MESSAGE}}</b>
+                                                        </div>
+                                                        <br>
+                                                        <br>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">{{translation.KEY_SCREEN_DRIVER_NAME_LABEL}}: {{selectedRow.firstName}}
+                                                            {{selectedRow.lastName}}</div>
+                                                        <br>
+                                                        <br>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="animate-if" ng-if="confirmActionErrorResponse !== ''">
+                                                            <div class="alert alert-danger" role="alert">
+                                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                                {{confirmActionErrorResponse}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-right">
+                            <button ng-click="removeDriverAssociation();" class="btn btn-success outline-none width-modal-btn" ng-disabled="removeButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_REMOVE_LABEL}}
+                            </button>
+
+                            <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeConfirmationDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+    </div>
+
+
+</div>

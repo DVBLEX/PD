@@ -1,0 +1,167 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_INVOICE + '/' + translation.KEY_SCREEN_STATEMENTS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_INVOICE + '/' + translation.KEY_SCREEN_STATEMENTS_LABEL}}</h3>
+        </div>
+        <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="filterButton" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false"
+                aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="filterAccountNumber">{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}} </label>
+                        <input type="text" style="width: 100px;"
+                               class="form-control margin-rigth input-sm filter-input" id="filterAccountNumber" ng-model="filterAccountNumber"
+                               aria-describedby="accountNumber" ng-minlength="6" minlength="6"
+                               ng-maxlength="6" maxlength="6" number/>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterType">{{translation.KEY_SCREEN_TYPE_LABEL}} </label>
+                        <select style="width: 160px !important;"
+                                class="form-control margin-rigth input-sm filter-input" id="filterType" ng-model="filterType">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="type in typeInvoiceStatementOptions | orderBy: 'name'"
+                                    value="{{type.value}}">{{type.name | uppercase}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="search();" class="btn btn-success" style="width: 100%;" ng-disabled="searchSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearch()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>
+                            <a href="" ng-click="sort('reference');"> {{translation.KEY_SCREEN_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'reference' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'reference' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span
+                                    ng-show="sortColumn == 'type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                    ng-show="sortColumn == 'type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href="" ng-click="sort('number');"> {{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}} <span
+                                    ng-show="sortColumn == 'number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                    ng-show="sortColumn == 'number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                            </a>
+                        </td>
+
+                        <td>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('date_created');">{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}<span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('total_amount');"> {{translation.KEY_SCREEN_INVOICE_TOTAL_LABEL}} <span
+                                ng-show="sortColumn == 'total_amount' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'total_amount' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_due');">{{translation.KEY_SCREEN_DATE_DUE_LABEL}}<span
+                                ng-show="sortColumn == 'date_due' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_due' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td></td>
+                    </tr>
+                </thead>
+
+               <!--  <colgroup>
+                    <col width="10%">
+                    <col width="15%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="5%">
+                    <col width="10%">
+                    <col width="10%">
+                </colgroup> -->
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{translation.KEY_SCREEN_NUMBER_LABEL}}">{{row.reference}}</td>
+                        <td title="{{translation.KEY_SCREEN_TYPE_LABEL}}" class="text-center">
+                            <span class="label label-info" ng-if="row.type == invoicesTypeConstants.INVOICES_TYPE_STATEMENT">{{translation.KEY_SCREEN_STATEMENT_LABEL | uppercase}}</span>
+                            <span class="label label-success" ng-if="row.type == invoicesTypeConstants.INVOICES_TYPE_INVOICE">{{translation.KEY_SCREEN_INVOICE_LABEL | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}}">{{row.accountNumber}}</td>
+                        <td title="{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}">{{row.companyName}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td title="{{translation.KEY_SCREEN_INVOICE_TOTAL_LABEL}}" class="text-right">{{row.totalAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_DUE_LABEL}}">
+                            <span ng-if="row.type !== 1">{{row.dateDueString}}</span>
+                        </td>
+                        <td class="text-center">
+                            <form target="_blank" method="post" action="invoice/download" class="form-inline"
+                                  ng-submit="downloadInvoice(row)">
+                                <button type="submit" class="btn btn-info btn-sm" ng-disabled="row.downloaded"
+                                        title="{{translation.KEY_SCREEN_DOWNLOAD_LABEL}}">
+                                    <span class="glyphicon glyphicon-download-alt"></span>
+                                </button>
+                                <input type="hidden" name="code" ng-value="row.code"/>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="8" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="8" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <invoice-payment-date></invoice-payment-date>
+
+    </div>
+</div>

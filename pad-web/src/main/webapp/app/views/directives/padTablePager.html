@@ -1,0 +1,48 @@
+<div class="pad-table-pager">
+    <form name="padTablePagination">
+        <div>
+            <button type="button" id="padTablePagerButtonFirst" class="btn btn-default pad-table-pager-button" ng-click="padTableChangePage(5)">
+                <span class="glyphicon glyphicon-backward"></span>
+            </button>
+        </div>
+        <div>
+            <button type="button" id="padTablePagerButtonPrevious" class="btn btn-default pad-table-pager-button" ng-click="padTableChangePage(3)">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+            </button>
+        </div>
+        <div class="pad-table-pager-separator">
+            <div></div>
+        </div>
+        <div class="padTablePageDetails">
+            Page:
+            <input type="text" id="padTablePagerCurrentPage" class="pad-table-pagegoto" ng-model="padTable.currentPage" value="{{padTable.currentPage}}"
+                ng-change="padTableChangePage(1)">
+            of {{padTable.pageCount}}
+        </div>
+        <div class="pad-table-pager-separator">
+            <div></div>
+        </div>
+        <div>
+            <button type="button" id="padTablePagerButtonNext" class="btn btn-default pad-table-pager-button" ng-click="padTableChangePage(2)">
+                <span class="glyphicon glyphicon-arrow-right"></span>
+            </button>
+        </div>
+        <div>
+            <button type="button" id="padTablePagerButtonLast" class="btn btn-default pad-table-pager-button" ng-click="padTableChangePage(4)">
+                <span class="glyphicon glyphicon-forward"></span>
+            </button>
+        </div>
+        <div class="pull-right text-right" style="float: right">
+            <select ng-model="padTable.pageBookingCount" ng-change="padTable.reloadTable()" class="pad-table-pagesize-select form-control" convert-to-number>
+                <option value="20" selected="selected">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+            </select>
+        </div>
+        <div class="pull-right text-right margin-top" style="float: right">
+            <span class="padTablePagerShowing">{{translation.KEY_SCREEN_SHOWING_LABEL}} {{padTable.showingData}} {{translation.KEY_SCREEN_OF_LABEL}} {{padTable.count}} {{translation.KEY_SCREEN_ROWS_LABEL}}</span>
+        </div>
+    </form>
+</div>

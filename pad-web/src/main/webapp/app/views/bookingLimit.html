@@ -1,0 +1,182 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" ng-if="isAdmin == 'true'" ><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_BOOKING_LIMITS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+
+    <!-- Content -->
+    <div class="Page-content no-margin-top">
+
+        <form style="margin-bottom: 5px;" class="form-inline text-alight-center text-center" name="searchForm">
+
+            <div class="form-group font-size-14 no-margin-top">
+                <label for="portOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label>
+                <select class="form-control margin-rigth input-md width-210" id="portOperator" name="portOperator" ng-model="formSearch.portOperator" ng-change="search()"
+                    aria-describedby="portOperator" required>
+                    <option ng-repeat="operator in portOperatorList | orderBy: 'name'"
+                            value="{{operator.id}}">{{operator.name}}
+                    </option>
+                </select>
+
+            </div>
+            <div class="form-group font-size-14 no-margin-top">
+                <label for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} </label>
+                <select class="form-control margin-rigth input-md width-210" id="transactionType" name="transactionType" ng-model="formSearch.transactionType" ng-change="search()"
+                    ng-disabled="!formSearch.portOperator" aria-describedby="transactionType">
+                    <option ng-repeat="entry in portOperatorTransactionTypes | orderBy: 'translateKey'"
+                            value="{{entry.transactionType}}">{{entry.translateKey | translate}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group font-size-14 no-margin-top">
+                <label for="period">Period</label>
+                <select class="form-control margin-rigth input-md width-210" id="period" name="period" ng-model="formSearch.period" ng-change="search()" aria-describedby="period" required>
+                    <option ng-repeat="period in periods = periodList" value="{{period.value}}">{{period.name}}</option>
+                    <option value="DEFAULT">--------- {{translation.KEY_SCREEN_DEFAULT_LABEL | uppercase}} ---------</option>
+                </select>
+            </div>
+        </form>
+
+        <div class="table-responsive" ng-show="isLoaded">
+            <table class="pad-table text-center">
+                <thead class="thead-booking-limit">
+                    <tr style="line-height: 30px;">
+                        <td></td>
+                        <td ng-repeat="dayOfWeek in daysOfWeek = daysWeek">
+                            <div ng-if="!dayOfWeek.isAllowUpdate || isAdmin != 'true'">
+                                <span>{{getColumnTitle(dayOfWeek)}}</span>
+                            </div>
+                             
+                            <a href="" ng-if="dayOfWeek.isAllowUpdate && isAdmin == 'true'" ng-click="showModalBulk(dayOfWeek);">
+                                <div class="div-booking-limit">
+                                    <span>{{getColumnTitle(dayOfWeek)}}</span>
+                                </div>
+                            </a>
+                        </td>
+                    </tr>
+                    
+                    <tr style="line-height: 20px;" ng-if="formSearch.period != 'DEFAULT'">
+                        <td></td>
+                        <td style="border-top-width: 1px; padding: 0;" ng-repeat="dayOfWeek in daysOfWeek = daysWeek">
+                            <div class="div-bl-remaining" title="{{translation.KEY_SCREEN_AVAILABLE_LABEL}}">{{translation.KEY_SCREEN_AVAILABLE_LABEL.substring(0, 1)}}</div>
+                            <div class="div-bl-booked" title="{{translation.KEY_SCREEN_BOOKED_LABEL}}">{{translation.KEY_SCREEN_BOOKED_LABEL.substring(0, 1)}}</div>
+                            <div class="div-bl-slots" title="{{translation.KEY_SCREEN_SLOTS_LABEL}}">{{translation.KEY_SCREEN_SLOTS_LABEL.substring(0, 1)}}</div>
+                        </td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8]" width="12.5%">
+                </colgroup>
+
+                <tbody class="highlight-cell" ng-repeat="(key, value) in bookingSlotLimitMap">
+                    <tr style="height: 21px;">
+                        <td>{{key}}</td>
+                        
+                        <td ng-repeat="cell in cells = value" ng-init="cell.edit = false;"  ng-if="formSearch.period == 'DEFAULT'">
+
+                            <div ng-if="!cell.isAllowUpdate || isAdmin != 'true'" class="div-booking-limit">{{cell.bookingLimit}}</div>
+
+                            <div ng-if="cell.isAllowUpdate && isAdmin == 'true'">
+
+                                <a href="" ng-click="cell.edit = true;" ng-show="!cell.edit">
+                                    <div class="div-booking-limit">{{cell.bookingLimit}}</div>
+                                </a>
+
+                                <div class="row no-margin-right" ng-show="cell.edit">
+                                    <div class="col-xs-8" style="padding-right: 2px;">
+                                        <input type="number" class="form-control input-xsm input-booking-limit" ng-model="cell.newBookingLimit"
+                                            ng-init="cell.newBookingLimit = cell.bookingLimit">
+                                    </div>
+                                    <div class="col-xs-2 no-padding-left no-padding-right">
+                                        <button class="btn btn-success btn-xsm" ng-click="saveCell(cell);" ng-disabled="isBookingLimitInvalid(cell)">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                        </button>
+                                    </div>
+                                    <div class="col-xs-2  no-padding-left no-padding-right">
+                                        <button class="btn btn-danger btn-xsm" ng-click="cancelCell(cell);">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td ng-repeat="cell in cells = value" style="padding: 0;" ng-style="{'background-color': $index % 2 == 0 ? '#fff' : '#f0f2f4'}" ng-if="formSearch.period != 'DEFAULT'">
+
+                            <div class="div-bl-remaining" ng-class="getNegativeClass(cell)">{{cell.bookingLimit - cell.bookingCount}}</div>
+                            <div class="div-bl-booked">{{cell.bookingCount}}</div>
+                            <div class="div-bl-slots">
+                                <div ng-if="!cell.isAllowUpdate || isAdmin != 'true'" class="div-booking-limit">{{cell.bookingLimit}}</div>
+
+                                <div ng-if="cell.isAllowUpdate && isAdmin == 'true'">
+                                    <a href="" ng-click="showModal(cell, $index);" >
+                                        <div class="div-booking-limit">{{cell.bookingLimit}}</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="bookingLimitModal" tabindex="-1" role="dialog" aria-labelledby="bookingLimitModalLabel" ng-form="bookingLimitForm">
+            <div class="modal-dialog modal-dialog-approve-deny-trips" role="document" style="width: 70%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeModal()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="bookingLimitModalLabel">{{translation.KEY_SCREEN_UPDATE_BOOKING_LIMIT_LABEL}} - {{modalTitle}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel-body form-inline text-alight-center text-center">
+                                    <div class="form-group font-size-14 no-margin-top">
+                                        <label for="hourSlotFrom">{{translation.KEY_SCREEN_SLOT_TIME_FROM_LABEL}} </label>
+                                        <select class="form-control margin-rigth input-md width-115" name="hourSlotFrom" ng-model="formData.hourSlotFrom"
+                                            ng-change="populateTimeTo()" required ng-if="formData.isBulk">
+                                            <option ng-repeat="time in times = timeFromList" value="{{time.value}}">{{time.label}}</option>
+                                        </select>
+                                        
+                                        <input type="text" class="form-control margin-rigth input-md width-115" name="hourSlotFrom" ng-model="formData.hourSlotFromString"  disabled ng-if="!formData.isBulk"/>
+                                    </div>
+                                    <div class="form-group font-size-14 no-margin-top">
+                                        <label for="hourSlotTo">{{translation.KEY_SCREEN_SLOT_TIME_TO_LABEL}} </label>
+                                        <select class="form-control margin-rigth input-md width-115" name="hourSlotTo" ng-model="formData.hourSlotTo"
+                                            ng-disabled="timeToList.length <= 0" required ng-if="formData.isBulk">
+                                            <option ng-repeat="time in times = timeToList" value="{{time.value}}">{{time.label}}</option>
+                                        </select>
+                                        
+                                        <input type="text" class="form-control margin-rigth input-md width-115" name="hourSlotTo" ng-model="formData.hourSlotToString" disabled ng-if="!formData.isBulk"/>
+                                    </div>
+                                    <div class="form-group font-size-14 no-margin-top">
+                                        <label for="newBookingLimit">{{translation.KEY_SCREEN_BOOKING_LIMITS_LABEL}} </label>
+                                        <input type="number" class="form-control margin-rigth input-md width-115" name="newBookingLimit" ng-model="formData.newBookingLimit"
+                                            ng-min="0" min="0" ng-max="9999" max="9999" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-center">
+                        <button ng-click="saveBulk()" class="btn btn-success" ng-disabled="bookingLimitForm.$invalid">
+                            <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_BUTTON_SAVE}}
+                        </button>
+
+                        <button type="button" class="btn btn-danger" ng-click="closeModal()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

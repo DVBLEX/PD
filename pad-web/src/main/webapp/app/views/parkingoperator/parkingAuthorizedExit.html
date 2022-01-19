@@ -1,0 +1,157 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_AUTHORIZED_EXIT_LABEL}}</li>
+    </ol>
+</nav>
+<div style="padding: 5px;" class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-9 text-right">
+            <button class="btn btn-primary" name="filterButton" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse"
+                aria-pressed="false" ng-class="{ 'filterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <b> <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+                </b>
+            </button>
+            <button ng-click="refreshTableData();" class="btn btn-primary" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+                    <div class="form-group font-size-12">
+                        <label for="portOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label> <select style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" id="portOperator" ng-model="filterPortOperator" aria-describedby="portOperator">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="operator in portOperatorList | orderBy: 'name'"
+                                value="{{operator.id}}">{{operator.name}}
+                            </option>
+                        </select>
+
+                    </div>
+                    <div class="form-group font-size-12">
+                        <label for="vehicleRegistration">{{translation.KEY_SCREEN_VEHICLE_LABEL}} </label> <input type="text" style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" id="vehicleRegistration" ng-model="filterVehicleRegistration" aria-describedby="vehicleRegistration" />
+                    </div>
+
+                    <div class="form-group margin-left-20px">
+                        <button ng-click="refreshTableData();" class="btn btn-info btn-sm" ng-disabled="disableControls">
+                            <b><span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}} </b>
+                        </button>
+                    </div>
+                    <div class="form-group margin-left-20px">
+                        <button ng-click="clearFilter();" class="btn btn-danger btn-sm" ng-disabled="disableControls">
+                            <b> <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_LABEL}}
+                            </b>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('vehicle_registration');"> {{translation.KEY_SCREEN_VEHICLE_LABEL}} <span
+                                ng-show="sortColumn == 'vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('driver.first_name, driver.last_name');"> {{translation.KEY_SCREEN_DRIVER_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'driver.first_name, driver.last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'driver.first_name, driver.last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('driver_msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'driver_msisdn' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'driver_msisdn' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span ng-show="sortColumn == 'status' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'status' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_slot_approved');"> {{translation.KEY_SCREEN_SLOT_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_slot_approved' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_slot_approved' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_entry');"> {{translation.KEY_SCREEN_ENTRY_DATE_LABEL}} <span ng-show="sortColumn == 'date_entry' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'date_entry' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_sms_exit');"> {{translation.KEY_SCREEN_RELEASED_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_sms_exit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_sms_exit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="8%">
+                    <col width="4%">
+                    <col width="4%">
+                    <col width="4%">
+                    <col width="10%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{getOperatorName(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentOperatorCode, 2)}}">
+                            {{getOperatorNameShort(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentOperatorCode, 1)}}</td>
+                        <td title="{{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}">{{row.referenceNumber}}</td>
+                        <td title="{{getTransactionTypeName(row.portOperator, row.transactionType + '')}}">{{getTransactionTypeName(row.portOperator, row.transactionType +
+                            '')}}</td>
+                        <td title="">{{row.vehicleRegistration}}</td>
+                        <td title="">{{row.driverName}}</td>
+                        <td title="">{{row.driverMobile}}</td>
+                        <td title="" class="text-center"><span class="label label-success" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_ENTRY">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-danger" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_EXIT">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-danger" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_REMINDER_EXIT_DUE">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-success" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_ENTERED_PORT">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_IN_TRANSIT_EXPIRED">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_EXITED_PREMATURELY_EXPIRED">{{getParkingStatusText(row.status)
+                                | uppercase}}</span> <span class="label label-warning" ng-if="row.driverName == ''">AD HOC</span> <span class="label label-primary"
+                            ng-if="row.isInTransit && row.status != parkingStatusConstants.PARKING_STATUS_IN_TRANSIT_EXPIRED">{{translation.KEY_SCREEN_IN_TRASIT_LABEL |
+                                uppercase}}</span></td>
+                        <td title="" ng-class="getDateSlotPastClass(row.dateSlotString)">{{row.dateSlotString}}</td>
+                        <td title="">{{row.dateEntryString}}</td>
+                        <td title="">{{row.dateExitSmsString}}</td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="10" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_VEHICLE_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="10" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+USE pad;
+
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Users' WHERE `id`='1195';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Utilisateurs' WHERE `id`='1196';
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1233', '1', 'KEY_RESPONSE_1192', 'The trip can be created only after the mission start date. Check the Mission Created email/SMS for reference.');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1234', '2', 'KEY_RESPONSE_1192', 'Le voyage ne peut être créé qu’après la date de début de la mission. Consultez l’e-mail / SMS créé par la mission pour référence.');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1235', '1', 'KEY_RESPONSE_1193', 'The trip can\'t be created as the mission date is expired. Check the Mission Created Email/SMS for reference.');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1236', '2', 'KEY_RESPONSE_1193', 'Le voyage ne peut pas être créé car la date de la mission est expirée. Vérifiez l’e-mail / SMS créé par la mission pour référence.');
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Liste blanche pour le port créé avec succès' WHERE `id`='968';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Liste blanche pour le port avec ces date et heure existe déjà' WHERE `id`='970';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Liste blanche pour le port supprimé avec succès' WHERE `id`='986';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitlist' WHERE `id`='941';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Create Port Whitlist' WHERE `id`='959';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitlist successfully created' WHERE `id`='967';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitlist with these Date and Time already exists' WHERE `id`='969';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitlist successfully deleted' WHERE `id`='985';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Liste blanche pour le port' WHERE `id`='941';
+-- UPDATE `pad`.`language_keys` SET `translate_key`='KEY_NAVBAR_PORT_WHITELIST', `translate_value`='Port Whitelist' WHERE `id`='941';
+-- UPDATE `pad`.`language_keys` SET `translate_key`='KEY_NAVBAR_PORT_WHITELIST' WHERE `id`='942';
+-- UPDATE `pad`.`language_keys` SET `translate_key`='KEY_SCREEN_CREATE_PORT_WHITELIST_LABEL' WHERE `id`='959';
+-- UPDATE `pad`.`language_keys` SET `translate_key`='KEY_SCREEN_CREATE_PORT_WHITELIST_LABEL' WHERE `id`='960';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitelist successfully created' WHERE `id`='967';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitelist with these Date and Time already exists' WHERE `id`='969';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Port Whitelist successfully deleted' WHERE `id`='985';
+-- UPDATE `pad`.`language_keys` SET `translate_value`='Create Port Whitelist' WHERE `id`='959';
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1239', '1', 'KEY_SCREEN_CONFIRMATION_LABEL', 'Confirmation');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1240', '2', 'KEY_SCREEN_CONFIRMATION_LABEL', 'Confirmation');

@@ -1,0 +1,613 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_TRIPS_LABEL}}</li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_TRIPS_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+
+            <button ng-click="showMissionTripDialog(1);" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="missionTripsFilterButton" data-toggle="collapse" data-target="#missionTripSearchCollapse"
+                aria-expanded="false" aria-controls="tripSearchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="missionTripSearchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="missionTripFiltersForm">
+                    <div class="form-group font-size-12">
+                        <label for="filterPortOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label> <select style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" ng-model="filterPortOperator" id="filterPortOperator" aria-describedby="filterPortOperator">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="operator in portOperatorList | orderBy: 'name'" value="{{operator.id}}">{{operator.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12" ng-show="independentOperators.length !== 0">
+                        <label for="filterIndependentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label> <input type="text"
+                            class="form-control margin-rigth input-sm filter-input filter-input-width-180" id="filterIndependentOperatorName" name="filterIndependentOperatorName"
+                            ng-model="filterIndependentOperatorName">
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterTransactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} </label> <select style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" ng-model="filterTransactionType" aria-describedby="filterTransactionType"
+                            ng-disabled="filterPortOperator === undefined || filterPortOperator === ''">
+                            <option ng-repeat="entry in getTransactionTypesForPortOperator(filterPortOperator) | orderBy: 'name'" value="{{entry.transactionType}}">{{entry.translateKey
+                                | translate}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterReferenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}} </label> <input type="text" style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" ng-model="filterReferenceNumber" aria-describedby="filterReferenceNumber"
+                            ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH" maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}" capitalize alphanumeric />
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterStatus">{{translation.KEY_SCREEN_STATUS_LABEL}} </label> <select style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" id="filterStatus" name="filterStatus" ng-model="filterStatus">
+                            <option selected value="-1">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="status in statusOptions | orderBy: 'name'" value="{{status.value}}">{{status.name | uppercase}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterVehicleRegistrationNumber">{{translation.KEY_SCREEN_VEHICLE_LABEL}} </label> <input type="text" style="width: 100px;"
+                            class="form-control margin-rigth input-sm filter-input" ng-model="filterVehicleRegistrationNumber" aria-describedby="filterVehicleRegistrationNumber"
+                            ng-maxlength="validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX" maxlength="{{validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX}}" capitalize
+                            alphanumeric />
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterDateSlotFromString">{{translation.KEY_SCREEN_SLOT_DATE_FROM_LABEL}}</label>
+                        <div class="slot_from_date date input-group">
+                            <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateSlotFromString" name="filterDateSlotFromString"
+                                ng-model="filterDateSlotFromString"> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group font-size-12">
+                        <label for="filterTimeSlotFromString">{{translation.KEY_SCREEN_SLOT_TIME_FROM_LABEL}}</label> <select id="filterTimeSlotFromString"
+                            name="filterTimeSlotFromString" ng-init="filterTimeSlotFromString = '0000'" class="form-control margin-rigth input-sm filter-input"
+                            ng-model="filterTimeSlotFromString">
+                            <option value="0000">00:00</option>
+                            <option value="0100">01:00</option>
+                            <option value="0200">02:00</option>
+                            <option value="0300">03:00</option>
+                            <option value="0400">04:00</option>
+                            <option value="0500">05:00</option>
+                            <option value="0600">06:00</option>
+                            <option value="0700">07:00</option>
+                            <option value="0800">08:00</option>
+                            <option value="0900">09:00</option>
+                            <option value="1000">10:00</option>
+                            <option value="1100">11:00</option>
+                            <option value="1200">12:00</option>
+                            <option value="1300">13:00</option>
+                            <option value="1400">14:00</option>
+                            <option value="1500">15:00</option>
+                            <option value="1600">16:00</option>
+                            <option value="1700">17:00</option>
+                            <option value="1800">18:00</option>
+                            <option value="1900">19:00</option>
+                            <option value="2000">20:00</option>
+                            <option value="2100">21:00</option>
+                            <option value="2200">22:00</option>
+                            <option value="2300">23:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group font-size-12">
+                        <label for="filterDateSlotToString">{{translation.KEY_SCREEN_SLOT_DATE_TO_LABEL}}</label>
+                        <div class="slot_to_date date input-group">
+                            <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateSlotToString" name="filterDateSlotToString"
+                                ng-model="filterDateSlotToString"> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group font-size-12">
+                        <label for="filterTimeSlotToString">{{translation.KEY_SCREEN_SLOT_TIME_TO_LABEL}}</label> <select id="filterTimeSlotToString" name="filterTimeSlotToString"
+                            ng-init="filterTimeSlotToString = '0000'" class="form-control margin-rigth input-sm filter-input" ng-model="filterTimeSlotToString">
+                            <option value="0000">00:00</option>
+                            <option value="0100">01:00</option>
+                            <option value="0200">02:00</option>
+                            <option value="0300">03:00</option>
+                            <option value="0400">04:00</option>
+                            <option value="0500">05:00</option>
+                            <option value="0600">06:00</option>
+                            <option value="0700">07:00</option>
+                            <option value="0800">08:00</option>
+                            <option value="0900">09:00</option>
+                            <option value="1000">10:00</option>
+                            <option value="1100">11:00</option>
+                            <option value="1200">12:00</option>
+                            <option value="1300">13:00</option>
+                            <option value="1400">14:00</option>
+                            <option value="1500">15:00</option>
+                            <option value="1600">16:00</option>
+                            <option value="1700">17:00</option>
+                            <option value="1800">18:00</option>
+                            <option value="1900">19:00</option>
+                            <option value="2000">20:00</option>
+                            <option value="2100">21:00</option>
+                            <option value="2200">22:00</option>
+                            <option value="2300">23:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="searchMissionTrip()" class="btn btn-success" style="width: 100%;" ng-disabled="searchTripSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearchMissionTrip()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_BAD_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span ng-show="sortColumn == 'status' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'status' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('vehicle_registration');"> {{translation.KEY_SCREEN_VEHICLE_LABEL}} <span
+                                ng-show="sortColumn == 'vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('drivers.first_name, drivers.last_name');"> {{translation.KEY_SCREEN_DRIVER_LABEL}} <span
+                                ng-show="sortColumn == 'drivers.first_name, drivers.last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'drivers.first_name, drivers.last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_REQUEST_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_approved_denied');"> {{translation.KEY_SCREEN_DATE_APPROVAL_LABEL}} <span
+                                ng-show="sortColumn == 'date_approved_denied' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_approved_denied' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_slot_approved');"> {{translation.KEY_SCREEN_SLOT_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_slot_approved' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_slot_approved' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_entry_parking');"> {{translation.KEY_SCREEN_PARKING_ENTRY_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_entry_parking' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_entry_parking' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td ng-if="false"><a href="" ng-click="sort('date_port_entry');"> {{translation.KEY_SCREEN_PORT_ENTRY_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_port_entry' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_port_entry' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('amount_fee');">{{translation.KEY_SCREEN_PAID_FEE_AMOUNT_LABEL}}<span ng-show="sortColumn == 'amount_fee' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'amount_fee' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col width="9%">
+                    <col ng-if="false" width="9%">
+                    <col width="8%">
+                    <col width="2%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{getOperatorName(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 2)}}">
+                            {{getOperatorNameShort(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 1)}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}"><span class="label label-info">{{getTransactionTypeName(row.portOperatorId,
+                                row.transactionType) | uppercase}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}">{{row.referenceNumber}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_STATUS_LABEL}}"><span class="label label-info"
+                            ng-if="row.status == tripConstants.TRIP_STATUS_PENDING_APPROVAL">{{translation.KEY_SCREEN_PENDING_APPROVAL_LABEL | uppercase}}</span>
+                            <div ng-if="row.status == tripConstants.TRIP_STATUS_DENIED_BY_OFFICE_OPERATOR" title="{{row.reasonDeny}}"
+                                style="white-space: nowrap; display: flex; justify-content: center;">
+                                <span class="label label-danger">{{translation.KEY_SCREEN_DENIED_BY_OFFICE_OPERATOR_LABEL | uppercase}}</span><span style="margin-left: 3px;"
+                                    class="glyphicon glyphicon-warning-sign red"></span>
+                            </div> <span class="label label-success" ng-if="row.status == tripConstants.TRIP_STATUS_APPROVED">{{translation.KEY_SCREEN_APPROVED_LABEL | uppercase}}</span>
+                            <span class="label label-success" ng-if="row.status == tripConstants.TRIP_STATUS_COMPLETED">{{translation.KEY_SCREEN_COMPLETED_LABEL| uppercase}}</span>
+                            <span class="label label-success" ng-if="row.status == tripConstants.TRIP_STATUS_ENTERED_PARKING">{{translation.KEY_SCREEN_ENTERED_PARKING_LABEL
+                                | uppercase}}</span> <span class="label label-danger" ng-if="row.status == tripConstants.TRIP_STATUS_EXITED_PARKING_PREMATURELY">{{translation.KEY_SCREEN_EXITED_PARKING_PREMATURELY_LABEL
+                                | uppercase}}</span> <span class="label label-success" ng-if="row.status == tripConstants.TRIP_STATUS_IN_TRANSIT">{{translation.KEY_SCREEN_IN_TRASIT_LABEL
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == tripConstants.TRIP_STATUS_IN_TRANSIT_EXPIRED">{{translation.KEY_SCREEN_IN_TRANSIT_EXPIRED_LABEL
+                                | uppercase}}</span> <span class="label label-success" ng-if="row.status == tripConstants.TRIP_STATUS_ENTERED_PORT">{{translation.KEY_SCREEN_ENTERED_PORT_LABEL
+                                | uppercase}}</span>
+                            <div ng-if="row.status == tripConstants.TRIP_STATUS_DENIED_PORT_ENTRY" title="{{row.reasonDeny}}"
+                                style="white-space: nowrap; display: flex; justify-content: center;">
+                                <span class="label label-danger">{{translation.KEY_SCREEN_DENIED_PORT_ENTRY_LABEL | uppercase}}</span> <span style="margin-left: 3px;"
+                                    class="glyphicon glyphicon-warning-sign red"></span>
+                            </div> <span class="label label-danger" ng-if="row.status == tripConstants.TRIP_STATUS_CANCELLED">{{translation.KEY_SCREEN_CANCELLED_LABEL |
+                                uppercase}}</span> <span class="label label-danger" ng-if="row.status == tripConstants.TRIP_STATUS_CANCELLED_SYSTEM">{{translation.KEY_SCREEN_CANCELLED_BY_SYSTEM_LABEL
+                                | uppercase}}</span> <span class="label label-danger" ng-if="row.status == tripConstants.TRIP_STATUS_ABORTED">{{translation.KEY_SCREEN_ABORTED_LABEL
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == tripConstants.TRIP_STATUS_PORT_EXIT_EXPIRED">{{translation.KEY_SCREEN_PORT_EXIT_EXPIRED_LABEL
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == tripConstants.TRIP_STATUS_COMPLETED_SYSTEM">{{translation.KEY_SCREEN_COMPLETED_BY_SYSTEM_LABEL
+                                | uppercase}}</span> <span class="label label-info" ng-if="row.status == tripConstants.TRIP_STATUS_PENDING">{{translation.KEY_SCREEN_PENDING_LABEL |
+                                uppercase}}</span> <span class="label label-info" ng-if="row.status == tripConstants.TRIP_STATUS_EXITED_PARKING_PREMATURELY_EXPIRED">{{translation.KEY_SCREEN_EXITED_PARKING_PREMATURELY_EXPIRED_LABEL
+                                | uppercase}}</span> <span class="label label-danger" ng-if="row.status == tripConstants.TRIP_STATUS_CANCELLED_BY_KIOSK_OPERATOR">{{translation.KEY_SCREEN_CANCELLED_BY_KIOSK_OPERATOR_LABEL
+                                | uppercase}}</span> <span class="label label-default" ng-if="row.status == tripConstants.TRIP_STATUS_IN_FLIGHT">{{translation.KEY_SCREEN_IN_FLIGHT_LABEL
+                                | uppercase}}</span> <span class="label label-warning" ng-if="row.adHoc">AD HOC</span></td>
+                        <td title="{{translation.KEY_SCREEN_VEHICLE_LABEL}}"><span ng-if="row.isVehicleActive">{{row.vehicleRegistration}}</span>
+                            <div ng-if="!row.isVehicleActive" title="{{translation.KEY_SCREEN_VEHICLE_INACTIVE_LABEL}}"
+                                style="white-space: nowrap; display: flex; justify-content: flex-start;">
+                                <span>{{row.vehicleRegistration}}</span> <span style="margin-left: 3px;" class="glyphicon glyphicon-warning-sign red"></span>
+                            </div></td>
+                        <td title="{{translation.KEY_SCREEN_DRIVER_LABEL}}">{{row.driverName}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_REQUEST_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_APPROVAL_LABEL}}">{{row.dateApprovedDeniedString}}</td>
+                        <td title="{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}">{{row.dateSlotApprovedString == "" ? row.dateSlotString : row.dateSlotApprovedString}}</td>
+                        <td title="{{translation.KEY_SCREEN_PARKING_ENTRY_DATE_LABEL}}">{{row.dateParkingEntryString}}</td>
+                        <td ng-if="false" title="{{translation.KEY_SCREEN_PORT_ENTRY_DATE_LABEL}}">{{row.datePortEntryString}}</td>
+                        <td title="{{translation.KEY_SCREEN_PAID_FEE_AMOUNT_LABEL}}"><span ng-if="row.feePaid && row.status != tripConstants.TRIP_STATUS_IN_FLIGHT">{{row.tripFeeAmount | customCurrency :
+                                0}}&nbsp;{{getSymbolByCurrencyCode(row.currency)}}</span></td>
+                        <td class="text-center" title="">
+                            <button class="btn btn-danger btn-sm" ng-click="cancelTrip(row); $event.stopPropagation();"
+                                ng-if="row.status == tripConstants.TRIP_STATUS_PENDING_APPROVAL 
+                                    || row.status == tripConstants.TRIP_STATUS_APPROVED
+                                    || row.status == tripConstants.TRIP_STATUS_IN_FLIGHT 
+                                    || (row.isAllowMultipleEntries && row.isDirectToPort && row.status == tripConstants.TRIP_STATUS_ENTERED_PORT) 
+                                    || (row.status == tripConstants.TRIP_STATUS_IN_TRANSIT && (row.isDirectToPort || row.isAllowMultipleEntries))"
+                                title="{{translation.KEY_SCREEN_CANCEL_MESSAGE}}">
+                                <span class="glyphicon glyphicon-remove"> </span>
+                            </button>
+                            
+                            <button class="btn btn-info btn-sm" ng-click="approveTrip(row); $event.stopPropagation();" ng-if="row.status == tripConstants.TRIP_STATUS_PENDING"
+                                title="{{translation.KEY_SCREEN_APPROVE_LABEL}}">
+                                <span class="glyphicon glyphicon-ok"> </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="13" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_TRIP_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="13" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="modal fade" id="activateVehicleModal" tabindex="-1" style="z-index: 9999;" role="dialog" aria-labelledby="activateVehicleModalLabel">
+            <div class="modal-dialog modal-dialog-record" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeActivateVehicleModal()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="activateVehicleModalLabel">{{translation.KEY_SCREEN_ACTIVATE_LABEL}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading font-size-18">{{translation.KEY_SCREEN_VEHICLE_DETAIL_LABEL}}</div>
+                                    <div class="panel-body">
+                                        <form name="activateVehicleForm" autocomplete="off" novalidate>
+                                            <div class="col-md-12 form-group" style="padding: 0px;">
+                                                <div class="row">
+                                                    <div class="form-group col-sm-6">
+                                                        <label for="vehicle" class="text-nowrap">{{translation.KEY_SCREEN_VEHICLE_LABEL}}</label> <span
+                                                            style="font-size: 16px; margin-left: 5px;" class="glyphicon glyphicon-info-sign"
+                                                            ng-if="result.isVehicleAddedApi && !result.isVehicleApproved"
+                                                            title="{{translation.KEY_SCREEN_VEHICLE_ADDED_AUTOMATICALLY_MESSAGE}}"> </span> <input type="text" class="form-control"
+                                                            name="vehicle" ng-value="result.vehicleRegistration" ng-readonly="true">
+                                                    </div>
+                                                    <div class="form-group col-sm-6">
+                                                        <label for="regCountry">{{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}}</label> <select id="regCountry"
+                                                            name="regCountry" class="form-control" ng-model="activateVehicleFormData.regCountry"
+                                                            ng-init="activateVehicleFormData.regCountry='SN'" required autofocus>
+                                                            <option value="SN">Senegal</option>
+                                                            <option value="ML">Mali</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-sm-6">
+                                                        <label for="make">{{translation.KEY_SCREEN_MAKE_LABEL}}</label> <input type="text" class="form-control" name="make"
+                                                            ng-model="activateVehicleFormData.make" minlength="2" ng-minlength="2" ng-maxlength="16" maxlength="16" ng-trim="true"
+                                                            required avoid-special-chars>
+                                                    </div>
+                                                    <div class="form-group col-sm-6">
+                                                        <label for="color">{{translation.KEY_SCREEN_COLOR_LABEL}} <span class="optional">-
+                                                                {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label> <input type="text" class="form-control" name="color"
+                                                            ng-model="activateVehicleFormData.color" ng-maxlength="16" maxlength="16" ng-trim="true" avoid-special-chars
+                                                            avoid-numbers>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-right">
+                        <button ng-click="activateApiVehicle();" class="btn btn-success outline-none width-modal-btn" ng-disabled="activateVehicleForm.$invalid">
+                            <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_ACTIVATE_LABEL}}
+                        </button>
+
+                        <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeActivateVehicleModal()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="missionTripModal" tabindex="-1" role="dialog" aria-labelledby="missionTripModalLabel" ng-form="missionTripForm">
+            <fieldset>
+                <div class="modal-dialog" role="document" style="width: 70%;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeMissionTripDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="missionTripModalLabel">{{modalTitle}}</h4>
+
+                        </div>
+                        <div class="modal-body" style="padding-bottom: 0px;">
+                            <form name="missionTripForm" autocomplete="off" novalidate>
+                                <div class="row">
+                                    <div class="col-sm-12 form-group">
+
+                                        <div class="col-md-12" style="padding: 0px;">
+                                            <div class="form-group col-md-5">
+                                                <label for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label> <select id="operatorType" name="operatorType"
+                                                    class="form-control" ng-model="formData.operatorType" ng-disabled="isResultFound"
+                                                    ng-options="operator.id as operator.name for operator in portOperatorList | orderBy: 'name'" required>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-md-5">
+                                                <label for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label> <input type="text" class="form-control"
+                                                    id="referenceNumber" name="referenceNumber" ng-model="formData.referenceNumber"
+                                                    ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH" maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}"
+                                                    ng-disabled="isResultFound" capitalize alphanumeric required>
+                                            </div>
+
+                                            <div class="form-group col-md-2 text-right" ng-show="!isResultFound">
+                                                <button type="button" class="btn btn-primary outline-none width-modal-btn" style="margin-top: 25px;"
+                                                    ng-click="validateReferenceNumber()" ng-disabled="validateButtonDisabled">
+                                                    <b><span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_VALIDATE_LABEL}}</b>
+                                                </button>
+                                            </div>
+
+                                            <div class="form-group col-md-2 text-right" ng-show="isResultFound && !isApprove">
+                                                <button type="button" class="btn btn-primary outline-none width-modal-btn" style="margin-top: 25px;"
+                                                    ng-click="resetMissionTripSearch()">
+                                                    <b><span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}</b>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class=" col-md-12" ng-if="missionTripSearchErrorResponse !== ''">
+                                            <div class="animate-if">
+                                                <div class="alert alert-danger" role="alert">
+                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                    {{missionTripSearchErrorResponse}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row" ng-show="isResultFound">
+                                    <div class="col-sm-12 form-group" style="margin-bottom: 0px">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading font-size-18">{{translation.KEY_SCREEN_MISSION_DETAIL_LABEL}}</div>
+                                            <div class="panel-body" style="padding-left: 0px; padding-right: 0px;">
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="portOperatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="portOperatorType" value="{{getOperatorName(result.portOperatorId)}} {{result.gateNumber}}" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="transactionType" value="{{getTransactionTypeName(result.portOperatorId, result.transactionType)}}" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="dateMissionStart">{{translation.KEY_SCREEN_START_DATE_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="dateMissionStart" ng-value="result.dateMissionStartString" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="dateMissionEnd">{{translation.KEY_SCREEN_END_DATE_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="dateMissionEnd" ng-value="result.dateMissionEndString" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-if="!result.vehicleCode">
+                                                    <label for="vehicle" class="text-nowrap">{{translation.KEY_SCREEN_CHOOSE_VEHICLE_LABEL}}</label> <select class="form-control"
+                                                        name="vehicle" ng-model="formData.vehicle"
+                                                        ng-options="vehicle.code as vehicle.vehicleRegistration for vehicle in accountvehicles | orderBy: 'vehicleRegistration'"
+                                                        required>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group" ng-class="result.isVehicleActive ? 'col-md-6' : 'col-md-4'" ng-if="result.vehicleCode">
+                                                    <label for="vehicle" class="text-nowrap">{{translation.KEY_SCREEN_VEHICLE_LABEL}}</label> <span
+                                                        style="font-size: 16px; margin-left: 5px;" class="glyphicon glyphicon-info-sign"
+                                                        ng-if="result.isVehicleAddedApi && !result.isVehicleApproved"
+                                                        title="{{translation.KEY_SCREEN_VEHICLE_ADDED_AUTOMATICALLY_MESSAGE}}"> </span>
+                                                    <div class="inner-addon right-addon">
+                                                        <i class="glyphicon glyphicon-warning-sign red" ng-if="!result.isVehicleActive"></i> <input type="text" class="form-control"
+                                                            name="vehicle" ng-value="result.vehicleRegistration" ng-readonly="true"
+                                                            title="{{result.isVehicleActive ? '' : translation.KEY_SCREEN_VEHICLE_INACTIVE_LABEL}}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-2" ng-if="result.vehicleCode && !result.isVehicleActive" style="margin-top: 25px;">
+                                                    <button ng-click="activate()" class="btn btn-primary" ng-if="!result.isVehicleActive">
+                                                        <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_ACTIVATE_LABEL}}
+                                                    </button>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="driver" class="text-nowrap">{{translation.KEY_SCREEN_CHOOSE_DRIVER_LABEL}}</label> <select class="form-control"
+                                                        name="driver" ng-model="formData.driver"
+                                                        ng-options="driver.code as driver.name for driver in accountdrivers | orderBy: 'name'" required>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-show="!formData.tripDateSlot">
+                                                    <label for="dateSlot">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label>
+                                                    <div class="slot_start_date date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="dateSlot" name="dateSlot" ng-model="dateSlot"
+                                                            required> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-show="formData.tripDateSlot">
+                                                    <label for="tripDateSlot">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="tripDateSlot" ng-model="formData.tripDateSlot" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-show="!formData.tripTimeSlot">
+                                                    <label for="timeSlot">{{translation.KEY_SCREEN_SLOT_TIME_LABEL}}</label> <select id="timeSlot" name="timeSlot"
+                                                        class="form-control" ng-model="formData.timeSlot"
+                                                        ng-options="entry.time as entry.timeFormat disable when entry.isTimeSlotDisabled for entry in tripBookingTimeJsonList"
+                                                        ng-disabled="tripBookingTimeJsonList.length == 0" required>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-show="formData.tripTimeSlot">
+                                                    <label for="tripTimeSlot">{{translation.KEY_SCREEN_SLOT_TIME_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="tripTimeSlot" ng-model="formData.tripTimeSlot" ng-readonly="true">
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="createTripInfoMessage !== ''">
+                                                        <div class="alert alert-warning" style="margin-bottom: 0px;" role="alert">
+                                                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <span class="sr-only">Error: </span> <span>{{createTripInfoMessage}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="missionTripSaveErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert" style="margin-bottom: 0px;">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{missionTripSaveErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="createTripSuccessResponse !== ''">
+                                                        <div class="alert alert-success" role="alert" style="margin-bottom: 0px;">
+                                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{createTripSuccessResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <br />
+
+                                                <div class="form-group col-md-12" ng-if="!isApprove">
+                                                    <button ng-click="addMissionTrip()" class="btn btn-primary" style="width: 100%;"
+                                                        ng-disabled="addMissionTripSubmitButtonDisabled || !formData.driver || (!dateSlot || !formData.timeSlot)">
+                                                        <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+                                                    </button>
+                                                </div>
+
+                                                <div class="form-group" ng-class="!result.isVehicleActive ? 'col-md-6' : 'col-md-12'" ng-if="isApprove">
+                                                    <button ng-click="approveMissionTrip()" class="btn btn-primary" style="width: 100%;"
+                                                        ng-disabled="addMissionTripSubmitButtonDisabled || !formData.driver || !result.isVehicleActive">
+                                                        <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_APPROVE_LABEL}}
+                                                    </button>
+                                                </div>
+                                                <div class="form-group col-md-6" ng-if="isApprove && !result.isVehicleActive">
+                                                    <button ng-click="rejectMissionTrip()" class="btn btn-danger" style="width: 100%;">
+                                                        <span class="glyphicon glyphicon-ban-circle"></span> {{translation.KEY_SCREEN_REJECTED_LABEL}}
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <slot-start-d-p></slot-start-d-p>
+                                    <slot-from-d-p></slot-from-d-p>
+                                    <slot-to-d-p></slot-to-d-p>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer text-alight-right">
+                            <button type="button" class="btn btn-danger" ng-click="closeMissionTripDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

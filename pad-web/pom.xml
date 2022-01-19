@@ -1,0 +1,206 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.pad</groupId>
+        <artifactId>pad-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>pad-web</artifactId>
+    <packaging>war</packaging>
+    <name>PAD Web</name>
+
+    <properties>
+        <warName>pad</warName>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.pad</groupId>
+            <artifactId>pad-base</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/${env}</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <executions>
+                    <!-- Application CSS files -->
+                    <execution>
+                        <id>application-css-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <cssFinalFile>pad.css</cssFinalFile>
+                            <cssSourceDir>app/css</cssSourceDir>
+                            <cssSourceIncludes>
+                                <cssSourceInclude>*.css</cssSourceInclude>
+                            </cssSourceIncludes>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>false</skipMerge>
+                            <skipMinify>${skipMinify}</skipMinify>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- angular main app and the related files -->
+                    <execution>
+                        <id>main-pad-apps-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <jsFinalFile>pad.js</jsFinalFile>
+                            <jsSourceDir>app/js</jsSourceDir>
+                            <jsSourceFiles>
+                                <jsSourceFile>padMainApp.js</jsSourceFile>
+                            </jsSourceFiles>
+                            <jsSourceIncludes>
+                                <jsSourceInclude>controllers/*.js</jsSourceInclude>
+                                <jsSourceInclude>services/*.js</jsSourceInclude>
+                                <jsSourceInclude>directives/*.js</jsSourceInclude>
+                                <jsSourceInclude>factories/*.js</jsSourceInclude>
+                                <jsSourceInclude>constants/*.js</jsSourceInclude>
+                                <jsSourceInclude>filters/*.js</jsSourceInclude>
+                            </jsSourceIncludes>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>false</skipMerge>
+                            <skipMinify>${skipMinify}</skipMinify>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- angular login app and the related files -->
+                    <execution>
+                        <id>login-pad-apps-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <jsFinalFile>login.js</jsFinalFile>
+                            <jsSourceDir>app/js</jsSourceDir>
+                            <jsSourceFiles>
+                                <jsSourceFile>loginApp.js</jsSourceFile>
+                            </jsSourceFiles>
+                            <jsSourceIncludes>
+                                <jsSourceInclude>processLogin.js</jsSourceInclude>
+                                <jsSourceInclude>services/tc-comservice-1.0.js</jsSourceInclude>
+                            </jsSourceIncludes>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>false</skipMerge>
+                            <skipMinify>${skipMinify}</skipMinify>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- angular registration app and the related files -->
+                    <execution>
+                        <id>registration-pad-apps-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <jsFinalFile>registration.js</jsFinalFile>
+                            <jsSourceDir>app/js</jsSourceDir>
+                            <jsSourceFiles>
+                                <jsSourceFile>registrationApp.js</jsSourceFile>
+                            </jsSourceFiles>
+                            <jsSourceIncludes>
+                                <jsSourceInclude>services/tc-comservice-1.0.js</jsSourceInclude>
+                            </jsSourceIncludes>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>false</skipMerge>
+                            <skipMinify>${skipMinify}</skipMinify>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- angular receipt app and the related files -->
+                    <execution>
+                        <id>receipt-pad-apps-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <jsFinalFile>receipt.js</jsFinalFile>
+                            <jsSourceDir>app/js</jsSourceDir>
+                            <jsSourceFiles>
+                                <jsSourceFile>receiptApp.js</jsSourceFile>
+                            </jsSourceFiles>
+                            <jsSourceIncludes>
+                                <jsSourceInclude>services/tc-comservice-1.0.js</jsSourceInclude>
+                            </jsSourceIncludes>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>false</skipMerge>
+                            <skipMinify>${skipMinify}</skipMinify>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <target>
+                                <java classpath="${project.build.directory}/classes" classname="${project.groupId}.server.web.common.BuildVersionNumberUpdater">
+                                    <arg value="${project.basedir}/src/main/webapp/WEB-INF/jsp/buildNumber.jsp" />
+                                    <arg value="${buildNumber}" />
+                                </java>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warSourceExcludes>app/css/*.css,app/js/constants/*.js,app/js/controllers/*.js,app/js/directives/*.js,app/js/factories/*.js,app/js/filters/*.js,app/js/services/*.js</warSourceExcludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

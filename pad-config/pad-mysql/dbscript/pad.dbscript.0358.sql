@@ -1,0 +1,6 @@
+USE pad;
+
+ ALTER TABLE `pad`.`api_remote_addr` 
+ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+;

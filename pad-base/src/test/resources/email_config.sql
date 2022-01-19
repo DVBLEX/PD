@@ -1,0 +1,2 @@
+INSERT INTO email_config (`id`,`smtp_host`,`smtp_auth`,`smtp_port`,`smtp_starttls_enable`, `smtp_ssl_protocols`,`operator_id`,`date_created`,`date_edited`) VALUES (-1,'smtp.gmail.com','true','587','true','TLSv1.2',-1,'2018-03-01 09:28:19','2018-03-01 09:28:19');
+INSERT INTO email_config (`id`,`smtp_host`,`smtp_auth`,`smtp_port`,`smtp_starttls_enable`, `smtp_ssl_protocols`,`operator_id`,`date_created`,`date_edited`) VALUES (1,'pro.turbo-smtp.com','true','465',NULL,'TLSv1.2',-1,'2019-05-31 09:29:00','2019-05-31 09:29:00');

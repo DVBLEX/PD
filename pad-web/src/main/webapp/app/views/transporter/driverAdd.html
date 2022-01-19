@@ -1,0 +1,97 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item"><a href="" ng-click="go('/driver')">{{translation.KEY_NAVBAR_DRIVERS}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_ADD_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_ADD_DRIVER_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="go('/driver')" type="button" class="btn btn-warning btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-arrow-left"></span> {{translation.KEY_BUTTON_BACK}}
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Content -->
+        <div class="Page-content">
+
+            <div class="col-md-12" style="padding: 0px;">
+                <form name="driverAddForm" autocomplete="off" novalidate>
+                    <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="firstName">{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}</label>
+                            <input type="text" class="form-control" name="firstName" ng-model="formData.firstName" ng-maxlength="32" maxlength="32" ng-trim="true"
+                                avoid-special-chars avoid-numbers required autofocus>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="lastName">{{translation.KEY_SCREEN_LAST_NAME_LABEL}}</label>
+                            <input type="text" class="form-control" name="lastName" ng-model="formData.lastName" ng-maxlength="32" maxlength="32" ng-trim="true" avoid-special-chars
+                                avoid-numbers required>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                            <div style="width: 100%;">
+                                <input type="text" class="form-control" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber" ng-intl-tel-input required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="email">{{translation.KEY_SCREEN_EMAIL_LABEL}} <span class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label>
+                            <input type="text" class="form-control" id="email" name="email" ng-model="formData.email" ng-pattern="emailRegexp" ng-trim="true" ng-maxlength="64" maxlength="64">
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2" style="padding-left: 0px;padding-right: 0px;margin-bottom: 0px;">
+                            <div class="form-group col-sm-6">
+                                <label for="issuingCountry" class="text-nowrap">{{translation.KEY_SCREEN_COUNTRY_ISSUE_LABEL}}</label>
+                                <select class="form-control" id="issuingCountry" name="issuingCountry" ng-model="formData.issuingCountry" required>
+                                    <option value="ML">Mali</option>
+                                    <option value="SN">{{translation.KEY_SCREEN_SENEGAL_LABEL}}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="licenceNumber">{{translation.KEY_SCREEN_LICENCE_NUMBER_LABEL}}</label>
+                                <input type="text" class="form-control" id="licenceNumber" name="licenceNumber" ng-model="formData.licenceNumber" ng-maxlength="32" maxlength="32" ng-trim="true"
+                                    required capitalize alphanumeric>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="languageId" class="text-nowrap">{{translation.KEY_SCREEN_LANGUAGE_LABEL}}</label>
+                            <select class="form-control" id="languageId" name="languageId" ng-model="formData.languageId" required>
+                                <option ng-repeat="language in languageIdOptions | orderBy: 'name'"
+                                        value="{{language.value}}">{{language.name}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <div class="animate-if" ng-if="addDriverErrorResponse !== ''">
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">{{translation.KEY_SCREEN_ERROR_LABEL}}: </span>
+                                    {{addDriverErrorResponse}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center col-sm-8 col-sm-offset-2" style="padding-bottom: 30px;">
+                            <button ng-click="addDriver()" class="btn btn-success" style="width: 100%;" ng-disabled="addDriverSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

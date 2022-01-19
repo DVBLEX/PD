@@ -1,0 +1,604 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PARKING}} {{vehiclesSelected}}</li>
+    </ol>
+</nav>
+<div style="padding: 5px;" class="container-fluid">
+
+    <!-- Content -->
+
+    <div class="collapse" id="searchCollapse">
+        <div class="div-filter">
+            <form style="display: inline;" class="form-inline" name="filtersForm">
+                <div class="form-group font-size-12">
+                    <label for="portOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label>
+                    <select ng-click="clearTransactionType()" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="portOperator" ng-model="filterPortOperator" aria-describedby="portOperator">
+                        <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                        <option ng-repeat="operator in portOperatorList | orderBy: 'name'"
+                                value="{{operator.id}}">{{operator.name}}
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterTransactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} </label>
+                    <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterTransactionType" ng-model="filterTransactionType" aria-describedby="filterTransactionType"
+                            ng-disabled="filterPortOperator === undefined || filterPortOperator === ''">
+                        <option ng-repeat="entry in getTransactionTypesForPortOperator(filterPortOperator) | orderBy: 'translateKey'"
+                                value="{{entry.transactionType}}">{{entry.translateKey | translate}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="vehicleRegistration">{{translation.KEY_SCREEN_VEHICLE_LABEL}} </label>
+                    <input type="text" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="vehicleRegistration" ng-model="filterVehicleRegistration"
+                        aria-describedby="vehicleRegistration" />
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterType">{{translation.KEY_SCREEN_TYPE_LABEL}} </label>
+                    <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterType" name="filterType" ng-model="filterType">
+                        <option value="{{parkingTypeConstants.PARKING_TYPE_ALL}}">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                        <option ng-repeat="typeParking in typeParkingOptions | orderBy: 'name'"
+                                value="{{typeParking.value}}">{{typeParking.name | uppercase}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterStatus">{{translation.KEY_SCREEN_STATUS_LABEL}} </label>
+                    <select style="width: 150px;" class="form-control margin-rigth input-sm filter-input filter-input-width-180" id="filterStatus" name="filterStatus" ng-model="filterStatus">
+                        <option value="{{parkingStatusConstants.PARKING_STATUS_ALL}}">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                        <option ng-repeat="statusParking in statusParkingOptions | orderBy: 'name'"
+                                value="{{statusParking.value}}">{{statusParking.name | uppercase}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterDateEntryFromString">{{translation.KEY_SCREEN_ENTRY_DATE_FROM_LABEL}}</label>
+                    <div class="parking_entry_from date input-group">
+                        <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateEntryFromString" name="filterDateEntryFromString"
+                            ng-model="filterDateEntryFromString" readonly>
+                        <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterTimeEntryFromString">{{translation.KEY_SCREEN_ENTRY_TIME_FROM_LABEL}}</label>
+                    <select id="filterTimeEntryFromString" name="filterTimeEntryFromString" ng-init="filterTimeEntryFromString = '0000'"
+                        class="form-control margin-rigth input-sm filter-input" ng-model="filterTimeEntryFromString">
+                        <option value="0000">00:00</option>
+                        <option value="0100">01:00</option>
+                        <option value="0200">02:00</option>
+                        <option value="0300">03:00</option>
+                        <option value="0400">04:00</option>
+                        <option value="0500">05:00</option>
+                        <option value="0600">06:00</option>
+                        <option value="0700">07:00</option>
+                        <option value="0800">08:00</option>
+                        <option value="0900">09:00</option>
+                        <option value="1000">10:00</option>
+                        <option value="1100">11:00</option>
+                        <option value="1200">12:00</option>
+                        <option value="1300">13:00</option>
+                        <option value="1400">14:00</option>
+                        <option value="1500">15:00</option>
+                        <option value="1600">16:00</option>
+                        <option value="1700">17:00</option>
+                        <option value="1800">18:00</option>
+                        <option value="1900">19:00</option>
+                        <option value="2000">20:00</option>
+                        <option value="2100">21:00</option>
+                        <option value="2200">22:00</option>
+                        <option value="2300">23:00</option>
+                    </select>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterDateEntryToString">{{translation.KEY_SCREEN_ENTRY_DATE_TO_LABEL}}</label>
+                    <div class="parking_entry_to date input-group">
+                        <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateEntryToString" name="filterDateEntryToString"
+                            ng-model="filterDateEntryToString" readonly>
+                        <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterTimeEntryToString">{{translation.KEY_SCREEN_ENTRY_TIME_TO_LABEL}}</label>
+                    <select id="filterTimeEntryToString" name="filterTimeEntryToString" ng-init="filterTimeEntryToString = '0000'"
+                        class="form-control margin-rigth input-sm filter-input" ng-model="filterTimeEntryToString">
+                        <option value="0000">00:00</option>
+                        <option value="0100">01:00</option>
+                        <option value="0200">02:00</option>
+                        <option value="0300">03:00</option>
+                        <option value="0400">04:00</option>
+                        <option value="0500">05:00</option>
+                        <option value="0600">06:00</option>
+                        <option value="0700">07:00</option>
+                        <option value="0800">08:00</option>
+                        <option value="0900">09:00</option>
+                        <option value="1000">10:00</option>
+                        <option value="1100">11:00</option>
+                        <option value="1200">12:00</option>
+                        <option value="1300">13:00</option>
+                        <option value="1400">14:00</option>
+                        <option value="1500">15:00</option>
+                        <option value="1600">16:00</option>
+                        <option value="1700">17:00</option>
+                        <option value="1800">18:00</option>
+                        <option value="1900">19:00</option>
+                        <option value="2000">20:00</option>
+                        <option value="2100">21:00</option>
+                        <option value="2200">22:00</option>
+                        <option value="2300">23:00</option>
+                    </select>
+                </div>
+
+                <div class="form-group margin-left-20px">
+                    <button ng-click="refreshTableData();" class="btn btn-primary btn-sm" ng-disabled="disableControls">
+                        <b><span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}} </b>
+                    </button>
+                </div>
+                <div class="form-group margin-left-20px">
+                    <button ng-click="clearFilter();" class="btn btn-danger btn-sm" ng-disabled="disableControls">
+                        <b> <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_LABEL}}
+                        </b>
+                    </button>
+                </div>
+            </form>
+            <form target="_blank" method="post" action="parking/export" style="display: inline;" class="form-inline margin-left-20px" ng-submit="exportData()">
+                <button type="submit" class="form-group btn btn-success btn-sm" ng-disabled="isExportRequested">
+                    <b><span class="glyphicon glyphicon-export"></span> {{translation.KEY_SCREEN_EXPORT_LABEL}} </b>
+                </button>
+                <input type="hidden" name="portOperator" ng-value="filterPortOperator" />
+                <input type="hidden" name="transactionType" ng-value="filterTransactionType" />
+                <input type="hidden" name="vehicleRegistration" ng-value="filterVehicleRegistration" />
+                <input type="hidden" name="type" ng-value="filterType" />
+                <input type="hidden" name="status" ng-value="filterStatus" />
+                <input type="hidden" name="isInTransit" ng-value="filterInTransit" />
+                <input type="hidden" name="dateEntryFromString" ng-value="filterDateEntryFromString" />
+                <input type="hidden" name="dateEntryToString" ng-value="filterDateEntryToString" />
+                <input type="hidden" name="timeEntryFromString" ng-value="formatTimeEntryFromString(filterTimeEntryFromString)" />
+                <input type="hidden" name="timeEntryToString" ng-value="formatTimeEntryToString(filterTimeEntryToString)" />
+                <input type="hidden" name="sortColumn" ng-value="sortColumn" />
+                <input type="hidden" name="sortAsc" ng-value="sortAsc" />
+                <input type="hidden" name="currentPage" ng-value="0" />
+                <input type="hidden" name="pageCount" ng-value="-1" />
+            </form>
+            <br>
+            <br>
+        </div>
+    </div>
+
+    <div class="row no-margin-left no-margin-right">
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_DPWORLD)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_DPWORLD)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_DPWORLD)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countDPWorldVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TVS)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TVS)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TVS) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTVSVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countDakarTerminalVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countVivoEnergyVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_SENSTOCK)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_SENSTOCK)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_SENSTOCK)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countSenstockVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_ORYX)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_ORYX)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_ORYX) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countOryxVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_ERES)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_ERES)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_ERES) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countEresVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TM_NORTH)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TM_NORTH)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TM_NORTH)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTMNorthVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TM_SOUTH)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TM_NORTH)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TM_SOUTH)
+                            | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTMSouthVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_MOLE_10)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TM_NORTH)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_MOLE_10)
+                            | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countMole10Vehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px" style="padding: 0px;">
+                            <a href="" title="{{translation.KEY_NAVBAR_PARKING_EXIT_ONLY}}" ng-click="filterByType(parkingTypeConstants.PARKING_TYPE_EXIT_ONLY)">{{translation.KEY_NAVBAR_PARKING_EXIT_ONLY
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countVehicleExitOnly}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left no-padding-right">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px" style="padding: 0px;">
+                            <a href="" title="{{translation.KEY_SCREEN_IN_TRASIT_LABEL}}" ng-click="filterByInTransit()">{{translation.KEY_SCREEN_IN_TRASIT_LABEL |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countVehicleInTransit}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12 text-alight-center no-padding-left" style="padding-right: 0px; margin-top: 20px;">
+                    <button ng-click="refreshTableData();" class="btn btn-primary btn-sm" style="margin-right: 10px;" ng-disabled="disableControls"
+                        title="{{translation.KEY_SCREEN_REFRESH_LABEL}}">
+                        <b><span class="glyphicon glyphicon-refresh"></span></b>
+                    </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right: 10px;" name="filterButton" data-toggle="collapse" data-target="#searchCollapse"
+                        aria-expanded="false" aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'filterIsActive': isFilterActive}" ng-disabled="disableControls"
+                        title="{{translation.KEY_SCREEN_FILTER_LABEL}}">
+                        <b><span class="glyphicon glyphicon-filter"></span><span ng-show="isFilterActive">*</span></b>
+                    </button>
+                    <button class="btn btn-primary btn-sm" ng-click="showExitParkingDialog()" title="{{translation.KEY_SCREEN_EXIT_LABEL}}"
+                        ng-disabled="selectedVehicles.length === 0">
+                        <b> <span class="glyphicon glyphicon-share-alt"></span>{{translation.KEY_SCREEN_EXIT_LABEL}}
+                        </b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="pad-table">
+            <thead>
+                <tr>
+                    <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                    <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}} <span
+                            ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                            ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('entry_lane_id');"> {{translation.KEY_SCREEN_ENTRY_LANE_LABEL}} <span
+                            ng-show="sortColumn == 'entry_lane_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'entry_lane_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('vehicle_registration');"> {{translation.KEY_SCREEN_VEHICLE_LABEL}} <span
+                            ng-show="sortColumn == 'vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('driver.first_name, driver.last_name');"> {{translation.KEY_SCREEN_DRIVER_NAME_LABEL}} <span
+                            ng-show="sortColumn == 'driver.first_name, driver.last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'driver.first_name, driver.last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('driver_msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span
+                            ng-show="sortColumn == 'driver_msisdn' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'driver_msisdn' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span
+                            ng-show="sortColumn == 'status' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'status' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('date_slot_approved');"> {{translation.KEY_SCREEN_SLOT_DATE_LABEL}} <span
+                            ng-show="sortColumn == 'date_slot_approved' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'date_slot_approved' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('date_entry');"> {{translation.KEY_SCREEN_ENTRY_DATE_LABEL}} <span
+                            ng-show="sortColumn == 'date_entry' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'date_entry' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('date_sms_exit');"> {{translation.KEY_SCREEN_RELEASED_DATE_LABEL}} <span
+                            ng-show="sortColumn == 'date_sms_exit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'date_sms_exit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('date_exit');"> {{translation.KEY_SCREEN_EXIT_DATE_LABEL}} <span
+                            ng-show="sortColumn == 'date_exit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'date_exit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td></td>
+                </tr>
+            </thead>
+
+            <colgroup>
+                <col width="8%">
+                <col width="4%">
+                <col width="4%">
+                <col width="4%">
+                <col width="8%">
+                <col width="10%">
+                <col width="8%">
+                <col width="8%">
+                <col width="10%">
+                <col width="10%">
+                <col width="9%">
+                <col width="9%">
+                <col width="2%">
+            </colgroup>
+
+            <tbody ng-repeat="row in rows = padTable.data">
+
+                <tr ng-click="padTable.selectRow($event)">
+                    <td title="{{getOperatorName(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentOperatorCode, 2)}}">
+                        {{getOperatorNameShort(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentOperatorCode, 1)}}
+                    </td>
+                    <td title="{{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}">{{row.referenceNumber}}</td>
+                    <td title="{{getTransactionTypeName(row.portOperator, row.transactionType + '')}}">{{getTransactionTypeName(row.portOperator, row.transactionType + '')}}</td>
+                    <td title="">{{row.entryLaneNumber === -1 ? '' : row.entryLaneNumber}}</td>
+                    <td title="">
+                        <span ng-if="row.status !== parkingStatusConstants.PARKING_STATUS_ENTRY && row.status !== parkingStatusConstants.PARKING_STATUS_REMINDER_EXIT_DUE">{{row.vehicleRegistration}}</span>
+                        <button class="btn no-padding" style="background-color:transparent;"
+                            ng-if="row.status === parkingStatusConstants.PARKING_STATUS_ENTRY || row.status === parkingStatusConstants.PARKING_STATUS_REMINDER_EXIT_DUE"
+                            ng-click="showVehicleStateUpdateDialog(row); $event.stopPropagation();" title="{{translation.KEY_BUTTON_UPDATE}} {{translation.KEY_SCREEN_VEHICLE_STATE_LABEL}}">{{row.vehicleRegistration}}
+                        </button>
+                        <button type="button" class="btn btn-lg no-padding" style="background-color:transparent;" data-toggle="tooltip" tooltip-loader
+                            data-original-title="{{getVehicleStateText(row.vehicleState) | uppercase}}" ng-show="row.vehicleState !== vehicleParkingStateConstants.VEHICLE_PARKING_STATE_NORMAL">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                    </td>
+                    <td title="">{{row.driverName}}</td>
+                    <td title="">{{row.driverMobile}}</td>
+                    <td title="" class="text-center"><span class="label label-success" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_ENTRY">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-danger" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_EXIT">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-danger" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_REMINDER_EXIT_DUE">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-success" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_ENTERED_PORT">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-info" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_IN_TRANSIT_EXPIRED">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-info" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_EXITED_PREMATURELY_EXPIRED">{{getParkingStatusText(row.status)
+                            | uppercase}}</span> <span class="label label-warning" ng-if="row.driverName == ''">AD HOC</span>
+                            <span class="label label-primary" ng-if="row.isInTransit && row.status != parkingStatusConstants.PARKING_STATUS_IN_TRANSIT_EXPIRED && row.status != parkingStatusConstants.PARKING_STATUS_ENTERED_PORT">{{translation.KEY_SCREEN_IN_TRASIT_LABEL |
+                            uppercase}}</span></td>
+                    <td title="" ng-class="getDateSlotPastClass(row.dateSlotString)">{{row.dateSlotString}}</td>
+                    <td title="">{{row.dateEntryString}}</td>
+                    <td title="">{{row.dateExitSmsString}}</td>
+                    <td title="">{{row.dateExitString}}</td>
+                    <td title=""><input type="checkbox"
+                            ng-if="row.status == parkingStatusConstants.PARKING_STATUS_ENTRY && row.type == parkingTypeConstants.PARKING_TYPE_PARKING"
+                            ng-click="toggleSelection(row)"> <span class="label label-success" ng-if="row.status == parkingStatusConstants.PARKING_STATUS_REMINDER_EXIT_DUE">{{translation.KEY_SCREEN_EXIT_PARKING_DRIVER_NOTIFIED_LABEL}}</span></td>
+                </tr>
+            </tbody>
+
+            <tr ng-show="padTable.count == 0">
+                <td colspan="13" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_VEHICLE_RETURNED_MESSAGE}}</td>
+            </tr>
+
+            <!-- PAD Table Pagination -->
+            <tr>
+                <td colspan="13" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- > Modal Exit Parking -->
+    <div class="modal fade" id="parkingExitModal" tabindex="-1" role="dialog" aria-labelledby="parkingExitModalLabel" ng-form="parkingExitConfirmationForm">
+        <fieldset>
+            <div class="modal-dialog modal-dialog-exit" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeExitParkingDialog()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="parkingExitModalLabel">{{translation.KEY_SCREEN_EXIT_VEHICLE_LABEL}} {{selectedRow.vehicleRegistration}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading font-size-18">
+                                        <b>{{translation.KEY_SCREEN_DETAILS_LABEL}}</b>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form name="parkingExitConfirmationForm" autocomplete="off" novalidate>
+                                            <div class="row">
+                                                <div class="col-md-12 form-group" style="padding: 0px;">
+                                                    <div style="height: 220px; overflow-y: scroll;" class="form-group col-md-12">
+                                                        <div class="table-responsive">
+                                                            <table class="pad-table font-size-12">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td>{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</td>
+                                                                        <td>{{translation.KEY_SCREEN_DRIVER_NAME_LABEL}}</td>
+                                                                        <td>{{translation.KEY_SCREEN_DRIVER_MOBILE_NUMBER_LABEL}}</td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <colgroup>
+                                                                    <col width="32%">
+                                                                    <col width="32%">
+                                                                    <col width="32%">
+                                                                    <col width="4%">
+                                                                </colgroup>
+
+                                                                <tbody ng-repeat="row in selectedVehicles">
+                                                                    <tr ng-click="padTable.selectRow($event)">
+                                                                        <td title="Vehicle">{{row.vehicleRegistration}}</td>
+                                                                        <td title="Vehicle">{{row.driverName}}</td>
+                                                                        <td title="Vehicle">{{row.driverMobile}}</td>
+                                                                        <td class="text-center" title="">
+                                                                            <button class="btn btn-danger btn-xsm" ng-click="deleteVehicle(row); $event.stopPropagation();" title="">
+                                                                                <span class="glyphicon glyphicon-remove"> </span>
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-center">
+                        <button type="button" class="btn btn-info outline-none width-modal-btn" ng-click="sendExitParkingSms(selectedRow.code)"
+                            ng-disabled="sendExitParkingSmsDisabled || selectedVehicles.length === 0">
+                            <b><span class="glyphicon glyphicon-share-alt"></span> {{translation.KEY_SCREEN_EXIT_LABEL}}</b>
+                        </button>
+
+                        <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeExitParkingDialog()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- > Modal Update Vehicle State -->
+    <div class="modal fade" id="parkingStateUpdateModal" tabindex="-1" role="dialog" aria-labelledby="parkingStateUpdateModalLabel" ng-form="parkingStateUpdateForm">
+        <fieldset>
+            <div class="modal-dialog modal-dialog-exit" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeVehicleStateUpdateDialog()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="parkingStateUpdateModalLabel">{{translation.KEY_BUTTON_UPDATE}} {{translation.KEY_SCREEN_VEHICLE_STATE_LABEL}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading font-size-16">
+                                        <b>{{selectedRow.vehicleRegistration}}</b>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form name="parkingStateUpdateForm" autocomplete="off" novalidate>
+                                            <div class="row">
+                                                <div class="col-md-12 form-group" style="padding: 0px;">
+                                                    <div class="form-group col-md-5">
+                                                        <label for="vehicleState">{{translation.KEY_SCREEN_VEHICLE_STATE_LABEL}}</label>
+                                                        <select id="vehicleState" name="vehicleState" class="form-control" ng-model="formData.vehicleState" required>
+                                                            <option value="{{vehicleParkingStateConstants.VEHICLE_PARKING_STATE_BROKEN_DOWN + ''}}" ng-disabled="selectedRow.vehicleState === vehicleParkingStateConstants.VEHICLE_PARKING_STATE_BROKEN_DOWN">{{translation.KEY_SCREEN_VEHICLE_STATE_BROKEN_DOWN_LABEL | uppercase}}</option>
+                                                            <option value="{{vehicleParkingStateConstants.VEHICLE_PARKING_STATE_CLAMPED + ''}}" ng-disabled="selectedRow.vehicleState === vehicleParkingStateConstants.VEHICLE_PARKING_STATE_CLAMPED">{{translation.KEY_SCREEN_VEHICLE_STATE_CLAMPED_LABEL | uppercase}}</option>
+                                                            <option value="{{vehicleParkingStateConstants.VEHICLE_PARKING_STATE_UNRESPONSIVE + ''}}" ng-disabled="selectedRow.vehicleState === vehicleParkingStateConstants.VEHICLE_PARKING_STATE_UNRESPONSIVE">{{translation.KEY_SCREEN_VEHICLE_STATE_UNRESPONSIVE_LABEL | uppercase}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-12" ng-if="confirmActionErrorResponse !== ''">
+                                                    <div class="animate-if">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{confirmActionErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-center">
+                        <button type="button" class="btn btn-info outline-none width-modal-btn" ng-click="updateVehicleState(selectedRow)"
+                            ng-disabled="disableControls">
+                            <b><span class="glyphicon glyphicon-share-alt"></span> {{translation.KEY_SCREEN_CONFIRM_ACTION_MESSAGE}}</b>
+                        </button>
+
+                        <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeVehicleStateUpdateDialog()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>

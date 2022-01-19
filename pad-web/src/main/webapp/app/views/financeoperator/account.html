@@ -1,0 +1,165 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_ACCOUNTS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+        
+    <!-- Content -->
+    <div class="Page-content" style="margin-top: -10px;">
+
+        <div class="row">
+            <h3 style="margin-bottom: 25px;padding-left: 15px;"><span ng-if="account">{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}}: {{account.number}}  &nbsp;&nbsp;&nbsp; {{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}: {{account.accountName}}</span>&nbsp;</h3>
+        </div>
+
+        <ul class="nav nav-pills" style="margin-bottom: 15px;">
+            <li class="active"><a data-toggle="pill" href="javascript:void(0)" ng-click="switchTab('account')">{{translation.KEY_SCREEN_ACCOUNT_LABEL}}</a></li>
+            <li ng-if="tabsAllowed()"><a data-toggle="pill" href="javascript:void(0)" ng-click="switchTab('transactions')">{{translation.KEY_SCREEN_TRANSACTIONS_LABEL}}</a></li>
+            <li ng-if="tabsAllowed()"><a data-toggle="pill" href="javascript:void(0)" ng-click="switchTab('payments')">{{translation.KEY_SCREEN_PAYMENTS_LABEL}}</a></li>
+            <li ng-if="tabsAllowed()"><a data-toggle="pill" href="javascript:void(0)" ng-click="switchTab('invoices')">{{translation.KEY_NAVBAR_INVOICE + '/' + translation.KEY_SCREEN_STATEMENTS_LABEL}}</a></li>
+            <li ng-if="tabsAllowed()"><a data-toggle="pill" href="javascript:void(0)" ng-click="switchTab('edit')">{{translation.KEY_SCREEN_EDIT_LABEL}}</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="activeTab" class="tab-pane fade in active" ng-include="tabContent">
+            </div>
+        </div>
+        
+        <div id="payments" class="tab-pane fade">
+            <h3>payments</h3>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+       </div>
+       
+       <div id="invoices" class="tab-pane fade">
+            <h3>invoices</h3>
+            <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        </div>
+
+    </div>
+  
+
+    <!-- > Modal Activate Account Confirmation -->
+    <div class="modal fade" id="accountActivateConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="accountActivateConfirmationModalLabel"
+        ng-form="accountActivateConfirmationForm">
+        <fieldset>
+            <div class="modal-dialog modal-dialog-record" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeAccountActivateConfirmationDialog()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="accountActivateConfirmationModalLabel">{{confirmationDialogTitle}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading font-size-18">
+                                        <b>{{translation.KEY_SCREEN_DETAILS_LABEL}}</b>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form name="accountActivateConfirmationForm" autocomplete="off" novalidate>
+                                            <div class="col-md-12 form-group font-size-18" style="padding: 0px;">
+
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{selectedRow.firstName}} {{selectedRow.lastName}}</div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_ACCOUNT_TYPE_LABEL}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{getAccountTypeText(selectedRow.type)}}</div>
+                                                </div>
+
+                                                <div class="row" ng-show="selectedRow.type == 1">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{selectedRow.companyName}}</div>
+                                                </div>
+
+                                                <div class="row" ng-show="selectedRow.type == 1">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_COMPANY_RESGISTRATION_NUMBER_MESSAGE}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{selectedRow.companyRegistration}}</div>
+                                                </div>
+
+                                                <div class="row" ng-show="selectedRow.type == 1">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_TELEPHONE_NUMBER_LABEL}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{selectedRow.companyTelephone}}</div>
+                                                </div>
+
+                                                <div class="row" ng-show="selectedRow.type == 2">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{selectedRow.msisdn}}</div>
+                                                </div>
+                                                <div class="row" ng-show="selectedRow.type == 2">
+                                                    <div class="col-md-5">
+                                                        <label>{{translation.KEY_SCREEN_COUNTRY_LABEL}} ({{translation.KEY_SCREEN_NATIONALITY_LABEL}})</label>
+                                                    </div>
+                                                    <div class="col-md-7">{{getCountryNameByISOCode(selectedRow.nationalityCountryISO)}}</div>
+                                                </div>
+                                                <br>
+                                                <div class="form-group" ng-if="isActivateAccount">
+                                                    <label for="paymentTermsType">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_LABEL}}</label> <select id="paymentTermsType"
+                                                        name="paymentTermsType" class="form-control" ng-model="formData.paymentTermsType" required
+                                                        ng-init="formData.paymentTermsType='1'">
+                                                        <option value="1" selected>{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_PREPAY_LABEL}}</option>
+                                                        <option value="2">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_POSTPAY_LABEL}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" ng-if="isActivateAccount">
+                                                    <label for="amountOverdraftLimit">{{translation.KEY_SCREEN_MAX_AMOUNT_OVERDRAFT_LIMIT_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="amountOverdraftLimit" id="amountOverdraftLimit"
+                                                           ng-model="formData.amountOverdraftLimit" input-currency ng-maxlength="15" maxlength="15" required>
+                                                </div>
+                                                <div class="form-group" ng-if="!isActivateAccount">
+                                                    <label for="denialReason">{{translation.KEY_SCREEN_DENIAL_REASON_LABEL}}</label>
+                                                    <textarea class="form-control" name="denialReason" ng-model="formData.denialReason" rows="3" maxlength="256" max="256" required></textarea>
+                                                </div>
+
+                                                <div class="animate-if" ng-if="accountActivateErrorResponse !== ''">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                        {{accountActivateErrorResponse}}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-center">
+                        <button type="button" class="btn btn-info outline-none width-modal-btn" ng-click="activateAccount(selectedRow.code)" ng-disabled="accountActivateDisabled"
+                            ng-if="isActivateAccount">
+                            <b><span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_ACTIVATE_LABEL}}</b>
+                        </button>
+
+                        <button type="button" class="btn btn-info outline-none width-modal-btn" ng-click="denyAccount(selectedRow.code)" ng-disabled="accountActivateDisabled"
+                            ng-if="!isActivateAccount">
+                            <b><span class="glyphicon glyphicon-remove-circle"></span> {{translation.KEY_SCREEN_DENY_LABEL}}</b>
+                        </button>
+
+                        <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeAccountActivateConfirmationDialog()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>

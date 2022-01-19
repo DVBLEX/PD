@@ -1,0 +1,398 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_ENTRY_LABEL}}</li>
+    </ol>
+</nav>
+<div style="padding: 5px;" class="container-fluid">
+
+    <!-- Content -->
+
+    <div class="collapse" id="searchCollapse">
+        <div class="div-filter">
+            <form style="display: inline;" class="form-inline" name="filtersForm">
+                <div class="form-group font-size-12">
+                    <label for="filterPortOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label>
+                    <select ng-click="clearTransactionType()" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterPortOperator" ng-model="filterPortOperator" aria-describedby="portOperator">
+                        <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                        <option ng-repeat="operator in portOperatorList | orderBy: 'name'"
+                            value="{{operator.id}}">{{operator.name}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterTransactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} </label>
+                    <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterTransactionType" ng-model="filterTransactionType" aria-describedby="filterTransactionType"
+                        ng-disabled="filterPortOperator === undefined || filterPortOperator === ''">
+                        <option ng-repeat="entry in getTransactionTypesForPortOperator(filterPortOperator) | orderBy: 'translateKey'"
+                                value="{{entry.transactionType}}">{{entry.translateKey | translate}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="vehicleRegistration">{{translation.KEY_SCREEN_VEHICLE_LABEL}} </label> <input type="text" style="width: 100px;"
+                        class="form-control margin-rigth input-sm filter-input" id="vehicleRegistration" ng-model="filterVehicleRegistration" aria-describedby="vehicleRegistration" />
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="referenceNumber">{{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}} </label> <input type="text" style="width: 100px;"
+                        class="form-control margin-rigth input-sm filter-input" id="referenceNumber" ng-model="filterReferenceNumber" aria-describedby="referenceNumber" />
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="status">{{translation.KEY_SCREEN_STATUS_LABEL}} </label>
+                    <select style="width: 100px;" id="status" class="form-control margin-rigth input-sm filter-input"
+                        ng-model="filterStatus" aria-describedby="status">
+                        <option value="{{portAccessStatusConstants.PORT_ACCESS_STATUS_ALL}}">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                        <option ng-repeat="statusPortEntry in statusPortEntryOptions | orderBy: 'name'"
+                                value="{{statusPortEntry.value}}">{{statusPortEntry.name | uppercase}}
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group font-size-12">
+                    <label for="filterDateEntryFromString">{{translation.KEY_SCREEN_ENTRY_DATE_FROM_LABEL}}</label>
+                    <div class="port_entry_from date input-group">
+                        <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateEntryFromString" name="filterDateEntryFromString"
+                            ng-model="filterDateEntryFromString" readonly> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterTimeEntryFromString">{{translation.KEY_SCREEN_ENTRY_TIME_FROM_LABEL}}</label> <select id="filterTimeEntryFromString"
+                        name="filterTimeEntryFromString" ng-init="filterTimeEntryFromString = '0000'" class="form-control margin-rigth input-sm filter-input"
+                        ng-model="filterTimeEntryFromString">
+                        <option value="0000">00:00</option>
+                        <option value="0100">01:00</option>
+                        <option value="0200">02:00</option>
+                        <option value="0300">03:00</option>
+                        <option value="0400">04:00</option>
+                        <option value="0500">05:00</option>
+                        <option value="0600">06:00</option>
+                        <option value="0700">07:00</option>
+                        <option value="0800">08:00</option>
+                        <option value="0900">09:00</option>
+                        <option value="1000">10:00</option>
+                        <option value="1100">11:00</option>
+                        <option value="1200">12:00</option>
+                        <option value="1300">13:00</option>
+                        <option value="1400">14:00</option>
+                        <option value="1500">15:00</option>
+                        <option value="1600">16:00</option>
+                        <option value="1700">17:00</option>
+                        <option value="1800">18:00</option>
+                        <option value="1900">19:00</option>
+                        <option value="2000">20:00</option>
+                        <option value="2100">21:00</option>
+                        <option value="2200">22:00</option>
+                        <option value="2300">23:00</option>
+                    </select>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterDateEntryToString">{{translation.KEY_SCREEN_ENTRY_DATE_TO_LABEL}}</label>
+                    <div class="port_entry_to date input-group">
+                        <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateEntryToString" name="filterDateEntryToString"
+                            ng-model="filterDateEntryToString" readonly> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="filterTimeEntryToString">{{translation.KEY_SCREEN_ENTRY_TIME_TO_LABEL}}</label> <select id="filterTimeEntryToString" name="filterTimeEntryToString"
+                        ng-init="filterTimeEntryToString = '0000'" class="form-control margin-rigth input-sm filter-input" ng-model="filterTimeEntryToString">
+                        <option value="0000">00:00</option>
+                        <option value="0100">01:00</option>
+                        <option value="0200">02:00</option>
+                        <option value="0300">03:00</option>
+                        <option value="0400">04:00</option>
+                        <option value="0500">05:00</option>
+                        <option value="0600">06:00</option>
+                        <option value="0700">07:00</option>
+                        <option value="0800">08:00</option>
+                        <option value="0900">09:00</option>
+                        <option value="1000">10:00</option>
+                        <option value="1100">11:00</option>
+                        <option value="1200">12:00</option>
+                        <option value="1300">13:00</option>
+                        <option value="1400">14:00</option>
+                        <option value="1500">15:00</option>
+                        <option value="1600">16:00</option>
+                        <option value="1700">17:00</option>
+                        <option value="1800">18:00</option>
+                        <option value="1900">19:00</option>
+                        <option value="2000">20:00</option>
+                        <option value="2100">21:00</option>
+                        <option value="2200">22:00</option>
+                        <option value="2300">23:00</option>
+                    </select>
+                </div>
+
+                <div class="form-group margin-left-20px">
+                    <button ng-click="refreshTableData();" class="btn btn-info btn-sm" ng-disabled="disableControls">
+                        <b><span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}} </b>
+                    </button>
+                </div>
+                <div class="form-group margin-left-20px">
+                    <button ng-click="clearFilter();" class="btn btn-danger btn-sm" ng-disabled="disableControls">
+                        <b> <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_LABEL}}
+                        </b>
+                    </button>
+                </div>
+            </form>
+            <form target="_blank" method="post" action="port/access/entry/export" style="display: inline;" class="form-inline margin-left-20px" ng-submit="exportData()">
+                <button type="submit" class="form-group btn btn-success btn-sm" ng-disabled="isExportRequested">
+                    <b><span class="glyphicon glyphicon-export"></span> {{translation.KEY_SCREEN_EXPORT_LABEL}} </b>
+                </button>
+                <input type="hidden" name="portOperator" ng-value="filterPortOperator"/>
+                <input type="hidden" name="transactionType" ng-value="filterTransactionType"/>
+                <input type="hidden" name="vehicleRegistration" ng-value="filterVehicleRegistration"/>
+                <input type="hidden" name="referenceNumber" ng-value="filterReferenceNumber"/>
+                <input type="hidden" name="status" ng-value="filterStatus"/>
+                <input type="hidden" name="dateEntryFromString" ng-value="filterDateEntryFromString"/>
+                <input type="hidden" name="dateEntryToString" ng-value="filterDateEntryToString"/>
+                <input type="hidden" name="timeEntryFromString" ng-value="formatTimeEntryFromString(filterTimeEntryFromString)"/>
+                <input type="hidden" name="timeEntryToString" ng-value="formatTimeEntryToString(filterTimeEntryToString)"/>
+                <input type="hidden" name="sortColumn" ng-value="sortColumn"/>
+                <input type="hidden" name="sortAsc" ng-value="sortAsc"/>
+                <input type="hidden" name="currentPage" ng-value="0"/>
+                <input type="hidden" name="pageCount" ng-value="-1"/>
+            </form>
+            <br>
+            <br>
+        </div>
+    </div>
+
+
+
+    <!-- -->
+    <div class="row no-margin-left no-margin-right">
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_DPWORLD)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_DPWORLD)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_DPWORLD)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countDPWorldVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TVS)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TVS)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TVS) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTVSVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_DAKAR_TERMINAL)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countDakarTerminalVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_VIVO_ENERGY)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countVivoEnergyVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_SENSTOCK)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_SENSTOCK)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_SENSTOCK)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countSenstockVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_ORYX)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_ORYX)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_ORYX) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countOryxVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_ERES)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_ERES)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_ERES) |
+                                limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countEresVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TM_NORTH)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TM_NORTH)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TM_NORTH)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTMNorthVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_TM_SOUTH)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_TM_SOUTH)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_TM_SOUTH)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countTMSouthVehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-sm-2 col-xs-2 text-center no-padding-left" title="{{getOperatorName(portOperatorConstants.PORT_OPERATOR_MOLE_10)}}">
+                    <div style="margin-bottom: 10px;" class="panel panel-info">
+                        <div class="panel-heading padding-top-5px padding-bottom-5px">
+                            <a href="" ng-click="filterByOperator(portOperatorConstants.PORT_OPERATOR_MOLE_10)">{{getOperatorNameShort(portOperatorConstants.PORT_OPERATOR_MOLE_10)
+                                | limitChar:9}}</a>
+                        </div>
+                        <div class="panel-body  padding-top-5px padding-bottom-5px">
+                            <div class="text-center">{{countMole10Vehicles}}</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12 text-alight-center no-padding-left" style="padding-right: 0px; margin-top: 20px;">
+                    <button ng-click="refreshTableData();" class="btn btn-primary btn-sm" style="margin-right: 10px;" ng-disabled="disableControls"
+                        title="{{translation.KEY_SCREEN_REFRESH_LABEL}}">
+                        <b><span class="glyphicon glyphicon-refresh"></span></b>
+                    </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right: 10px;" name="filterButton" data-toggle="collapse" data-target="#searchCollapse"
+                        aria-expanded="false" aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'filterIsActive': isFilterActive}" ng-disabled="disableControls"
+                        title="{{translation.KEY_SCREEN_FILTER_LABEL}}">
+                        <b><span class="glyphicon glyphicon-filter"></span><span ng-show="isFilterActive">*</span></b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- -->
+
+    <div class="table-responsive">
+        <table class="pad-table">
+            <thead>
+                <tr>
+                    <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                    <td><a href="" ng-click="sort('portaccess.vehicle_registration');"> {{translation.KEY_SCREEN_VEHICLE_LABEL}} <span
+                            ng-show="sortColumn == 'portaccess.vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('mission.reference_number');"> {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}} <span
+                            ng-show="sortColumn == 'mission.reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'mission.reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('mission.transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                            ng-show="sortColumn == 'mission.transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'mission.transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('parking.driver_msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span
+                            ng-show="sortColumn == 'parking.driver_msisdn' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'parking.driver_msisdn' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('portaccess.status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span
+                            ng-show="sortColumn == 'portaccess.status' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.status' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('portaccess.reason_deny');"> {{translation.KEY_SCREEN_DENIAL_REASON_LABEL}} <span
+                            ng-show="sortColumn == 'portaccess.reason_deny' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.reason_deny' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('portaccess.date_deny');"> {{translation.KEY_SCREEN_DENIAL_DATE}} <span
+                            ng-show="sortColumn == 'portaccess.date_deny' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.date_deny' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('trip.date_slot_approved');"> {{translation.KEY_SCREEN_SLOT_DATE_LABEL}} <span
+                            ng-show="sortColumn == 'trip.date_slot_approved' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'trip.date_slot_approved' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('parking.date_exit');"> {{translation.KEY_SCREEN_PARKING_EXIT_LABEL}} <span
+                            ng-show="sortColumn == 'parking.date_exit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'parking.date_exit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('portaccess.date_entry');"> {{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_ENTRY_LABEL}} <span
+                            ng-show="sortColumn == 'portaccess.date_entry' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.date_entry' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                    <td><a href="" ng-click="sort('portaccess.date_exit');"> {{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_EXIT_LABEL}} <span
+                            ng-show="sortColumn == 'portaccess.date_exit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'portaccess.date_exit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+                </tr>
+            </thead>
+
+            <tbody ng-repeat="row in rows = padTable.data">
+
+                <tr ng-click="padTable.selectRow($event)">
+                    <td title="{{getOperatorName(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentPortOperatorCode, 2)}}">
+                        {{getOperatorNameShort(row.portOperator)}} {{getIndependentOperatorName(row.portOperator, row.independentPortOperatorCode, 1)}}
+                    </td>
+                    <td title="">{{row.vehicleRegistration}}</td>
+                    <td title="">{{row.referenceNumber}}</td>
+                    <td title="">{{getTransactionTypeName(row.portOperator, row.transactionType + '')}}</td>
+                    <td title="">{{row.driverMobile}}</td>
+                    <td title="" class="text-center"><span class="label label-success" ng-if="row.status == '1'">{{translation.KEY_SCREEN_ENTRY_LABEL | uppercase}}</span> <span
+                        class="label label-danger" ng-if="row.status == '2'">{{translation.KEY_SCREEN_DENY_LABEL | uppercase}}</span> <span class="label label-default"
+                        ng-if="row.status == '3'">{{translation.KEY_SCREEN_EXIT_LABEL | uppercase}}</span> <span class="label label-default" ng-if="row.status == '4'">{{translation.KEY_SCREEN_EXIT_CLOSED_BY_SYSTEM_LABEL
+                            | uppercase}}</span> <span class="label label-warning" ng-if="row.driverName == '' && row.dateExitString">AD HOC</span> <!-- <span class="label label-info" ng-if="!row.dateParkingExitString">{{translation.KEY_SCREEN_WHITELISTED_LABEL | uppercase}}</span></td> -->
+                    <td title="">{{row.reasonDeny}}</td>
+                    <td title="">{{row.dateStringDeny}}</td>
+                    <td title="">{{row.dateSlotString}}</td>
+                    <td title="">{{row.dateParkingExitString}}</td>
+                    <td title="">{{row.datePortEntryString}}</td>
+                    <td title="">{{row.datePortExitString}}</td>
+                </tr>
+            </tbody>
+
+            <tr ng-show="padTable.count == 0">
+                <td colspan="12" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_VEHICLE_RETURNED_MESSAGE}}</td>
+            </tr>
+
+            <!-- PAD Table Pagination -->
+            <tr>
+                <td colspan="12" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+            </tr>
+        </table>
+    </div>
+</div>

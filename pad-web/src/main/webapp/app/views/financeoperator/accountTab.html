@@ -1,0 +1,250 @@
+<div ng-controller="AccountsAccountTabController">
+<!-- Filters -->
+<div class="div-filter">
+    <form style="margin-bottom: 20px;" class="form-inline" name="accountFiltersForm">
+
+        <div class="form-group font-size-12">
+            <label for="accountNumber">{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}} </label>
+            <input type="text" style="width: 100px;"
+                   class="form-control margin-rigth input-sm filter-input" id="accountNumber" ng-model="filterAccountNumber"
+                   aria-describedby="accountNumber" ng-minlength="6" minlength="6"
+                   ng-maxlength="6" maxlength="6" number/>
+        </div>
+
+        <div class="form-group font-size-12">
+            <label for="accountName">{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}} </label>
+            <input type="text"
+                   style="width: 100px;"
+                   class="form-control margin-rigth input-sm filter-input"
+                   id="accountName"
+                   ng-model="filterAccountName"
+                   aria-describedby="accountName"/>
+        </div>
+
+        <div class="form-group font-size-12">
+            <label for="filterStatus">{{translation.KEY_SCREEN_STATUS_LABEL}} </label>
+            <select style="width: 160px !important;"
+                    class="form-control margin-rigth input-sm filter-input" id="filterStatus" name="filterStatus"
+                    ng-model="filterStatus">
+                <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                <option ng-repeat="status in statusAccountOptions | orderBy: 'name'"
+                        value="{{status.value}}">{{status.name | uppercase}}
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group font-size-12">
+            <div class="text-center" style="padding-bottom: 10px;">
+                <button ng-click="searchAccount()" class="btn btn-success" style="width: 100%;"
+                        ng-disabled="searchAccountSubmitButtonDisabled || accountFiltersForm.$pristine">
+                    <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group font-size-12">
+            <div class="text-center" style="padding-bottom: 10px;">
+                <button ng-click="clearSearchAccount()" class="btn btn-primary" style="width: 100%;">
+                    <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="pad-table">
+        <thead>
+        <tr>
+            <td>&nbsp;</td>
+
+            <td><a href="" ng-click="sort('number');"> {{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}} <span
+                    ng-show="sortColumn == 'number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span ng-show="sortColumn == 'type' && sortAsc"
+                                                                                                 class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'type' && !sortAsc"
+                                                                                                                                                                           class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('first_name');"> {{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}} <span ng-show="sortColumn == 'first_name' && sortAsc"
+                                                                                                               class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'first_name' && !sortAsc"
+                                                                                                                                                                                         class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span ng-show="sortColumn == 'status' && sortAsc"
+                                                                                                     class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'status' && !sortAsc"
+                                                                                                                                                                               class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('payment_terms_type');"> {{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_LABEL}} <span
+                    ng-show="sortColumn == 'payment_terms_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'payment_terms_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('amount_balance');"> {{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}} <span
+                    ng-show="sortColumn == 'amount_balance' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'amount_balance' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('amount_overdraft_limit');"> {{translation.KEY_SCREEN_OVERDRAFT_LIMIT_LABEL}} <span
+                    ng-show="sortColumn == 'amount_overdraft_limit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'amount_overdraft_limit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+            
+            <td><a href="" ng-click="sort('amount_hold');"> {{translation.KEY_SCREEN_AMOUNT_HOLD_LABEL}} <span
+                    ng-show="sortColumn == 'amount_hold' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'amount_hold' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('registration_country_iso');"> {{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}} <span
+                    ng-show="sortColumn == 'registration_country_iso' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'registration_country_iso' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                    ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                    ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+            </a></td>
+
+            <td>&nbsp;</td>
+
+        </tr>
+        </thead>
+
+        <colgroup>
+            <col width="3%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="9%">
+            <col width="7%">
+        </colgroup>
+
+        <tbody ng-repeat="row in rows = (padTable.data)">
+
+        <tr ng-click="padTable.selectRow($event); selectAccount(row);">
+            <td class="text-center">
+                <button class="show-detail-button" ng-click="row.expanded = !row.expanded; $event.stopPropagation();" ng-init="row.expanded = false">
+                    <span class="glyphicon glyphicon-plus-sign font-size-14 top-4px show-detail-btn" ng-show="!row.expanded" title="Show Details"></span>
+                    <span class="glyphicon glyphicon-minus-sign font-size-14 top-4px show-detail-btn" ng-show="row.expanded" title="Hide Details"></span>
+                </button>
+            </td>
+
+            <td title="Account Name">{{row.number}}</td>
+
+            <td title="Account Type" class="text-center">
+                <span class="label label-success" ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">{{translation.KEY_SCREEN_COMPANY_LABEL}}</span>
+                <span class="label label-info" ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_INDIVIDUAL">{{translation.KEY_SCREEN_INDIVIDUAL_LABEL}}</span>
+            </td>
+
+            <td title="Account Name">{{row.accountName}}</td>
+
+            <td title="Status" class="text-center">
+                <span class="label label-warning" ng-if="row.status == accountStatusConstants.ACCOUNT_STATUS_PENDING_FOR_ACTIVATION">{{translation.KEY_SCREEN_ACCOUNT_PENDING_ACTIVATION_LABEL}}</span>
+                <span class="label label-success" ng-if="row.status == accountStatusConstants.ACCOUNT_STATUS_ACTIVE">{{translation.KEY_SCREEN_ACTIVE_LABEL}}</span>
+                <span class="label label-danger" ng-if="row.status == accountStatusConstants.ACCOUNT_STATUS_INACTIVE">{{translation.KEY_SCREEN_INACTIVE_LABEL}}</span>
+                <div ng-if="row.status == accountStatusConstants.ACCOUNT_STATUS_DENIED" title="{{row.denialReason}}" style="white-space: nowrap; display: flex; justify-content: center;">
+                    <span class="label label-danger">{{translation.KEY_SCREEN_DENIED_LABEL}}</span>
+                    <span style="margin-left: 3px;" class="glyphicon glyphicon-warning-sign red"></span>
+                </div>
+            </td>
+
+            <td title="Payment Terms Type" class="text-center">
+                <span class="label label-info" ng-if="row.paymentTermsType == 1">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_PREPAY_LABEL | uppercase}}</span>
+                <span class="label label-default" ng-if="row.paymentTermsType == 2">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_POSTPAY_LABEL | uppercase}}</span>
+            </td>
+
+            <td title="Balance Amount">{{row.balanceAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+
+            <td title="Overdraft Limit">{{row.amountOverdraftLimit | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+            
+            <td title="Amount Hold">{{row.amountHold | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+
+            <td title="Company Registration Country">{{getCountryNameByISOCode(row.registrationCountryISO)}}</td>
+
+            <td title="Date Created">{{row.dateCreatedString}}</td>
+
+            <td class="text-center">
+                <button class="btn btn-primary btn-sm" ng-click="showAccountActivateConfirmationDialog(row); $event.stopPropagation();"
+                        ng-if="row.status === accountStatusConstants.ACCOUNT_STATUS_PENDING_FOR_ACTIVATION" title="{{translation.KEY_SCREEN_ACCOUNT_ACTIVATION_LABEL}}">
+                    <span class="glyphicon glyphicon-ok-circle"></span>
+                </button>
+                <button class="btn btn-danger btn-sm" ng-click="showAccountDenialConfirmationDialog(row); $event.stopPropagation();"
+                        ng-if="row.status === accountStatusConstants.ACCOUNT_STATUS_PENDING_FOR_ACTIVATION" title="{{translation.KEY_SCREEN_ACCOUNT_DENIAL_LABEL}}">
+                    <span class="glyphicon glyphicon-remove-circle"></span>
+                </button>
+            </td>
+
+        </tr>
+
+        <tr class="bg-light-gray pad-row-for-nested-table" ng-if="row.expanded">
+            <td colspan="11" class="pad-table-extension-cell">
+                <div class="div-detail-thead">
+
+                    <table class="pad-nested-table">
+                        <colgroup>
+                            <col width="10%">
+                            <col width="90%">
+                        </colgroup>
+                        <thead class="bg-light-gray">
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</th>
+                            <td class="text-align-left"><span>{{row.companyName}}</span></td>
+                        </tr>
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_REGISTRATION_NUMBER_LABEL}}</th>
+                            <td class="text-align-left"><span>{{row.companyRegistration}}</span></td>
+                        </tr>
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_TELEPHONE_NUMBER_LABEL}}</th>
+                            <td class="text-align-left"><span>{{row.companyTelephone}}</span></td>
+                        </tr>
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_INDIVIDUAL">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</th>
+                            <td class="text-align-left"><span>{{row.msisdn}}</span></td>
+                        </tr>
+                        <tr>
+                            <th class="text-align-left" ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">{{translation.KEY_SCREEN_COMPANY_ADDRESS_LABEL}}</th>
+                            <th class="text-align-left" ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_INDIVIDUAL">{{translation.KEY_SCREEN_ADDRESS_LABEL}}</th>
+                            <td class="text-align-left"><span ng-bind-html="previewCompanyAddress(row) | to_trusted_html"></span></td>
+                        </tr>
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_COMPANY">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_SPECIAL_TAX_STATUS_LABEL}}</th>
+                            <td class="text-align-left">
+                                <span class="label label-success" ng-if="row.specialTaxStatus == true">{{translation.KEY_SCREEN_YES_LABEL}}</span>
+                                <span class="label label-warning" ng-if="row.specialTaxStatus == false">{{translation.KEY_SCREEN_NO_LABEL}}</span>
+                            </td>
+                        </tr>
+                        <tr ng-if="row.type == accountTypeConstants.ACCOUNT_TYPE_INDIVIDUAL">
+                            <th class="text-align-left">{{translation.KEY_SCREEN_COUNTRY_LABEL}} ({{translation.KEY_SCREEN_NATIONALITY_LABEL}})</th>
+                            <td class="text-align-left"><span>{{getCountryNameByISOCode(row.nationalityCountryISO)}}</span></td>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+
+        </tbody>
+
+        <tr ng-show="padTable.count == 0">
+            <td colspan="12" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+        </tr>
+
+        <!-- PAD Table Pagination -->
+        <tr>
+            <td colspan="12" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+        </tr>
+    </table>
+</div>
+</div>

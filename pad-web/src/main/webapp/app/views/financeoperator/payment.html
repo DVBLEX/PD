@@ -1,0 +1,597 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PAYMENT}}</li>
+    </ol>
+</nav>
+<div class="container-fluid" ng-init="activeNavbar('#navbarPayment')">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_PAYMENT}}</h3>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <div class="div-filter">
+            <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+                <div class="form-group font-size-12">
+                    <label for="companyName">{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}} </label> <input type="text" style="width: 100px;"
+                        class="form-control margin-rigth input-sm filter-input" ng-model="filterCompanyName" aria-describedby="companyName" />
+                </div>
+                <div class="form-group font-size-12">
+                    <label for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} </label> <input type="text" style="width: 100px;"
+                        class="form-control margin-rigth input-sm filter-input" ng-model="filterIndividualMobileNumber" aria-describedby="mobileNumber" />
+                </div>
+                <div class="form-group margin-left-20px">
+                    <button ng-click="refreshTableData();" class="btn btn-info btn-sm" ng-disabled="disableControls">
+                        <b><span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}} </b>
+                    </button>
+                </div>
+                <div class="form-group margin-left-20px">
+                    <button ng-click="clearFilter();" class="btn btn-danger btn-sm" ng-disabled="disableControls">
+                        <b> <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_LABEL}}
+                        </b>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>&nbsp;</td>
+
+                        <td><a href="" ng-click="sort('first_name');"> {{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}} <span ng-show="sortColumn == 'first_name' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'first_name' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_ACCOUNT_TYPE_LABEL}} <span ng-show="sortColumn == 'type' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'type' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span ng-show="sortColumn == 'msisdn' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'msisdn' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('company_name');"> {{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'company_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'company_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('company_registration');"> {{translation.KEY_SCREEN_REGISTRATION_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'company_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'company_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('company_telephone');"> {{translation.KEY_SCREEN_TELEPHONE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'company_telephone' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'company_telephone' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('amount_balance');"> {{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}} <span
+                                ng-show="sortColumn == 'amount_balance' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'amount_balance' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('payment_terms_type');"> {{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'payment_terms_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'payment_terms_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('amount_overdraft_limit');"> {{translation.KEY_SCREEN_OVERDRAFT_LIMIT_LABEL}} <span
+                                ng-show="sortColumn == 'amount_overdraft_limit' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'amount_overdraft_limit' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><span class="glyphicon glyphicon-credit-card"></span></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+                <!--
+            <colgroup>
+                <col width="2%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="8%">
+                <col width="8%">
+                <col width="10%">
+                <col width="10%">
+                <col width="2%">
+                <col width="2%">
+            </colgroup>
+ -->
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td class="text-center">
+                            <button class="show-detail-button" ng-click="row.expanded = !row.expanded; row.showOnlinePayments = false; $event.stopPropagation();"
+                                ng-init="row.expanded = false">
+                                <span class="glyphicon glyphicon-plus-sign font-size-14 top-4px show-detail-btn" ng-show="!row.expanded" title="Show Details"></span> <span
+                                    class="glyphicon glyphicon-minus-sign font-size-14 top-4px show-detail-btn" ng-show="row.expanded" title="Hide Details"></span>
+                            </button>
+                        </td>
+                        <td title="Account Name">{{row.firstName}} {{row.lastName}}</td>
+                        <td title="Account Type" class="text-center"><span class="label label-info" ng-if="row.type == 1">{{translation.KEY_SCREEN_COMPANY_LABEL}}</span> <span
+                            class="label label-info" ng-if="row.type == 2">{{translation.KEY_SCREEN_INDIVIDUAL_LABEL}}</span></td>
+                        <td title="Mobile Number">{{row.msisdn}}</td>
+                        <td title="Company Name">{{row.companyName}}</td>
+                        <td title="Company Registration">{{row.companyRegistration}}</td>
+                        <td title="Company Telephone">{{row.companyTelephone}}</td>
+                        <td title="Account Balance" class="text-left">{{row.balanceAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+                        <td title="Payment Terms Type" class="text-center"><span class="label label-info" ng-if="row.paymentTermsType == 1">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_PREPAY_LABEL
+                                | uppercase}}</span> <span class="label label-default" ng-if="row.paymentTermsType == 2">{{translation.KEY_SCREEN_PAYMENT_TERMS_TYPE_POSTPAY_LABEL |
+                                uppercase}}</span></td>
+                        <td title="Overdraft Limit">{{row.amountOverdraftLimit | customCurrency : 0}} {{getSymbolByCurrencyCode(row.currency)}}</td>
+                        <td title="Date Created">{{row.dateCreatedString}}</td>
+                        <td class="text-center">
+                            <button class="btn btn-primary btn-sm" ng-click="showAccountTopupDialog(row); $event.stopPropagation();" title="">
+                                {{translation.KEY_SCREEN_PAYMENTS_LABEL}}</button>
+                        </td>
+                        <td title="">
+                            <button class="btn btn-primary btn-sm" ng-click="showHidePayments(row); row.expanded = false; $event.stopPropagation();"
+                                ng-init="row.showOnlinePayments = false" title="">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr class="bg-light-gray pad-row-for-nested-table" ng-if="row.expanded">
+                        <td colspan="13" class="pad-table-extension-cell">
+                            <div class="div-detail-thead">
+
+                                <table class="pad-nested-table">
+                                    <colgroup>
+                                        <col width="10%">
+                                        <col width="90%">
+                                    </colgroup>
+                                    <thead class="bg-light-gray">
+                                        <tr>
+                                            <th class="text-align-left" ng-if="row.type == 1">{{translation.KEY_SCREEN_COMPANY_ADDRESS_LABEL}}</th>
+                                            <th class="text-align-left" ng-if="row.type == 2">{{translation.KEY_SCREEN_ADDRESS_LABEL}}</th>
+                                            <td class="text-align-left"><span ng-bind-html="previewCompanyAddress(row) | to_trusted_html"></span></td>
+                                        </tr>
+                                        <tr ng-if="row.type == 2">
+                                            <th class="text-align-left">{{translation.KEY_SCREEN_COUNTRY_LABEL}} ({{translation.KEY_SCREEN_NATIONALITY_LABEL}})</th>
+                                            <td class="text-align-left"><span>{{getCountryNameByISOCode(row.nationalityCountryISO)}}</span></td>
+                                        </tr>
+                                    </thead>
+                                </table>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- **** ONLINE PAYMENT DETAILS **** -->
+                    <tr class="bg-light-gray pad-row-for-nested-table" ng-if="row.showOnlinePayments">
+                        <td colspan="13" class="pad-table-extension-cell">
+                            <div class="div-online-payment-thead">
+                                <table class="pad-nested-table" style="margin-bottom: 0px;">
+                                    <colgroup>
+                                        <col width="9%">
+                                        <col width="9%">
+                                        <col width="8%">
+                                        <col width="8%">
+                                        <col width="9%">
+                                        <col width="10%">
+                                        <col width="8%">
+                                        <col width="15%">
+                                        <col width="15%">
+                                        <col width="9%">
+                                    </colgroup>
+                                    <thead class="bg-light-gray">
+                                        <tr>
+                                            <th>{{translation.KEY_SCREEN_TYPE_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_MOBILE_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_AMOUNT_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_FEE_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_DATE_PAYMENT_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_REFERENCE_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_STATUS_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_ERROR_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_NOTES_LABEL}}</th>
+                                            <th>{{translation.KEY_SCREEN_DATE_RESPONSE_LABEL}}</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="row.showOnlinePayments">
+                        <td colspan="13" class="pad-table-extension-cell">
+                            <div class="div-online-payment-detail">
+                                <table class="pad-nested-table">
+                                    <colgroup>
+                                        <col width="9%">
+                                        <col width="9%">
+                                        <col width="8%">
+                                        <col width="8%">
+                                        <col width="9%">
+                                        <col width="10%">
+                                        <col width="8%">
+                                        <col width="15%">
+                                        <col width="15%">
+                                        <col width="9%">
+                                    </colgroup>
+                                    <tbody style="height: 130px; overflow-y: auto; width: 100%;">
+                                        <tr ng-repeat="onlinePayment in row.onlinePaymentsList">
+                                            <td class="text-center">
+                                                <span ng-if="onlinePayment.paymentOption === 2">Orange Money</span>
+                                                <span ng-if="onlinePayment.paymentOption === 3">Wari</span>
+                                                <span ng-if="onlinePayment.paymentOption === 4">Tigo Cash</span>
+                                                <span ng-if="onlinePayment.paymentOption === 5">E-Money</span>
+                                                <span ng-if="onlinePayment.paymentOption === 6">Ecobank</span>
+                                                <span ng-if="onlinePayment.paymentOption === 1">{{translation.KEY_SCREEN_CASH_LABEL}}</span>
+                                                <span ng-if="onlinePayment.paymentOption === 7">{{translation.KEY_SCREEN_BANK_TRANSFER_LABEL}}</span>
+                                                <span ng-if="onlinePayment.paymentOption === 8">{{translation.KEY_SCREEN_CHEQUE_LABEL}}</span>
+                                                <span ng-if="onlinePayment.paymentOption === 9">{{translation.KEY_SCREEN_ACCOUNT_CREDIT_LABEL}}</span>
+                                                <span ng-if="onlinePayment.paymentOption === 10">{{translation.KEY_SCREEN_CASH_REFUND_LABEL}}</span>
+                                                <span ng-if="onlinePayment.paymentOption === 11">{{translation.KEY_SCREEN_ACCOUNT_DEBIT_LABEL}}</span>
+                                            </td>
+                                            <td class="text-center">{{onlinePayment.msisdn}}</td>
+                                            <td class="text-center">{{onlinePayment.amount | customCurrency : 0}} {{getSymbolByCurrencyCode(onlinePayment.currencyCode)}}</td>
+                                            <td class="text-center">{{onlinePayment.feeAggregator | customCurrency : 0}} {{getSymbolByCurrencyCode(onlinePayment.currencyCode)}}</td>
+                                            <td class="text-center">{{onlinePayment.dateRequestString}}</td>
+                                            <td class="text-center">{{onlinePayment.referenceAggregator}}</td>
+                                            <td class="text-center">{{onlinePayment.statusAggregator}}</td>
+                                            <td class="text-center">{{onlinePayment.errorAggregator}}</td>
+                                            <td class="text-center">{{onlinePayment.paymentNote}}</td>
+                                            <td class="text-center">{{onlinePayment.dateCallbackResponseString}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="13" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_ACCOUNT_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="13" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- > Modal Payment Confirmation -->
+        <div class="modal fade" id="topupModal" tabindex="-1" role="dialog" aria-labelledby="topupModalLabel" ng-form="topupForm">
+            <fieldset>
+                <div class="modal-dialog modal-dialog-record" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeAccountTopupDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="topupModalLabel">{{translation.KEY_SCREEN_PAYMENTS_LABEL}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading font-size-18">
+                                            <b>{{translation.KEY_NAVBAR_PAYMENT}}</b>
+                                        </div>
+                                        <div class="panel-body">
+                                            <form name="topupForm" autocomplete="off" novalidate>
+                                                <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}</label>
+                                                        </div>
+                                                        <div class="col-md-8">{{selectedRow.firstName}} {{selectedRow.lastName}}</div>
+                                                    </div>
+
+                                                    <div class="row" ng-show="selectedRow.companyName != ''">
+                                                        <div class="col-md-4">
+                                                            <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</label>
+                                                        </div>
+                                                        <div class="col-md-8">{{selectedRow.companyName}}</div>
+                                                    </div>
+
+                                                    <div class="row" ng-show="selectedRow.msisdn != ''">
+                                                        <div class="col-md-4">
+                                                            <label>{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                                                        </div>
+                                                        <div class="col-md-8">{{selectedRow.msisdn}}</div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label>{{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}}</label>
+                                                        </div>
+                                                        <div class="col-md-8" ng-show="!isPaymentSuccessful">{{selectedRow.balanceAmount | customCurrency : 0}}
+                                                            {{getSymbolByCurrencyCode(selectedRow.currency)}}</div>
+                                                        <div class="col-md-8" ng-show="isPaymentSuccessful">{{newBalanceAmount | customCurrency : 0}}
+                                                            {{getSymbolByCurrencyCode(selectedRow.currency)}}</div>
+                                                    </div>
+
+                                                    <div class="row" ng-show="onlinePaymentRequestSubmitted">
+                                                        <div class="col-md-4">
+                                                            <label>{{translation.KEY_SCREEN_PAYMENT_OPTION_LABEL}}</label>
+                                                        </div>
+                                                        <div class="col-md-8">{{getPaymentOption(formData.paymentOption)}}</div>
+                                                    </div>
+
+                                                    <br>
+
+                                                    <div style="padding: 0px;" ng-show="!onlinePaymentRequestSubmitted && !isPaymentSuccessful">
+
+                                                        <div class="form-group">
+                                                            <label for="paymentOption">{{translation.KEY_SCREEN_PAYMENT_OPTION_LABEL}}</label> <select id="paymentOption"
+                                                                name="paymentOption" class="form-control" ng-model="formData.paymentOption" required autofocus>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_CREDIT}}">{{translation.KEY_SCREEN_ACCOUNT_CREDIT_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_DEBIT}}">{{translation.KEY_SCREEN_ACCOUNT_DEBIT_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_BANK_TRANSFER}}">{{translation.KEY_SCREEN_BANK_TRANSFER_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_CASH}}">{{translation.KEY_SCREEN_CASH_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND}}">{{translation.KEY_SCREEN_CASH_REFUND_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_CHEQUE}}">{{translation.KEY_SCREEN_CHEQUE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}}"
+                                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_E_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}})">E-Money -
+                                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}}"
+                                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_E_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}})">E-Money</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}}"
+                                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ECOBANK)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}})">Ecobank -
+                                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}}"
+                                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ECOBANK)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}})">Ecobank</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}}"
+                                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}})">Free Money
+                                                                - {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}}"
+                                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}})">Free Money</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}}"
+                                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}})">Orange
+                                                                Money - {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}}"
+                                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}})">Orange
+                                                                Money</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_WARI}}"
+                                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_WARI)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_WARI}})">Wari -
+                                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_WARI}}"
+                                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_WARI)"
+                                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_WARI}})">Wari</option>
+                                                                
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-6" style="padding-left: 0px;">
+                                                            <label for="firstName">{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}</label> <input type="text" class="form-control"
+                                                                name="firstName" ng-model="formData.firstName" ng-maxlength="32" maxlength="32" ng-trim="true" required
+                                                                avoid-special-chars avoid-numbers>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-6" style="padding-right: 0px;">
+                                                            <label for="lastName">{{translation.KEY_SCREEN_LAST_NAME_LABEL}}</label> <input type="text" class="form-control"
+                                                                name="lastName" ng-model="formData.lastName" ng-maxlength="32" maxlength="32" ng-trim="true" required
+                                                                avoid-special-chars avoid-numbers>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                                                            <div style="width: 100%;">
+                                                                <input type="text" class="form-control" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber"
+                                                                    ng-intl-tel-input required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="amountTopup" ng-if="formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''">{{translation.KEY_SCREEN_TOPUP_AMOUNT_LABEL}}</label>
+                                                            <label for="amountTopup" ng-if="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''">{{translation.KEY_SCREEN_CASH_REFUND_AMOUNT_LABEL}}</label>
+                                                            <input type="text" class="form-control" name="amountTopup" id="amountTopup" ng-model="formData.amountTopup" input-currency ng-maxlength="15" maxlength="15" required>
+                                                        </div>
+
+                                                        <div class="form-group"
+                                                            ng-show="isPaymentOptionSelected && formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH + ''">
+                                                            <label for="amountCashGiven">{{translation.KEY_SCREEN_FEE_AMOUNT_CASH_LABEL}}</label>
+                                                            <input type="text" class="form-control" name="amountCashGiven" id="amountCashGiven" ng-model="formData.amountCashGiven" input-currency ng-maxlength="15" maxlength="15" required>
+                                                        </div>
+
+                                                        <div class="form-group"
+                                                            ng-if="isPaymentOptionSelected && (formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_CREDIT + '' 
+                                                                || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''
+                                                                || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_BANK_TRANSFER + ''
+                                                                || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CHEQUE + '')">
+                                                            <label for="notes">{{translation.KEY_SCREEN_NOTES_LABEL}}</label> <textarea class="form-control"
+                                                                name="notes" ng-model="formData.notes" rows="3" ng-max="256" max="256" required></textarea>
+                                                        </div>
+
+                                                        <div class="form-group font-size-18"
+                                                            ng-show="isPaymentOptionSelected && formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH + ''">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                                    <label>{{translation.KEY_SCREEN_AMOUNT_CHANGE_DUE_LABEL}}: {{formData.amountChangeDue | customCurrency : 0}}
+                                                                        {{getSymbolByCurrencyCode(selectedRow.currency)}}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row" ng-show="selectedRow.paymentTermsType == 1">
+                                                            <div class="col-md-12 font-size-12">
+                                                                <label>{{translation.KEY_SCREEN_ELETRONIC_RECEIPT_LABEL}}</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="animate-if" ng-if="makePaymentErrorResponse !== ''">
+                                                                <div class="alert alert-danger" role="alert">
+                                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                                    {{makePaymentErrorResponse}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="animate-if" ng-if="makePaymentInfoResponse !== ''">
+                                                                <div class="alert alert-info" role="alert">
+                                                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <span class="sr-only">Info: </span>
+                                                                    {{makePaymentInfoResponse}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH + ''
+                                                                        || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_CREDIT + ''
+                                                                        || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''
+                                                                        || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_BANK_TRANSFER + ''
+                                                                        || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CHEQUE + ''"
+                                                                ng-click="topupAccountBalance(selectedRow)" ng-disabled="topupButtonDisabled" class="btn btn-primary btn-block">
+                                                                <span class="glyphicon glyphicon-ok"></span> 
+                                                                <span ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH + ''">{{translation.KEY_SCREEN_AMOUNT_PAID_LABEL}}</span>
+                                                                <span ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_CREDIT + ''">{{translation.KEY_SCREEN_ACCOUNT_CREDIT_LABEL}}</span>
+                                                                <span ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''">{{translation.KEY_SCREEN_CASH_REFUND_LABEL}}</span>
+                                                                <span ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_BANK_TRANSFER + ''">{{translation.KEY_SCREEN_BANK_TRANSFER_LABEL}}</span>
+                                                                <span ng-show="formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_CHEQUE + ''">{{translation.KEY_SCREEN_CHEQUE_LABEL}}</span>
+                                                            </button>
+                                                            
+                                                            <button ng-show="formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_CASH + ''
+                                                                        && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_ACCOUNT_CREDIT + ''
+                                                                        && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_CASH_REFUND + ''
+                                                                        && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_BANK_TRANSFER + ''
+                                                                        && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_CHEQUE + ''"
+                                                                class="btn btn-primary btn-block" ng-click="topupAccountBalance(selectedRow)"
+                                                                ng-disabled="paymentConfirmationButtonDisabled">
+                                                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_MAKE_PAYMENT_LABEL}}
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div style="padding: 0px;" ng-show="onlinePaymentRequestSubmitted && !isPaymentSuccessful && makePaymentErrorResponse === ''">
+
+                                                        <div class="form-group">
+                                                            <div class="alert alert-warning" role="alert">
+                                                                <span>
+                                                                    <div>
+                                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                                                        {{translation.KEY_SCREEN_PAYMENT_CONFIRMATION_WAIT}}...
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group text-center">
+                                                            <img src="app/img/loadingSpinner.gif" style="max-width: 120px; padding-bottom: 20px;">
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div style="padding: 0px;" ng-show="onlinePaymentRequestSubmitted && !isPaymentSuccessful && makePaymentErrorResponse !== ''">
+
+                                                        <div class="form-group">
+                                                            <div
+                                                                ng-class="{'alert alert-danger': !isOnlinePaymentStatusCheckLimitReached, 'alert alert-warning': isOnlinePaymentStatusCheckLimitReached}"
+                                                                role="alert">
+                                                                <span>
+                                                                    <div>
+                                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{makePaymentErrorResponse}}
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div style="padding: 0px;"
+                                                        ng-show="isPaymentSuccessful
+                                                    && (formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY + ''
+                                                    || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY + ''
+                                                    || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_E_MONEY + '')">
+
+                                                        <div class="form-group">
+                                                            <div class="alert alert-success" role="alert">
+                                                                <span>
+                                                                    <div>
+                                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                                                        {{translation.KEY_SCREEN_PAYMENT_SUCCESS_LABEL}}! <br> <br> <br>
+                                                                        {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}: <b>{{paymentReference}}</b> <br>
+                                                                        {{translation.KEY_SCREEN_ACCOUNT_BALANCE_CREDITED_LABEL}} {{formData.amountTopup | customCurrency : 0}}
+                                                                        {{getSymbolByCurrencyCode(selectedRow.currency)}}
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div style="padding: 0px;"
+                                                        ng-show="isPaymentSuccessful
+                                                    && (formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY + ''
+                                                    && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY + ''
+                                                    && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_E_MONEY + '')">
+
+                                                        <div class="form-group">
+                                                            <div class="alert alert-warning" role="alert">
+                                                                <span>
+                                                                    <div>
+                                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                                                        {{translation.KEY_SCREEN_PAYMENT_INITIATED_LABEL}}! <br> <br> <br>
+                                                                        {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}: <b>{{paymentReference}}</b>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-center">
+                            <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeAccountTopupDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CLOSE_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+    </div>
+
+</div>

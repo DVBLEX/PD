@@ -1,0 +1,187 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_OPERATORS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_STAFF_USERS_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="add()" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="filterButton" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false"
+                aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="filterFirstName">{{translation.KEY_SCREEN_FIRST_NAME_LABEL}} </label>
+                        <input type="text" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterFirstName" ng-model="filterFirstName"
+                            aria-describedby="filterFirstName" />
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterLastName">{{translation.KEY_SCREEN_LAST_NAME_LABEL}} </label>
+                        <input type="text" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterLastName" ng-model="filterLastName" aria-describedby="filterLastName" />
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterRole">{{translation.KEY_SCREEN_ROLE_LABEL}} </label>
+                        <select style=" width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterRole" name="filterRole"
+                                ng-model="filterRole">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="operatorRole in operatorRoleOptions | orderBy: 'name'"
+                                    value="{{operatorRole.value}}">{{operatorRole.name | uppercase}}
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="refreshTableData();" class="btn btn-success" style="width: 100%;" ng-disabled="searchTripSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearch()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('first_name');"> {{translation.KEY_SCREEN_FIRST_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'first_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'first_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('last_name');"> {{translation.KEY_SCREEN_LAST_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('email');"> {{translation.KEY_SCREEN_EMAIL_LABEL}} <span
+                                ng-show="sortColumn == 'email' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'email' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('msisdn');"> {{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'msisdn' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'msisdn' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('username');"> {{translation.KEY_SCREEN_USERNAME_LABEL}} <span
+                                ng-show="sortColumn == 'username' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'username' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>{{translation.KEY_SCREEN_ROLE_LABEL}}</td>
+                        <td>{{translation.KEY_SCREEN_STATUS_LABEL}}</td>
+                        <td><a href="" ng-click="sort('is_active');"> {{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}? <span
+                                ng-show="sortColumn == 'is_active' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'is_active' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_last_login');"> {{translation.KEY_SCREEN_DATE_LAST_LOGIN_LABEL}} <span
+                                ng-show="sortColumn == 'date_last_login' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_last_login' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="13%">
+                    <col width="13%">
+                    <col width="15%">
+                    <col width="8%">
+                    <col width="11%">
+                    <col width="8%">
+                    <col width="10%">
+                    <col width="8%">
+                    <col width="5%">
+                    <col width="11%">
+                    <col width="11%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr>
+                        <td title="{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}">{{row.firstName}}</td>
+                        <td title="{{translation.KEY_SCREEN_LAST_NAME_LABEL}}">{{row.lastName}}</td>
+                        <td title="{{translation.KEY_SCREEN_EMAIL_LABEL}}">{{row.email}}</td>
+                        <td title="{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}">{{row.msisdn}}</td>
+                        <td title="{{translation.KEY_SCREEN_USERNAME_LABEL}}">{{row.username}}</td>
+                        <td title="{{translation.KEY_SCREEN_ROLE_LABEL}}" class="text-center"><span class="label label-primary"
+                            ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PARKING_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PARKING_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PARKING_SUPERVISOR_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PARKING_SUPERVISOR_LABEL
+                                | uppercase}}</span><span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PARKING_KIOSK_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PARKING_KIOSK_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PARKING_OFFICE_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PARKING_OFFICE_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PORT_AUTHORITY_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_AUTHORITY_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PORT_ENTRY_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_ENTRY_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PORT_EXIT_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_EXIT_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_PORT_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_OPERATOR_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_ADMIN">{{translation.KEY_SCREEN_OPERATOR_TYPE_ADMIN_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_FINANCE_OPERATOR">{{translation.KEY_SCREEN_OPERATOR_TYPE_FINANCE_LABEL
+                                | uppercase}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_STATUS_LABEL}}" class="text-center">
+                            <span class="label label-success" ng-if="row.password !== ''">{{translation.KEY_SCREEN_REGISTERED_UPPER_LABEL}}</span>
+                            <span class="label label-danger" ng-if="row.password === ''">{{translation.KEY_SCREEN_UNREGISTERED_UPPER_LABEL}}</span>
+                            <span class="label label-warning" ng-if="row.isLocked">{{translation.KEY_SCREEN_LOGIN_LOCKED_MESSAGE | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}?" class="text-center"><span class="label label-success" ng-if="row.isActive">{{translation.KEY_SCREEN_YES_LABEL
+                                | uppercase}}</span> <span class="label label-primary" ng-if="!row.isActive">{{translation.KEY_SCREEN_NO_LABEL | uppercase}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_DATE_LAST_LOGIN_LABEL}}">{{row.dateLastLoginString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td class="text-center nowrap">
+                            <button class="btn btn-default btn-xsm" ng-click="edit(row); $event.stopPropagation();" title="{{translation.KEY_SCREEN_EDIT_LABEL}}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button class="btn btn-primary btn-xsm" ng-click="passwordResetSend(row); $event.stopPropagation();" ng-disabled="disableSubmitButton"
+                                title="{{translation.KEY_SCREEN_SEND_SETUP_PASSWORD_LABEL}}">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="11" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="11" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>

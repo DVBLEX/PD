@@ -1,0 +1,412 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_MISSIONS}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_ISSUE_REPORT_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="showReportModal();" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_BUTTON_REPORT}}
+            </button>
+
+            <button style="display: none;" type="button" class="btn btn-primary btn-md" name="filterButton" id="filterButton" data-toggle="collapse" data-target="#searchCollapse"
+                aria-expanded="false" aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="search()" class="btn btn-success" style="width: 100%;" ng-disabled="searchSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearch()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+
+                        <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('working_capacity');"> {{translation.KEY_SCREEN_WORKING_CAPACITY_LABEL}} <span
+                                ng-show="sortColumn == 'working_capacity' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'working_capacity' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('description');"> {{translation.KEY_SCREEN_ISSUE_DESCRIPTION_LABEL}} <span
+                                ng-show="sortColumn == 'description' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'description' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_alert');"> {{translation.KEY_SCREEN_DATE_ISSUE_LABEL}} <span ng-show="sortColumn == 'date_alert' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'date_alert' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_resolution_estimate');"> {{translation.KEY_SCREEN_EST_RESOLUTION_LABEL}} <span
+                                ng-show="sortColumn == 'date_resolution_estimate' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_resolution_estimate' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('name_reporter');"> {{translation.KEY_SCREEN_REPORTER_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'name_reporter' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'name_reporter' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('msisdn_reporter');"> {{translation.KEY_SCREEN_REPORTER_MOBILE_LABEL}} <span
+                                ng-show="sortColumn == 'msisdn_reporter' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'msisdn_reporter' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('is_resolved');"> {{translation.KEY_SCREEN_IS_RESOLVED_LABEL}} <span ng-show="sortColumn == 'is_resolved' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'is_resolved' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_resolution');"> {{translation.KEY_SCREEN_RESOLUTION_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_resolution' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_resolution' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('resolution_description');"> {{translation.KEY_SCREEN_RESOLUTION_DESCRIPTION_LABEL}} <span
+                                ng-show="sortColumn == 'resolution_description' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'resolution_description' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td>&nbsp;</td>
+
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="14%">
+                    <col width="7%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="6%">
+                    <col width="8%">
+                    <col width="14%">
+                    <col width="7%">
+                    <col width="4%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td class="text-center" title="{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}">
+                            <span class="label label-info">{{getTransactionTypeName(row.portOperatorId, row.transactionType) | uppercase}}</span>
+                        </td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_WORKING_CAPACITY_LABEL}}">{{row.workingCapacityPercentage}}%</td>
+                        <td title="{{translation.KEY_SCREEN_ISSUE_DESCRIPTION_LABEL}}">{{row.description}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_ISSUE_LABEL}}">{{row.issueDateString}}</td>
+                        <td title="{{translation.KEY_SCREEN_EST_RESOLUTION_LABEL}}">{{row.estimatedResolutionDateString}}</td>
+                        <td title="{{translation.KEY_SCREEN_REPORTER_NAME_LABEL}}">{{row.nameReporter}}</td>
+                        <td title="{{translation.KEY_SCREEN_REPORTER_MOBILE_LABEL}}">{{row.msisdnReporter}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_IS_RESOLVED_LABEL}}"><span class="label label-danger" ng-if="!row.isResolved">{{translation.KEY_SCREEN_NO_LABEL
+                                | uppercase}}</span><span class="label label-success" ng-if="row.isResolved">{{translation.KEY_SCREEN_YES_LABEL | uppercase}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_RESOLUTION_DATE_LABEL}}">{{row.dateResolutionString}}</td>
+                        <td title="{{translation.KEY_SCREEN_RESOLUTION_DESCRIPTION_LABEL}}">{{row.resolutionDescription}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td class="text-center" title=""><span>
+                                <button class="btn btn-primary btn-xsm" ng-click="showEditModal(row); $event.stopPropagation();" ng-if="!row.isResolved"
+                                    title="{{translation.KEY_SCREEN_EDIT_LABEL}}">
+                                    <span class="glyphicon glyphicon-pencil"> </span>
+                                </button>
+                                <button class="btn btn-success btn-xsm" ng-click="showResolveModal(row); $event.stopPropagation();" ng-if="!row.isResolved"
+                                    title="{{translation.KEY_SCREEN_RESOLVE_ISSUE_LABEL}}">
+                                    <span class="glyphicon glyphicon-ok"> </span>
+                                </button>
+                        </span></td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="12" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="12" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div class="table-responsive">
+            <div class="modal fade" id="reportIssueModal" tabindex="-1" role="dialog" aria-labelledby="reportIssueModalLabel">
+                <fieldset>
+                    <div class="modal-dialog modal-dialog-record" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" ng-click="closeReportDialog()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="reportIssueModalLabel">{{modalTitle}}</h4>
+
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+
+                                        <form name="reportIssueForm" autocomplete="off" novalidate>
+                                            <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+
+                                                <div class="form-group col-sm-4 col-sm-offset-8" ng-show="modalType !== 3">
+                                                    <table>
+                                                        <tr>
+                                                            <td><b>{{translation.KEY_SCREEN_IS_OUT_OF_ORDER_LABEL}}</b>&nbsp;&nbsp;</td>
+                                                            <td><label class="switch-small" style="margin-top: 10px;"> <input type="checkbox" class="form-control"
+                                                                    name="isOutOfOrder" ng-model="requestData.isOutOfOrder" ng-checked="requestData.isOutOfOrder"
+                                                                    ng-change="changeOutOfOrder()"> <span class="slider-small round" ng-disabled="modalType === 3"></span>
+                                                            </label></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label> <select id="transactionType"
+                                                        name="transactionType" class="form-control" ng-model="requestData.transactionType"
+                                                        ng-options="entry.transactionType as (entry.translateKey | translate) for entry in portOperatorTransactionTypes" autofocus
+                                                        ng-disabled="modalType === 3 || modalType === 2" required>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="currentWorkingCapacityPercentage">{{translation.KEY_SCREEN_WORKING_CAPACITY_LABEL}} (%)</label> <select
+                                                        name="currentWorkingCapacityPercentage" class="form-control" ng-model="requestData.currentWorkingCapacityPercentage"
+                                                        ng-change="changeWorkingCapacity()" ng-disabled="modalType === 3" required>
+                                                        <option value="0">0</option>
+                                                        <option value="10">10</option>
+                                                        <option value="20">20</option>
+                                                        <option value="30">30</option>
+                                                        <option value="40">40</option>
+                                                        <option value="50">50</option>
+                                                        <option value="60">60</option>
+                                                        <option value="70">70</option>
+                                                        <option value="80">80</option>
+                                                        <option value="90">90</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="nameReporter">{{translation.KEY_SCREEN_REPORTER_NAME_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="nameReporter" ng-model="requestData.nameReporter" ng-maxlength="128" maxlength="128" ng-trim="true"
+                                                        avoid-special-chars required ng-disabled="modalType === 3">
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="msisdnReporter">{{translation.KEY_SCREEN_REPORTER_MOBILE_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="msisdnReporter" ng-model="requestData.msisdnReporter" ng-intl-tel-input required ng-disabled="modalType === 3">
+                                                </div>
+
+                                                <div class="form-group col-sm-12">
+                                                    <label for="description">{{translation.KEY_SCREEN_ISSUE_DESCRIPTION_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="description" ng-model="requestData.description" ng-maxlength="255" maxlength="255" ng-trim="true" avoid-special-chars
+                                                        required ng-disabled="modalType === 3">
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="issueDate">{{translation.KEY_SCREEN_DATE_ISSUE_START_LABEL}}</label>
+                                                    <div class="issue_date date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="issueDate" name="issueDate"
+                                                            ng-model="requestData.issueDate" required ng-disabled="modalType === 3"> <span
+                                                            class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="issueTime">{{translation.KEY_SCREEN_TIME_ISSUE_START_LABEL}}</label> <select id="issueTime" name="issueTime"
+                                                        class="form-control" ng-model="requestData.issueTime" required ng-disabled="modalType === 3">
+                                                        <option value="0000">00:00</option>
+                                                        <option value="0100">01:00</option>
+                                                        <option value="0200">02:00</option>
+                                                        <option value="0300">03:00</option>
+                                                        <option value="0400">04:00</option>
+                                                        <option value="0500">05:00</option>
+                                                        <option value="0600">06:00</option>
+                                                        <option value="0700">07:00</option>
+                                                        <option value="0800">08:00</option>
+                                                        <option value="0900">09:00</option>
+                                                        <option value="1000">10:00</option>
+                                                        <option value="1100">11:00</option>
+                                                        <option value="1200">12:00</option>
+                                                        <option value="1300">13:00</option>
+                                                        <option value="1400">14:00</option>
+                                                        <option value="1500">15:00</option>
+                                                        <option value="1600">16:00</option>
+                                                        <option value="1700">17:00</option>
+                                                        <option value="1800">18:00</option>
+                                                        <option value="1900">19:00</option>
+                                                        <option value="2000">20:00</option>
+                                                        <option value="2100">21:00</option>
+                                                        <option value="2200">22:00</option>
+                                                        <option value="2300">23:00</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="estimatedResolutionDate">{{translation.KEY_SCREEN_EST_RESOLUTION_DATE_LABEL}}</label>
+                                                    <div class="estimated_resolution_date date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="estimatedResolutionDate"
+                                                            name="estimatedResolutionDate" ng-model="requestData.estimatedResolutionDate" ng-disabled="modalType === 3"> <span
+                                                            class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-sm-6">
+                                                    <label for="estimatedResolutionTime">{{translation.KEY_SCREEN_EST_RESOLUTION_TIME_LABEL}}</label> <select
+                                                        id="estimatedResolutionTime" name="estimatedResolutionTime" class="form-control"
+                                                        ng-model="requestData.estimatedResolutionTime" ng-disabled="modalType === 3">
+                                                        <option value="0000">00:00</option>
+                                                        <option value="0100">01:00</option>
+                                                        <option value="0200">02:00</option>
+                                                        <option value="0300">03:00</option>
+                                                        <option value="0400">04:00</option>
+                                                        <option value="0500">05:00</option>
+                                                        <option value="0600">06:00</option>
+                                                        <option value="0700">07:00</option>
+                                                        <option value="0800">08:00</option>
+                                                        <option value="0900">09:00</option>
+                                                        <option value="1000">10:00</option>
+                                                        <option value="1100">11:00</option>
+                                                        <option value="1200">12:00</option>
+                                                        <option value="1300">13:00</option>
+                                                        <option value="1400">14:00</option>
+                                                        <option value="1500">15:00</option>
+                                                        <option value="1600">16:00</option>
+                                                        <option value="1700">17:00</option>
+                                                        <option value="1800">18:00</option>
+                                                        <option value="1900">19:00</option>
+                                                        <option value="2000">20:00</option>
+                                                        <option value="2100">21:00</option>
+                                                        <option value="2200">22:00</option>
+                                                        <option value="2300">23:00</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group col-sm-6" ng-show="modalType === 3">
+                                                    <label for="resolutionDate">{{translation.KEY_SCREEN_RESOLUTION_DATE_LABEL}}</label>
+                                                    <div class="resolution_date date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="resolutionDate"
+                                                            name="resolutionDate" ng-model="requestData.resolutionDate" ng-required="modalType === 3"> <span
+                                                            class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group col-sm-6" ng-show="modalType === 3">
+                                                    <label for="resolutionTime">{{translation.KEY_SCREEN_RESOLUTION_TIME_LABEL}}</label> <select
+                                                        id="resolutionTime" name="resolutionTime" class="form-control"
+                                                        ng-model="requestData.resolutionTime" ng-required="modalType === 3">
+                                                        <option value="0000">00:00</option>
+                                                        <option value="0100">01:00</option>
+                                                        <option value="0200">02:00</option>
+                                                        <option value="0300">03:00</option>
+                                                        <option value="0400">04:00</option>
+                                                        <option value="0500">05:00</option>
+                                                        <option value="0600">06:00</option>
+                                                        <option value="0700">07:00</option>
+                                                        <option value="0800">08:00</option>
+                                                        <option value="0900">09:00</option>
+                                                        <option value="1000">10:00</option>
+                                                        <option value="1100">11:00</option>
+                                                        <option value="1200">12:00</option>
+                                                        <option value="1300">13:00</option>
+                                                        <option value="1400">14:00</option>
+                                                        <option value="1500">15:00</option>
+                                                        <option value="1600">16:00</option>
+                                                        <option value="1700">17:00</option>
+                                                        <option value="1800">18:00</option>
+                                                        <option value="1900">19:00</option>
+                                                        <option value="2000">20:00</option>
+                                                        <option value="2100">21:00</option>
+                                                        <option value="2200">22:00</option>
+                                                        <option value="2300">23:00</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group col-sm-12" ng-show="modalType === 3">
+                                                    <label for="resolutionDescription">{{translation.KEY_SCREEN_RESOLUTION_DESCRIPTION_LABEL}}</label> <input type="text" class="form-control"
+                                                        name="resolutionDescription" ng-model="requestData.resolutionDescription" ng-maxlength="255" maxlength="255" ng-trim="true" avoid-special-chars
+                                                        ng-required="modalType === 3">
+                                                </div>
+
+                                                <div class="form-group col-sm-12">
+                                                    <div class="animate-if" ng-if="reportIssueErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">{{translation.KEY_SCREEN_ERROR_LABEL}}:
+                                                            </span> {{reportIssueErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <issue-date-d-p></issue-date-d-p>
+                                                <estimated-resolution-date-d-p></estimated-resolution-date-d-p>
+                                                <resolution-date-d-p></resolution-date-d-p>
+
+                                            </div>
+                                        </form>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer text-alight-center">
+                                <button ng-click="submitForm()" class="btn btn-success" ng-disabled="reportIssueSubmitButtonDisabled || reportIssueForm.$pristine || reportIssueForm.$invalid">
+                                    <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                                </button>
+
+                                <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeReportDialog()">
+                                    <span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+    </div>
+</div>

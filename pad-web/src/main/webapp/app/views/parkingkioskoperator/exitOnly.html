@@ -1,0 +1,71 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PARKING_EXIT_ONLY}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-sm-12 col-md-8 col-lg-8 col-md-offset-2 col-lg-offset-2">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title font-size-15">{{translation.KEY_NAVBAR_PARKING_EXIT_ONLY}}</h3>
+                    </div>
+                    <div class="panel-body" style="padding-left: 0px; padding-right: 0px;" ng-cloak>
+                        <div style="padding: 0px;">
+                            <form name="parkingExitOnlyForm" autocomplete="off" novalidate>
+
+                                <div ng-class="vehicleRegNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                                    <label class="font-size-15" for="vehicleRegNumber">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                                    <input type="text" class="form-control input-md" id="vehicleRegNumber" name="vehicleRegNumber" ng-model="formData.vehicleRegNumber"
+                                        ng-disabled="searchTripSubmitButtonDisabled || tripSearchByReferenceNumber || isProcessFinished" ng-change="vehicleRegNumberDivClass = ''; vehicleRegNumberSpanClass = ''"
+                                        ng-minlength="validationConstants.REGNUMBER_VALIDATION_LENGTH_MIN" minlength="{{validationConstants.REGNUMBER_VALIDATION_LENGTH_MIN}}"
+                                        ng-maxlength="validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX" maxlength="{{validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX}}" required capitalize alphanumeric
+                                        autofocus>
+                                    <span style="right: 15px;" ng-class="vehicleRegNumberSpanClass"></span>
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                                    <label class="font-size-15" for="color">{{translation.KEY_SCREEN_COLOR_LABEL}}</label>
+                                    <input type="text" class="form-control input-md" name="color" ng-model="formData.color" ng-maxlength="13" maxlength="13" ng-disabled="isProcessFinished">
+                                </div>
+                                <div ng-class="mobileNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                                    <label class="font-size-15" for="mobileNumber">{{translation.KEY_SCREEN_DRIVER_MOBILE_NUMBER_LABEL}}</label>
+                                    <div style="width: 100%;">
+                                        <input type="text" class="form-control input-md" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber"
+                                            ng-change="mobileNumberDivClass = ''; mobileNumberSpanClass = ''" ng-disabled="isProcessFinished" ng-intl-tel-input required>
+                                        <span style="top: 25px; right: 15px;" ng-class="mobileNumberSpanClass"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                                    <div class="animate-if" ng-if="addParkingExitOnlyErrorResponse !== ''">
+                                        <div class="alert alert-danger font-size-15" role="alert">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{addParkingExitOnlyErrorResponse}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                                    <div class="animate-if" ng-if="addParkingExitOnlySuccessResponse !== ''">
+                                        <div class="alert alert-success font-size-15" role="alert">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{addParkingExitOnlySuccessResponse}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-12 col-md-12 text-center" style="padding-bottom: 30px;" ng-hide="isProcessFinished">
+                                    <button ng-click="addParkingExitOnly()" class="btn btn-success" style="width: 100%;" ng-disabled="addParkingExitOnlySubmitButtonDisabled">
+                                        <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                                    </button>
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-12 col-md-12 text-center" style="padding-bottom: 30px;" ng-show="isProcessFinished">
+                                    <button ng-click="resetRegSearch()" class="btn btn-info" style="width: 100%;">
+                                        <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_LABEL}}
+                                    </button>
+                                </div>
+                                    
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

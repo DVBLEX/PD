@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <context:annotation-config />
+
+    <task:annotation-driven />
+
+    <aop:aspectj-autoproxy />
+
+    <bean id="propertyHolder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:pad.properties" />
+    </bean>
+
+    <import resource="jdbc.xml" />
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.pad.server.base.entities" />
+
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.id.new_generator_mappings">false</prop>
+                <prop key="hibernate.jdbc.batch_size">25</prop>
+                <prop key="hibernate.order_inserts">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
+
+    <context:component-scan base-package="com.pad.server.anpr.services" />
+    <context:component-scan base-package="com.pad.server.anpr.tasks" />
+
+    <bean id="accountService" class="com.pad.server.base.services.account.AccountServiceImpl" />
+    <bean id="activityLogService" class="com.pad.server.base.services.activitylog.ActivityLogServiceImpl" />
+    <bean id="anprBaseService" class="com.pad.server.base.services.anpr.AnprBaseServiceImpl" />
+    <bean id="driverService" class="com.pad.server.base.services.driver.DriverServiceImpl" />
+    <bean id="emailService" class="com.pad.server.base.services.email.EmailServiceImpl" />
+    <bean id="laneService" class="com.pad.server.base.services.lane.LaneServiceImpl" />
+    <bean id="missionService" class="com.pad.server.base.services.mission.MissionServiceImpl" />
+    <bean id="operatorService" class="com.pad.server.base.services.operator.OperatorServiceImpl" />
+    <bean id="parkingService" class="com.pad.server.base.services.parking.ParkingServiceImpl" />
+    <bean id="portAccessService" class="com.pad.server.base.services.portaccess.PortAccessServiceImpl" />
+    <bean id="sessionService" class="com.pad.server.base.services.session.SessionServiceImpl" />
+    <bean id="smsService" class="com.pad.server.base.services.sms.SmsServiceImpl" />
+    <bean id="statementService" class="com.pad.server.base.services.statement.StatementServiceImpl" />
+    <bean id="systemService" class="com.pad.server.base.services.system.SystemServiceImpl" />
+    <bean id="tripService" class="com.pad.server.base.services.trip.TripServiceImpl" />
+    <bean id="vehicleService" class="com.pad.server.base.services.vehicle.VehicleServiceImpl" />
+
+    <bean id="anprTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="1" />
+        <property name="maxPoolSize" value="1" />
+        <property name="queueCapacity" value="1000" />
+    </bean>
+
+</beans>

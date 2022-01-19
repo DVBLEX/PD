@@ -1,0 +1,176 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">ANPR</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">ANPR</h3>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Content -->
+        <div class="Page-content">
+
+            <div class="col-md-12" style="padding: 0px;">
+                <form name="anprForm" autocomplete="off" novalidate>
+                    <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+
+                        <div class="form-group col-sm-4">
+                            <label for="entryLogPageSize">{{translation.KEY_SCREEN_ENTRY_LOG_PAGE_SIZE_LABEL}}</label>
+                            <div ng-class="entryLogPageSize.$invalid && entryLogPageSize.$dirty ? 'has-error' : ''" ng-form="entryLogPageSize">
+                                <input type="number" class="form-control" name="entryLogPageSize" ng-model="anprParameter.entryLogPageSize" min="1" max="99999999" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="entryLogConnectTimeout">{{translation.KEY_SCREEN_ENTRY_LOG_CONNECTION_TIMEOUT_LABEL}}</label>
+                            <div ng-class="entryLogConnectTimeout.$invalid && entryLogConnectTimeout.$dirty ? 'has-error' : ''" ng-form="entryLogConnectTimeout">
+                                <input type="number" class="form-control" name="entryLogConnectTimeout" ng-model="anprParameter.entryLogConnectTimeout" min="1" max="99999999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="entryLogSocketTimeout">{{translation.KEY_SCREEN_ENTRY_LOG_SOCKET_TIMEOUT_LABEL}}</label>
+                            <div ng-class="entryLogSocketTimeout.$invalid && entryLogSocketTimeout.$dirty ? 'has-error' : ''" ng-form="entryLogSocketTimeout">
+                                <input type="number" class="form-control" name="entryLogSocketTimeout" ng-model="anprParameter.entryLogSocketTimeout" min="1" max="99999999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="entryLogConnRequestTimeout">{{translation.KEY_SCREEN_ENTRY_LOG_CONNECTION_REQUEST_TIMEOUT_LABEL}}</label>
+                            <div ng-class="entryLogConnRequestTimeout.$invalid && entryLogConnRequestTimeout.$dirty ? 'has-error' : ''" ng-form="entryLogConnRequestTimeout">
+                                <input type="number" class="form-control" name="entryLogConnRequestTimeout" ng-model="anprParameter.entryLogConnRequestTimeout" min="1"
+                                    max="99999999" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="defaultConnectTimeout">{{translation.KEY_SCREEN_DEFAULT_CONNECTION_TIMEOUT_LABEL}}</label>
+                            <div ng-class="defaultConnectTimeout.$invalid && defaultConnectTimeout.$dirty ? 'has-error' : ''" ng-form="defaultConnectTimeout">
+                                <input type="number" class="form-control" name="defaultConnectTimeout" ng-model="anprParameter.defaultConnectTimeout" min="1" max="99999999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="defaultSocketTimeout">{{translation.KEY_SCREEN_DEFAULT_SOCKET_TIMEOUT_LABEL}}</label>
+                            <div ng-class="defaultSocketTimeout.$invalid && defaultSocketTimeout.$dirty ? 'has-error' : ''" ng-form="defaultSocketTimeout">
+                                <input type="number" class="form-control" name="defaultSocketTimeout" ng-model="anprParameter.defaultSocketTimeout" min="1" max="99999999" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="defaultConnRequestTimeout">{{translation.KEY_SCREEN_DEFAULT_CONNECTION_REQUEST_TIMEOUT_LABEL}}</label>
+                            <div ng-class="defaultConnRequestTimeout.$invalid && defaultConnRequestTimeout.$dirty ? 'has-error' : ''" ng-form="defaultConnRequestTimeout">
+                                <input type="number" class="form-control" name="defaultConnRequestTimeout" ng-model="anprParameter.defaultConnRequestTimeout" min="1" max="99999999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="parkingPermissionHoursInFuture">{{translation.KEY_SCREEN_PARKING_PERMISSION_HOURS_INFUTURE_LABEL}}</label>
+                            <div ng-class="parkingPermissionHoursInFuture.$invalid && parkingPermissionHoursInFuture.$dirty ? 'has-error' : ''" ng-form="parkingPermissionHoursInFuture">
+                                <input type="number" class="form-control" name="parkingPermissionHoursInFuture" ng-model="anprParameter.parkingPermissionHoursInFuture" min="0" max="999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="parkingPermissionHoursPriorSlotDate">{{translation.KEY_SCREEN_PARKING_PERMISSION_HOURS_PRIOR_SLOTDATE_LABEL}}</label>
+                            <div ng-class="parkingPermissionHoursPriorSlotDate.$invalid && parkingPermissionHoursPriorSlotDate.$dirty ? 'has-error' : ''" ng-form="parkingPermissionHoursPriorSlotDate">
+                                <input type="number" class="form-control" name="parkingPermissionHoursPriorSlotDate" ng-model="anprParameter.parkingPermissionHoursPriorSlotDate" min="0" max="999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="parkingPermissionHoursAfterSlotDate">{{translation.KEY_SCREEN_PARKING_PERMISSION_HOURS_AFTER_SLOTDATE_LABEL}}</label>
+                            <div ng-class="parkingPermissionHoursAfterSlotDate.$invalid && parkingPermissionHoursAfterSlotDate.$dirty ? 'has-error' : ''" ng-form="parkingPermissionHoursAfterSlotDate">
+                                <input type="number" class="form-control" name="parkingPermissionHoursAfterSlotDate" ng-model="anprParameter.parkingPermissionHoursAfterSlotDate" min="0" max="999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="parkingPermissionHoursAfterExitDate">{{translation.KEY_SCREEN_PARKING_PERMISSION_HOURS_AFTER_EXITDATE_LABEL}}</label>
+                            <div ng-class="parkingPermissionHoursAfterExitDate.$invalid && parkingPermissionHoursAfterExitDate.$dirty ? 'has-error' : ''" ng-form="parkingPermissionHoursAfterExitDate">
+                                <input type="number" class="form-control" name="parkingPermissionHoursAfterExitDate" ng-model="anprParameter.parkingPermissionHoursAfterExitDate" min="0" max="999"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="btDowntimeSecondsLimit">btDowntimeSecondsLimit</label>
+                            <div ng-class="btDowntimeSecondsLimit.$invalid && btDowntimeSecondsLimit.$dirty ? 'has-error' : ''" ng-form="btDowntimeSecondsLimit">
+                                <input type="number" class="form-control" name="btDowntimeSecondsLimit" ng-model="anprParameter.btDowntimeSecondsLimit" min="0" max="100000"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-4">
+                            <label for="btUptimeSecondsLimit">btUptimeSecondsLimit</label>
+                            <div ng-class="btUptimeSecondsLimit.$invalid && btUptimeSecondsLimit.$dirty ? 'has-error' : ''" ng-form="btUptimeSecondsLimit">
+                                <input type="number" class="form-control" name="btUptimeSecondsLimit" ng-model="anprParameter.btUptimeSecondsLimit" min="0" max="100000"
+                                    required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-4">
+                            <label for="agsparkingEntryLane1VideoFeedUrl">{{translation.KEY_SCREEN_VIDEO_FEED_URL_LABEL}}. {{translation.KEY_SCREEN_LANE_NUMBER_LABEL}} 1</label>
+                            <div ng-class="agsparkingEntryLane1VideoFeedUrl.$invalid && agsparkingEntryLane1VideoFeedUrl.$dirty ? 'has-error' : ''" ng-form="agsparkingEntryLane1VideoFeedUrl">
+                                <input type="url" class="form-control" name="agsparkingEntryLane1VideoFeedUrl" ng-model="anprParameter.agsparkingEntryLane1VideoFeedUrl">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-4">
+                            <label for="agsparkingEntryLane2VideoFeedUrl">{{translation.KEY_SCREEN_VIDEO_FEED_URL_LABEL}}. {{translation.KEY_SCREEN_LANE_NUMBER_LABEL}} 2</label>
+                            <div ng-class="agsparkingEntryLane2VideoFeedUrl.$invalid && agsparkingEntryLane2VideoFeedUrl.$dirty ? 'has-error' : ''" ng-form="agsparkingEntryLane2VideoFeedUrl">
+                                <input type="url" class="form-control" name="agsparkingEntryLane2VideoFeedUrl" ng-model="anprParameter.agsparkingEntryLane2VideoFeedUrl">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-4">
+                            <label for="agsparkingEntryLane3VideoFeedUrl">{{translation.KEY_SCREEN_VIDEO_FEED_URL_LABEL}}. {{translation.KEY_SCREEN_LANE_NUMBER_LABEL}} 3</label>
+                            <div ng-class="agsparkingEntryLane3VideoFeedUrl.$invalid && agsparkingEntryLane3VideoFeedUrl.$dirty ? 'has-error' : ''" ng-form="agsparkingEntryLane3VideoFeedUrl">
+                                <input type="url" class="form-control" name="agsparkingEntryLane3VideoFeedUrl" ng-model="anprParameter.agsparkingEntryLane3VideoFeedUrl">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-4">
+                            <label for="agsparkingEntryLane4VideoFeedUrl">{{translation.KEY_SCREEN_VIDEO_FEED_URL_LABEL}}. {{translation.KEY_SCREEN_LANE_NUMBER_LABEL}} 4</label>
+                            <div ng-class="agsparkingEntryLane4VideoFeedUrl.$invalid && agsparkingEntryLane4VideoFeedUrl.$dirty ? 'has-error' : ''" ng-form="agsparkingEntryLane4VideoFeedUrl">
+                                <input type="url" class="form-control" name="agsparkingEntryLane4VideoFeedUrl" ng-model="anprParameter.agsparkingEntryLane4VideoFeedUrl">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-4">
+                            <label for="agsparkingEntryLane5VideoFeedUrl">{{translation.KEY_SCREEN_VIDEO_FEED_URL_LABEL}}. {{translation.KEY_SCREEN_LANE_NUMBER_LABEL}} 5</label>
+                            <div ng-class="agsparkingEntryLane5VideoFeedUrl.$invalid && agsparkingEntryLane5VideoFeedUrl.$dirty ? 'has-error' : ''" ng-form="agsparkingEntryLane5VideoFeedUrl">
+                                <input type="url" class="form-control" name="agsparkingEntryLane5VideoFeedUrl" ng-model="anprParameter.agsparkingEntryLane5VideoFeedUrl">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-12">
+                            <div class="animate-if" ng-if="anprFormErrorResponse !== ''">
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{anprFormErrorResponse}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center col-sm-12" style="padding-bottom: 30px;">
+                            <button ng-click="update()" class="btn btn-success" style="width: 100%;" ng-disabled="disableSubmitButton || anprForm.$pristine || anprForm.$invalid">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_BUTTON_UPDATE}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

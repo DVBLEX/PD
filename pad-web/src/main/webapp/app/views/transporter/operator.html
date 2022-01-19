@@ -1,0 +1,107 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_USER_ACCOUNTS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_USER_ACCOUNTS_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="add()" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('first_name');"> {{translation.KEY_SCREEN_FIRST_NAME_LABEL}} <span
+                                ng-show="sortType == 'first_name' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'first_name' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('last_name');"> {{translation.KEY_SCREEN_LAST_NAME_LABEL}} <span
+                                ng-show="sortType == 'last_name' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'last_name' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('email');"> {{translation.KEY_SCREEN_EMAIL_LABEL}} <span
+                                ng-show="sortType == 'email' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'email' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>{{translation.KEY_SCREEN_ROLE_LABEL}}</td>
+                        <td>{{translation.KEY_SCREEN_STATUS_LABEL}}</td>
+                        <td><a href="" ng-click="sort('is_active');"> {{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}? <span
+                                ng-show="sortType == 'is_active' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'is_active' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_last_login');"> {{translation.KEY_SCREEN_DATE_LAST_LOGIN_LABEL}} <span
+                                ng-show="sortType == 'date_last_login' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'date_last_login' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortType == 'date_created' && sortReverse" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortType == 'date_created' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="6%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = (padTable.data | orderBy:sortType:sortReverse)">
+                    <tr>
+                        <td title="{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}">{{row.firstName}}</td>
+                        <td title="{{translation.KEY_SCREEN_LAST_NAME_LABEL}}">{{row.lastName}}</td>
+                        <td title="{{translation.KEY_SCREEN_EMAIL_LABEL}}">{{row.email}}</td>
+                        <td title="{{translation.KEY_SCREEN_ROLE_LABEL}}" class="text-center"><span class="label label-primary"
+                            ng-if="row.roleId === operatorRoleConstants.OPERATOR_ROLE_TRANSPORTER">{{translation.KEY_SCREEN_TRANSPORTER_LABEL}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_STATUS_LABEL}}" class="text-center"><span class="label label-success" ng-if="row.password !== ''">{{translation.KEY_SCREEN_REGISTERED_UPPER_LABEL}}</span>
+                            <span class="label label-danger" ng-if="row.password === ''">{{translation.KEY_SCREEN_UNREGISTERED_UPPER_LABEL}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}?" class="text-center"><span class="label label-success" ng-if="row.isActive">{{translation.KEY_SCREEN_YES_LABEL}}</span>
+                            <span class="label label-primary" ng-if="!row.isActive">{{translation.KEY_SCREEN_NO_LABEL}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_DATE_LAST_LOGIN_LABEL}}">{{row.dateLastLoginString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td class="text-center nowrap">
+                            <button class="btn btn-default btn-xsm" ng-click="edit(row); $event.stopPropagation();" title="{{translation.KEY_SCREEN_EDIT_LABEL}}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button class="btn btn-primary btn-xsm" ng-click="passwordResetSend(row); $event.stopPropagation();" ng-disabled="disableSubmitButton"
+                                title="{{translation.KEY_SCREEN_SEND_SETUP_PASSWORD_LABEL}}">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="9" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_USER_ACCOUNT_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="9" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+USE pad;
+
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1507', '1', 'KEY_VEHICLE_NOT_REQUIRED_TO_ENTER_PARKING_MESSAGE', 'The vehicle is not required to go to AGS parking');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1508', '2', 'KEY_VEHICLE_NOT_REQUIRED_TO_ENTER_PARKING_MESSAGE', 'Le véhicule n\'est pas obligé de se rendre au parking AGS');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1509', '1', 'KEY_SCREEN_TRIP_SINGLE_PORT_ENTRY_MESSAGE', 'The vehicle associated with this trip will be authorised to enter the port once between');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1510', '2', 'KEY_SCREEN_TRIP_SINGLE_PORT_ENTRY_MESSAGE', 'Le véhicule associé à ce voyage sera autorisé à entrer une fois dans le port entre');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1511', '1', 'KEY_SCREEN_TRIP_MULTIPLE_PARKING_ENTRIES_MESSAGE', 'The vehicle associated with this trip will be authorised to enter the AGS parking and the port multiple times from');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1512', '2', 'KEY_SCREEN_TRIP_MULTIPLE_PARKING_ENTRIES_MESSAGE', 'Le véhicule associé à ce voyage sera autorisé à entrer plusieurs fois dans le parking AGS et le port à partir de');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1513', '1', 'KEY_VEHICLE_REQUIRED_TO_ENTER_PARKING_MESSAGE', 'The vehicle must go to AGS before entering the port on each trip');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1514', '2', 'KEY_VEHICLE_REQUIRED_TO_ENTER_PARKING_MESSAGE', 'Le véhicule doit se rendre à AGS avant d\'entrer dans le port à chaque voyage');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1515', '1', 'KEY_VEHICLE_REQUIRED_TO_ENTER_PARKING_SINGLE_MESSAGE', 'The vehicle must go to AGS before entering the port');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1516', '2', 'KEY_VEHICLE_REQUIRED_TO_ENTER_PARKING_SINGLE_MESSAGE', 'Le véhicule doit se rendre à AGS avant d\'entrer dans le port');

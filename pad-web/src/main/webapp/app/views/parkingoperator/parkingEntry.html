@@ -1,0 +1,505 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PARKING}} {{translation.KEY_SCREEN_ENTRY_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="form-group col-md-12">
+            <h3>{{translation.KEY_NAVBAR_PARKING}} {{translation.KEY_SCREEN_ENTRY_LABEL}}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1" style="padding: 0px;" ng-show="!showAdhocTripScreen && !showOverviewScreen">
+        <form name="tripSearchForm" autocomplete="off" novalidate>
+
+            <div ng-class="vehicleRegNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="vehicleRegNumberInput">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" id="vehicleRegNumberInput" name="vehicleRegNumberInput" ng-model="formData.vehicleRegNumberInput"
+                    ng-disabled="searchTripSubmitButtonDisabled || tripSearchByOperatorAndTransactionType || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer"
+                    ng-change="vehicleRegNumberDivClass = ''; vehicleRegNumberSpanClass = ''" required capitalize alphanumeric autofocus>
+                <span style="right: 15px; top: 30px;" ng-class="vehicleRegNumberSpanClass"></span>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="tripSearchByOperatorAndTransactionType || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                <label class="font-size-18" for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                <select id="operatorType" name="operatorType" class="form-control input-lg" ng-model="formData.operatorType"
+                    ng-disabled="tripSearchByOperatorAndTransactionTypeAndReference"
+                    ng-options="operator.id as operator.name for operator in portOperatorList | orderBy: 'name'" required>
+                </select>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="(tripSearchByOperatorAndTransactionType || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer) &&
+                independentOperators.length !== 0">
+                <label class="font-size-18" for="independentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label>
+                <input type="text" class="form-control input-lg" id="independentOperatorName" name="independentOperatorName"
+                    ng-model="formData.independentOperatorName" ng-disabled="tripSearchByOperatorAndTransactionTypeAndReference" required />
+            </div>
+
+            <div ng-class="transactionTypeDivClass" class="form-group col-xs-12 col-sm-12 col-md-12"
+                ng-show="tripSearchByOperatorAndTransactionType || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                <label class="font-size-18" for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                <select id="transactionType" name="transactionType" class="form-control input-lg" ng-model="formData.transactionType"
+                    ng-options="entry.transactionType as (entry.translateKey | translate) for entry in portOperatorTransactionTypes | orderBy: 'translateKey'"
+                    ng-change="transactionTypeDivClass = ''; transactionTypeSpanClass = '';"
+                    ng-disabled="tripSearchByOperatorAndTransactionTypeAndReference || formData.operatorType === undefined || formData.operatorType === ''" required>
+                </select>
+                <span style="right: 15px; top: 30px;" ng-class="transactionTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="referenceNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12"
+                ng-show="(tripSearchByOperatorAndTransactionTypeAndReference || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer)
+                && (referenceNumbersList === undefined || referenceNumbersList == null || referenceNumbersList.length == 0)">
+                <label class="font-size-18" for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+
+                <input type="text" class="form-control input-lg" name="referenceNumber" ng-model="formData.referenceNumber"
+                    ng-change="referenceNumberDivClass = ''; referenceNumberSpanClass = ''" ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH"
+                    maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}" capitalize alphanumeric required>
+                <span style="right: 15px; top: 30px;" ng-class="referenceNumberSpanClass"></span>
+            </div>
+
+            <div ng-class="referenceNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12"
+                ng-show="(tripSearchByOperatorAndTransactionTypeAndReference || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer)
+                && referenceNumbersList !== undefined && referenceNumbersList != null && referenceNumbersList.length > 0">
+                <label class="font-size-18" for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                <select class="form-control input-lg" name="referenceNumber" ng-model="formData.referenceNumber"
+                    ng-change="referenceNumberDivClass = ''; referenceNumberSpanClass = ''; searchTrip(3);" required>
+                    <option ng-repeat="item in referenceNumbersList">{{item}}</option>
+                </select>
+                <span style="right: 15px; top: 30px;" ng-class="referenceNumberSpanClass"></span>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <div class="animate-if" ng-if="searchTripErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{searchTripErrorResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row"></div>
+            <br />
+            <div class="row"></div>
+            <br />
+            <div class="row"></div>
+
+            <div ng-hide="isProcessFinished">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12"
+                    ng-show="!tripSearchByOperatorAndTransactionType && !tripSearchByOperatorAndTransactionTypeAndReference && !tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                    <button ng-click="searchTrip(1)" ng-disabled="searchTripSubmitButtonDisabled" class="btn btn-success btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12"
+                    ng-show="tripSearchByOperatorAndTransactionType && !tripSearchByOperatorAndTransactionTypeAndReference && !tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                    <button ng-click="searchTrip(2)" ng-disabled="searchTripSubmitButtonDisabled" class="btn btn-success btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12"
+                    ng-show="tripSearchByOperatorAndTransactionTypeAndReference || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                    <button ng-click="searchTrip(3)" ng-disabled="searchTripSubmitButtonDisabled" class="btn btn-success btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12"
+                    ng-show="tripSearchByOperatorAndTransactionType || tripSearchByOperatorAndTransactionTypeAndReference || tripSearchByOperatorAndTransactionTypeAndReferenceOrContainer">
+                    <button ng-click="clearTripSearchForm()" ng-disabled="searchTripSubmitButtonDisabled" class="btn btn-danger btn-lg btn-block">
+                        <span class="glyphicon glyphicon-arrow-left"></span> {{translation.KEY_BUTTON_BACK}}
+                    </button>
+                </div>
+            </div>
+
+            <div ng-show="isProcessFinished">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12 no-margin-bottom">
+                    <button ng-click="clearTripSearchForm()" class="btn btn-info btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1" style="padding: 0px;" ng-show="showAdhocTripScreen">
+        <form name="saveAdhocTripForm" autocomplete="off" novalidate>
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="vehicleRegNumberInput">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="vehicleRegNumberInput" ng-model="formData.vehicleRegNumberInput" ng-disabled="showAdhocTripScreen">
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="vehicleRegistrationCountryISO">{{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}}</label>
+                <div style="width: 100%;">
+                    <select class="form-control input-lg" name="vehicleRegistrationCountryISO" id="vehicleRegistrationCountryISO" ng-model="formData.vehicleRegistrationCountryISO"
+                        required>
+                        <option ng-repeat="regCountry in regCountryOptions | orderBy: 'name'"
+                                value="{{regCountry.value}}">{{regCountry.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                <select id="operatorType" name="operatorType" class="form-control input-lg" ng-model="formData.operatorType" disabled="showAdhocTripScreen"
+                    ng-options="operator.id as operator.name for operator in portOperatorList | orderBy: 'name'">
+                </select>
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="independentOperators.length !== 0">
+                <label class="font-size-18" for="independentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label>
+                <input type="text" class="form-control input-lg" id="independentOperatorName" name="independentOperatorName"
+                    ng-model="formData.independentOperatorName" ng-disabled="showAdhocTripScreen" required />
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                <select id="transactionType" name="transactionType" class="form-control input-lg" ng-model="formData.transactionType"
+                    ng-options="entry.transactionType as (entry.translateKey | translate) for entry in portOperatorTransactionTypes  | orderBy: 'translateKey'"
+                        ng-disabled="showAdhocTripScreen || formData.operatorType === undefined || formData.operatorType === ''" required>
+                </select>
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="gateNumber">{{translation.KEY_SCREEN_PORT_OPERATOR_GATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="gateNumber"
+                ng-value="getGateNumberFromSelectedPortOperatorAndTransactionType(formData.operatorType, formData.transactionType)" ng-disabled="true">
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="referenceNumber" ng-model="formData.referenceNumber" ng-disabled="showAdhocTripScreen">
+            </div>
+
+            <div ng-class="mobileNumberDivClass" class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                <div style="width: 100%;">
+                    <input type="text" class="form-control input-lg" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber"
+                        ng-change="mobileNumberDivClass = ''; mobileNumberSpanClass = ''" ng-intl-tel-input required>
+                    <span style="top: 32px; right: 15px;" ng-class="mobileNumberSpanClass"></span>
+                </div>
+            </div>
+
+            <div ng-class="driverLanguageIdDivClass" class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="driverLanguageId">{{translation.KEY_SCREEN_DRIVER_LANGUAGE_LABEL}}</label>
+                <div style="width: 100%;">
+                    <select class="form-control input-lg" name="driverLanguageId" id="driverLanguageId" ng-model="formData.driverLanguageId"
+                        ng-change="driverLanguageIdDivClass = ''; driverLanguageIdSpanClass = ''" required>
+                        <option ng-repeat="languageId in languageIdOptions | orderBy: 'name'"
+                                value="{{languageId.value}}">{{languageId.name}}
+                        </option>
+                    </select>
+                    <span style="top: 32px; right: 15px;" ng-class="mobileNumberSpanClass"></span>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="dateSlot">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label>
+                <div style="z-index: 1;" class="ad_hoc_trip_slot_start_date date input-group pad-datepicker-container margin-rigth">
+                    <input type="text" class="pad-datepicker-input form-control input-lg" id="dateSlot" name="dateSlot" ng-model="dateSlot" required>
+                    <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-6 col-sm-6 col-md-6">
+                <label class="font-size-18" for="timeSlot">{{translation.KEY_SCREEN_SLOT_TIME_LABEL}}</label>
+                <select id="timeSlot" name="timeSlot" class="form-control input-lg" ng-model="formData.timeSlot"
+                    ng-options="entry.time as entry.timeFormat disable when entry.isTimeSlotDisabled for entry in tripBookingTimeJsonList"
+                    ng-disabled="tripBookingTimeJsonList.length == 0" required>
+                </select>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18"
+                ng-show="(formData.accountName != '' && formData.accountName !== undefined) &&
+            (formData.companyName == '' || formData.companyName === undefined)">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}: {{formData.accountName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.companyName == '' || formData.companyName == undefined">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}: {{formData.companyName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.companyName == '' || formData.companyName == undefined || formData.accountBalance == undefined">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}}: {{formData.accountBalance| customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <div class="animate-if" ng-if="saveAdhocTripErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{saveAdhocTripErrorResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <div class="animate-if" ng-if="missionFoundSuccessResponse !== ''">
+                    <div class="alert alert-success font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{missionFoundSuccessResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="!tripSearchByOperatorAndTransactionType">
+                <button ng-click="saveAdhocTrip()" ng-disabled="saveAdhocTripSubmitButtonDisabled" class="btn btn-success btn-lg btn-block">
+                    <span class="glyphicon glyphicon-send"></span> {{translation.KEY_SCREEN_CREATE_ADHOC_TRIP_LABEL}}
+                </button>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="showAdhocTripScreen">
+                <button ng-click="backToSearchByReferenceNumber()" ng-disabled="saveAdhocTripSubmitButtonDisabled" class="btn btn-danger btn-lg btn-block">
+                    <span class="glyphicon glyphicon-arrow-left"></span> {{translation.KEY_BUTTON_BACK}}
+                </button>
+            </div>
+
+        </form>
+
+        <ad_hoc_trip_slot_start-d-p></ad_hoc_trip_slot_start-d-p>
+
+    </div>
+
+    <div class="col-md-10 col-md-offset-1" style="padding: 0px;" ng-show="showOverviewScreen">
+        <form name="tripBalanceCheckForm" autocomplete="off" novalidate>
+            <div ng-class="vehicleRegNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="vehicleRegNumberInput">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="vehicleRegNumberInput" ng-model="formData.vehicleRegNumberInput" ng-maxlength="16" maxlength="16"
+                    ng-disabled="showOverviewScreen" ng-change="vehicleRegNumberDivClass = ''; vehicleRegNumberSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="vehicleRegNumberSpanClass"></span>
+            </div>
+
+            <div ng-class="vehicleRegNumberDivClass" class="form-group col-xs-9 col-sm-8 col-md-8 col-lg-10">
+                <label class="font-size-18" for="vehicleRegistrationCountryISO">{{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}}</label>
+                <div style="width: 100%;">
+                    <select class="form-control input-lg" name="vehicleRegistrationCountryISO" id="vehicleRegistrationCountryISO" ng-model="formData.vehicleRegistrationCountryISO"
+                    required ng-disabled="showOverviewScreen && !isVehicleRegCountryISOEditRequested">
+                        <option ng-repeat="regCountry in regCountryOptions | orderBy: 'name'"
+                                value="{{regCountry.value}}">{{regCountry.name}}
+                        </option>
+                    </select>
+                    <span style="right: 15px; top: 30px;" ng-class="vehicleRegNumberSpanClass"></span>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-3 col-sm-4 col-md-4 col-lg-2" style="text-align: right; padding-left: 0px; margin-top: 40px;">
+                <button ng-show="isVehicleRegCountryISOEditRequested" ng-click="updateVehicleRegCountryISO()" class="btn btn-success btn-md"
+                    ng-disabled="tripBalanceCheckForm.vehicleRegistrationCountryISO.$pristine">
+                    <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_BUTTON_UPDATE}}
+                </button>
+                <button ng-show="isVehicleRegCountryISOEditRequested" ng-click="cancelVehicleRegCountryISOEdit()" class="btn btn-danger btn-md" ng-disabled="disableControls">
+                    <span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}
+                </button>
+                <button ng-show="!isVehicleRegCountryISOEditRequested" ng-click="requestVehicleRegCountryISOEdit()" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                    <span class="glyphicon glyphicon-edit"></span> {{translation.KEY_SCREEN_EDIT_LABEL}}
+                </button>
+            </div>
+
+            <div ng-class="operatorTypeDivClass" class="form-group col-xs-12 col-sm-6 col-md-6">
+                <label class="font-size-18" for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                <select id="operatorType" name="operatorType" class="form-control input-lg" ng-model="formData.operatorType" disabled="showOverviewScreen"
+                    ng-change="operatorTypeDivClass = ''; operatorTypeSpanClass = ''" ng-options="operator.id as operator.name for operator in portOperatorList | orderBy: 'name'">
+                </select>
+                <span style="right: 15px; top: 30px;" ng-class="operatorTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="operatorTypeDivClass" class="form-group col-xs-12 col-sm-6 col-md-6" ng-show="independentOperators.length !== 0">
+                <label class="font-size-18" for="independentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label>
+                <input type="text" class="form-control input-lg" id="independentOperatorName" name="independentOperatorName"
+                    ng-model="formData.independentOperatorName" disabled="showOverviewScreen" required />
+                <span style="right: 15px; top: 30px;" ng-class="operatorTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="transactionTypeDivClass" class="form-group col-xs-12 col-sm-6 col-md-6">
+                <label class="font-size-18" for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="transactionType" ng-value="getTransactionTypeName(formData.operatorType, formData.transactionType + '')" ng-maxlength="64"
+                    maxlength="64" ng-disabled="showOverviewScreen">
+                <span style="right: 15px; top: 30px;" ng-class="transactionTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="operatorTypeDivClass" class="form-group col-xs-12 col-sm-6 col-md-6">
+                <label class="font-size-18" for="gateNumber">{{translation.KEY_SCREEN_PORT_OPERATOR_GATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="gateNumber"
+                    ng-value="getGateNumberFromSelectedPortOperatorAndTransactionType(formData.operatorType, formData.transactionType)" ng-disabled="true">
+                <span style="right: 15px; top: 30px;" ng-class="operatorTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="referenceNumberDivClass" class="form-group col-xs-12 col-sm-6 col-md-6">
+                <label class="font-size-18" for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="referenceNumber" ng-model="formData.referenceNumber" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="referenceNumberDivClass = ''; referenceNumberSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="referenceNumberSpanClass"></span>
+            </div>
+
+            <div ng-class="slotDateDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="slotDate">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="slotDate" ng-model="formData.dateSlotString" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="slotDateDivClass = ''; slotDateSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="slotDateSpanClass"></span>
+            </div>
+
+            <div ng-class="slotDateDivClass" class="form-group col-xs-12 col-sm-12 col-md-12"
+                ng-hide="formData.dateParkingEntryString === undefined || formData.dateParkingEntryString === '' || formData.dateParkingEntryString === null">
+                <label class="font-size-18" for="slotDate">{{translation.KEY_SCREEN_ENTRY_DATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="parkingEntryDate" ng-model="formData.dateParkingEntryString" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="slotDateDivClass = ''; slotDateSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="slotDateSpanClass"></span>
+            </div>
+
+            <div ng-class="mobileNumberDivClass" class="form-group col-xs-3 col-sm-4 col-md-4 col-lg-5">
+                <label class="font-size-18" for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                <div style="width: 100%;">
+                    <input type="text" class="form-control input-lg" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber"
+                        ng-change="mobileNumberDivClass = ''; mobileNumberSpanClass = ''" ng-intl-tel-input required
+                        ng-disabled="showOverviewScreen && !isMobileNumberEditRequested">
+                    <span style="top: 32px; right: 15px;" ng-class="mobileNumberSpanClass"></span>
+                </div>
+            </div>
+
+            <div ng-class="driverLanguageIdDivClass" class="form-group col-xs-3 col-sm-4 col-md-4 col-lg-5">
+                <label class="font-size-18" for="driverLanguageId">{{translation.KEY_SCREEN_DRIVER_LANGUAGE_LABEL}}</label>
+                <div style="width: 100%;">
+                    <select class="form-control input-lg" name="driverLanguageId" id="driverLanguageId" ng-model="formData.driverLanguageId"
+                        ng-change="driverLanguageIdDivClass = ''; driverLanguageIdSpanClass = ''" required ng-disabled="showOverviewScreen && !isMobileNumberEditRequested">
+                        <option ng-repeat="languageId in languageIdOptions | orderBy: 'name'"
+                                value="{{languageId.value}}">{{languageId.name}}
+                        </option>
+                    </select>
+
+                    <span style="top: 32px; right: 15px;" ng-class="driverLanguageIdSpanClass"></span>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-3 col-sm-4 col-md-4 col-lg-2" style="text-align: right; padding-left: 0px; margin-top: 40px;">
+                <button ng-show="isMobileNumberEditRequested" ng-click="updateDriverMobileNumber()" class="btn btn-success btn-md"
+                    ng-disabled="tripBalanceCheckForm.mobileNumber.$pristine && tripBalanceCheckForm.driverLanguageId.$pristine">
+                    <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_BUTTON_UPDATE}}
+                </button>
+                <button ng-show="isMobileNumberEditRequested" ng-click="cancelMobileNumberEdit()" class="btn btn-danger btn-md" ng-disabled="disableControls">
+                    <span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}
+                </button>
+                <button ng-show="!isMobileNumberEditRequested" ng-click="requestMobileNumberEdit()" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                    <span class="glyphicon glyphicon-edit"></span> {{translation.KEY_SCREEN_EDIT_LABEL}}
+                </button>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18"
+                ng-show="(formData.accountName != '' && formData.accountName !== undefined) &&
+            (formData.companyName == '' || formData.companyName === undefined)">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}: {{formData.accountName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.companyName == '' || formData.companyName == undefined">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}: {{formData.companyName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.companyName == '' || formData.companyName == undefined || formData.accountBalance == undefined">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}}: {{formData.accountBalance | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</label>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6" style="text-align: right;">
+                        <span class="label label-success" ng-if="formData.parkingStatus !== undefined && formData.parkingStatus == 1">{{getParkingStatusText(formData.parkingStatus)
+                            | uppercase}}</span> <span class="label label-danger" ng-if="formData.parkingStatus !== undefined && formData.parkingStatus == 2">{{getParkingStatusText(formData.parkingStatus)
+                            | uppercase}}</span> <span class="label label-danger" ng-if="formData.parkingStatus !== undefined && formData.parkingStatus == 3">{{getParkingStatusText(formData.parkingStatus)
+                            | uppercase}}</span> <span class="label label-warning" ng-if="formData.isAdHoc">AD HOC</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-if="updateMobileNumberErrorResponse !== ''">
+                <div class="animate-if" ng-if="updateMobileNumberErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{updateMobileNumberErrorResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-if="updateMobileNumberSuccessResponse !== ''">
+                <div class="animate-if" ng-if="updateMobileNumberSuccessResponse !== ''">
+                    <div class="alert alert-success font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{updateMobileNumberSuccessResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-if="addHocTripSuccessResponse !== ''">
+                <div class="animate-if" ng-if="addHocTripSuccessResponse !== ''">
+                    <div class="alert alert-success font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{addHocTripSuccessResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-if="tripBalanceCheckErrorResponse !== ''">
+                <div class="animate-if" ng-if="tripBalanceCheckErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{tripBalanceCheckErrorResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-if="proceedToPaymentOrParkingSuccessResponse !== ''">
+                <div class="animate-if" ng-if="proceedToPaymentOrParkingSuccessResponse !== ''">
+                    <div class="alert alert-success font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{proceedToPaymentOrParkingSuccessResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-hide="isProcessFinished">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="proceedToParking && !proceedToPayment && proceedToPaymentOrParkingSuccessResponse == ''">
+                    <button ng-click="proceedVehicleEntry(1)" class="btn btn-primary btn-lg btn-block">
+                        <span class="glyphicon glyphicon-menu-right"></span> {{translation.KEY_SCREEN_PROCEED_TO_PARKING_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="!proceedToParking && proceedToPayment && proceedToPaymentOrParkingSuccessResponse == ''">
+                    <button ng-click="proceedVehicleEntry(2)" class="btn btn-success btn-lg btn-block">
+                        <span class="glyphicon glyphicon-credit-card"></span> {{translation.KEY_SCREEN_PROCEED_TO_PAYMENT_LABEL}}
+                    </button>
+                </div>
+            </div>
+
+            <div ng-show="isProcessFinished" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <div class="animate-if" ng-if="searchTripErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{searchTripErrorResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="isProcessFinished || showOverviewScreen">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                    <button ng-click="clearTripSearchForm()" class="btn btn-info btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>

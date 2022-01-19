@@ -1,0 +1,70 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item"><a href="" ng-click="go('/vehicle')">{{translation.KEY_NAVBAR_VEHICLES}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_ADD_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_ADD_VEHICLE_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="go('/vehicle')" type="button" class="btn btn-warning btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-arrow-left"></span> {{translation.KEY_BUTTON_BACK}}
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Content -->
+        <div class="Page-content">
+
+            <div class="col-md-12" style="padding: 0px;">
+                <form name="vehicleAddForm" autocomplete="off" novalidate>
+                    <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="regCountry">{{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}}</label>
+                            <select id="regCountry" name="regCountry" class="form-control" ng-model="formData.regCountry" ng-init="formData.regCountry='SN'" required autofocus>
+                                <option ng-repeat="regCountry in regCountryOptions | orderBy: 'name'"
+                                        value="{{regCountry.value}}">{{regCountry.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="regNumber">{{translation.KEY_SCREEN_REGISTRATION_NUMBER_LABEL}}</label>
+                            <input type="text" class="form-control" id="regNumber" name="regNumber" ng-model="formData.regNumber"
+                                ng-minlength="validationConstants.REGNUMBER_VALIDATION_LENGTH_MIN" minlength="{{validationConstants.REGNUMBER_VALIDATION_LENGTH_MIN}}"
+                                ng-maxlength="validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX" maxlength="{{validationConstants.REGNUMBER_VALIDATION_LENGTH_MAX}}"
+                                ng-trim="true" required capitalize alphanumeric>
+                        </div>
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="make">{{translation.KEY_SCREEN_MAKE_LABEL}}</label>
+                            <input type="text" class="form-control" id="make" name="make" ng-model="formData.make" minlength="2" ng-minlength="2" ng-maxlength="16" maxlength="16"
+                                ng-trim="true" avoid-special-chars>
+                        </div>
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="color">{{translation.KEY_SCREEN_COLOR_LABEL}} <span class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label>
+                            <input type="text" class="form-control" id="color" name="color" ng-model="formData.color" ng-maxlength="16" maxlength="16" ng-trim="true" avoid-special-chars
+                                avoid-numbers>
+                        </div>
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <div class="animate-if" ng-if="addVehicleErrorResponse !== ''">
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{addVehicleErrorResponse}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center col-sm-8 col-sm-offset-2" style="padding-bottom: 30px;">
+                            <button ng-click="addVehicle()" class="btn btn-success" style="width: 100%;" ng-disabled="addVehicleSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

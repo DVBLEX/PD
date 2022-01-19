@@ -1,0 +1,133 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">Port {{translation.KEY_SCREEN_EXIT_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Port {{translation.KEY_SCREEN_EXIT_LABEL}}</h3>
+        </div>
+    </div>
+    <!-- Content -->
+    <div class="col-md-10 col-md-offset-1" style="padding: 0px;">
+        <form name="vehicleRegSearchForm" autocomplete="off" novalidate>
+            <div style="padding: 0px;">
+
+                <div ng-class="divRegNumExitClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                    <label class="font-size-18" for="vehicleRegNumber">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" id="vehicleRegNumber" name="vehicleRegNumber" ng-model="formData.vehicleRegNumber" ng-maxlength="16"
+                        maxlength="16" ng-disabled="proceedExit" ng-change="divRegNumExitClass = ''; spanRegNumExitClass = ''" ng-disabled="isProcessFinished" required autofocus
+                        capitalize>
+
+                    <span style="right: 15px; top: 30px;" ng-class="spanRegNumExitClass"></span>
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.portOperator">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-value="getOperatorName(portAccess.portOperator) + ' ' + portAccess.independentPortOperatorName" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.transactionType">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-value="getTransactionTypeName(portAccess.portOperator, portAccess.transactionType + '')" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.referenceNumber">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.referenceNumber" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.dateSlotString">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.dateSlotString" disabled="disabled">
+                </div>
+                
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.accountNumber && portAccess.accountNumber > 0">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.accountNumber" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.companyName && portAccess.companyName != ''">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.companyName" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6"
+                    ng-show="portAccess && (!portAccess.companyName || portAccess.companyName == '')  && portAccess.accountName  && portAccess.accountName != ''">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.accountName" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.driverName">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_DRIVER_NAME_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.driverName" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.driverMobile">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_DRIVER_MOBILE_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.driverMobile" disabled="disabled">
+                </div>
+
+                <div class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="portAccess && portAccess.driverLicenceNumber">
+                    <label class="font-size-18">{{translation.KEY_SCREEN_DRIVER_LICENCE_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" ng-model="portAccess.driverLicenceNumber" disabled="disabled">
+                </div>
+
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-12 font-size-18" style="padding: 0px;" ng-show="portAccess && portAccess.isAdHoc">
+                <div style="padding: 0px;">
+                    <div class="form-group col-xs-12 col-sm-12 col-md-12" style="text-align: right;">
+                        <span class="label label-warning">AD HOC</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <div class="animate-if" ng-if="searchVehicleRegErrorResponse !== ''">
+                    <div class="alert alert-danger font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{searchVehicleRegErrorResponse}}
+                    </div>
+                </div>
+
+                <div class="animate-if" ng-if="searchVehicleRegSuccessResponse !== ''">
+                    <div class="alert alert-success font-size-18" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{searchVehicleRegSuccessResponse}}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-hide="isProcessFinished">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-hide="proceedExit">
+                    <button ng-click="searchEnteredVehicleReg()" class="btn btn-success btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12" style="margin-bottom: 35px;" ng-show="proceedExit">
+                    <button ng-click="showGenericConfirmationModal(translation.KEY_SCREEN_CONFIRM_ACTION_MESSAGE + '?', vehiclePortExit)" class="btn btn-info btn-lg btn-block">
+                        <span class="glyphicon glyphicon-log-out"></span> {{translation.KEY_SCREEN_PROCEED_LABEL}}
+                    </button>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="proceedExit">
+                    <button ng-click="resetRegSearch()" class="btn btn-info btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+            <div ng-show="isProcessFinished">
+                <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                    <button ng-click="resetRegSearch()" class="btn btn-info btn-lg btn-block">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>

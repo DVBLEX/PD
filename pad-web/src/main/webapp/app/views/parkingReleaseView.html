@@ -1,0 +1,144 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_PARKING_RELEASE_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+
+    <!-- Content -->
+    <div class="row" style="padding: 0px;">
+
+        <div class="col-md-12 text-right" ng-if="isParkingOfficeOperator == 'true'">
+            <span style="position: absolute; right: 60px;">{{translation.KEY_SCREEN_READONLY_LABEL}}?&nbsp;&nbsp;</span>
+            <label class="switch-small">
+                <input type="checkbox" class="form-control" name="isParkingSupervisorReadOnlyEnabled" ng-model="isParkingSupervisorReadOnlyEnabled" ng-checked="isParkingSupervisorReadOnlyEnabled"
+                ng-change="updateParkingSupervisorReadOnlyFlag()" ng-disabled="disableControls">
+                <span class="slider-small round"></span>
+            </label>
+        </div>
+
+        <div class="text-center font-size-13" ng-repeat="portOperator in portOperatorList">
+            <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4" ng-repeat="entry in getParkingReleaseStatsByPortOperator(portOperator.id)">
+                <div class="card" style="width: 11rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-text"></p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-size-15" style="padding: 5px 5px; height: 60px;" title="{{portOperator.name}} - {{entry.translateKey | translate}}">
+                            {{portOperator.nameShort}} - {{entry.translateKeyShort | translate}} <br> <b>{{entry.parkingSessionsCount}}</b></li>
+                        <li class="list-group-item" style="padding: 5px 5px;" ng-if="entry.isAutoReleaseOn === false">
+                            <button ng-click="toggleAutoRelease(portOperator, entry)" class="btn btn-danger btn-md" ng-disabled="disableControls" title="{{translation.KEY_SCREEN_START_AUTO_RELEASE_LABEL}}">
+                                <span class="glyphicon glyphicon-play" style="font-size: 200%;"></span>
+                            </button>
+                        </li>
+                        <li class="list-group-item" style="padding: 5px 5px;" ng-if="entry.isAutoReleaseOn === true">
+                            <button ng-click="toggleAutoRelease(portOperator, entry)" class="btn btn-success btn-md" ng-disabled="disableControls" title="{{translation.KEY_SCREEN_PAUSE_AUTO_RELEASE_LABEL}}">
+                                <span class="glyphicon glyphicon-pause" style="font-size: 200%;"></span>
+                            </button>
+                        </li>
+                        <li class="list-group-item font-size-15" style="padding: 5px 5px;">60 Min <br> {{entry.vehiclesAlreadyReleasedCount}} / {{entry.bookingLimitCount}}</li>
+                        <li class="list-group-item text-align-left" style="padding: 2px 2px; height: 100px;" ng-if="entry.releasedVehicleRegistrationList.length > 0 && entry.releasedVehicleRegistrationList.length < 5">
+                            <span ng-repeat="vehicle in entry.releasedVehicleRegistrationList" ng-style="{'color': vehicle.colourCode}">{{vehicle.vehicleRegistration}}<br></span>
+                        </li>
+                        <li class="list-group-item text-align-left" style="padding: 2px 2px; height: 100px; overflow-y: scroll;" ng-if="entry.releasedVehicleRegistrationList.length >= 5">
+                            <span ng-repeat="vehicle in entry.releasedVehicleRegistrationList" ng-style="{'color': vehicle.colourCode}">{{vehicle.vehicleRegistration}}<br></span>
+                        </li>
+                        <li class="list-group-item" style="padding: 2px 2px; height: 100px;" ng-if="entry.releasedVehicleRegistrationList.length == 0">{{translation.KEY_SCREEN_NO_DATA_MESSAGE}}</li>
+                        <li class="list-group-item font-size-15" style="padding: 5px 10px 10px;">{{translation.KEY_SCREEN_RELEASE_LABEL}} <br>
+                            <select class="form-control input-md font-size-15" name="releaseCount" ng-init="entry.releaseCount = '5'" ng-model="entry.releaseCount" ng-disabled="entry.parkingSessionsCount == 0">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </li>
+                        <li class="list-group-item" style="padding: 5px 5px;">
+                            <button ng-click="showConfirmationModal(portOperator, entry)" class="btn btn-primary btn-md" ng-disabled="entry.parkingSessionsCount == 0 || disableControls"
+                            title="{{translation.KEY_SCREEN_MANUAL_RELEASE_LABEL}}">
+                                <span class="glyphicon glyphicon-step-forward" style="font-size: 200%;"></span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" ng-form="confirmationForm">
+        <fieldset>
+            <div class="modal-dialog modal-dialog-record" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" ng-click="closeConfirmationDialog()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="confirmationModalLabel">{{translation.KEY_SCREEN_MANUAL_RELEASE_LABEL}}</h4>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading font-size-18"></div>
+                                    <div class="panel-body">
+                                        <form name="confirmationForm" autocomplete="off" novalidate>
+                                            <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <b>{{translation.KEY_SCREEN_MANUAL_RELEASE_CONFIRMATION_PART1_MESSAGE}} {{selectedParkingReleaseStatsObject.releaseCount}}
+                                                            {{translation.KEY_SCREEN_MANUAL_RELEASE_CONFIRMATION_PART2_MESSAGE}}?</b>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_OPERATOR_LABEL}}: {{selectedPortOperator.name}}</div>
+                                                    <div class="col-md-12">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}: {{selectedParkingReleaseStatsObject.translateKey | translate}}</div>
+                                                    <div class="col-md-12">{{translation.KEY_SCREEN_VEHICLES_ALREADY_RELEASED_LABEL}}: {{selectedParkingReleaseStatsObject.releasedVehicleRegistrationList.length}}</div>
+                                                    <br>
+                                                    <br>
+                                                </div>
+
+                                                <br>
+
+                                                <div class="form-group" style="margin-bottom: 0px;">
+                                                    <div class="animate-if" ng-if="confirmActionErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert" style="margin-bottom: 0px;">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{confirmActionErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-alight-right">
+                        <button ng-click="triggerManualRelease()" class="btn btn-success outline-none width-modal-btn" ng-disabled="disableControls">
+                            <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_CONFIRM_LABEL}}
+                        </button>
+
+                        <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeConfirmationDialog()">
+                            <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>

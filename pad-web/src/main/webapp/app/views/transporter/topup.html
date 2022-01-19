@@ -1,0 +1,252 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_TOPUP_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid" ng-init="activeNavbar('#navbarTopupTransporter'); refreshTableData();">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_TOPUP_LABEL}}</h3>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <!-- Content -->
+        <div class="Page-content">
+
+            <div class="col-md-8 col-md-offset-2" style="padding: 0px;">
+                <div class="panel panel-info">
+                    <div class="panel-heading font-size-18">
+                        <b>{{translation.KEY_NAVBAR_PAYMENT}}</b>
+                    </div>
+                    <div class="panel-body">
+                        <form name="topupForm" autocomplete="off" novalidate>
+                            <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}</label>
+                                    </div>
+                                    <div class="col-md-8">{{accountTransporter.firstName}} {{accountTransporter.lastName}}</div>
+                                </div>
+
+                                <div class="row" ng-show="accountTransporter.companyName != ''">
+                                    <div class="col-md-4">
+                                        <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</label>
+                                    </div>
+                                    <div class="col-md-8">{{accountTransporter.companyName}}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>{{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}}</label>
+                                    </div>
+                                    <div class="col-md-8" ng-show="!isPaymentSuccessful">{{accountTransporter.balanceAmount | customCurrency : 0}}
+                                        {{getSymbolByCurrencyCode(accountTransporter.currency)}}</div>
+                                    <div class="col-md-8" ng-show="isPaymentSuccessful">{{newBalanceAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(accountTransporter.currency)}}</div>
+                                </div>
+
+                                <div class="row" ng-show="onlinePaymentRequestSubmitted">
+                                    <div class="col-md-4">
+                                        <label>{{translation.KEY_SCREEN_PAYMENT_OPTION_LABEL}}</label>
+                                    </div>
+                                    <div class="col-md-8">{{getPaymentOption(formData.paymentOption)}}</div>
+                                </div>
+
+                                <br>
+
+                                <div style="padding: 0px;" ng-show="!onlinePaymentRequestSubmitted && !isPaymentSuccessful">
+
+                                    <div class="form-group">
+                                        <label for="paymentOption">{{translation.KEY_SCREEN_PAYMENT_OPTION_LABEL}}</label>
+                                        <select id="paymentOption" name="paymentOption" class="form-control" ng-model="formData.paymentOption" required autofocus>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}}"
+                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_E_MONEY)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}})">E-Money -
+                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}}"
+                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_E_MONEY)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_E_MONEY}})">E-Money</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}}"
+                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ECOBANK)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}})">Ecobank -
+                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}}"
+                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ECOBANK)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ECOBANK}})">Ecobank</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}}"
+                                                    ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}})">Free Money -
+                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}}"
+                                                    ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY)"
+                                                    ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY}})">Free Money</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}}"
+                                                ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY)"
+                                                ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}})">Orange Money -
+                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}}"
+                                                ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY)"
+                                                ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY}})">Orange Money</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_WARI}}"
+                                                ng-if="!isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_WARI)"
+                                                ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_WARI}})">Wari -
+                                                {{translation.KEY_SCREEN_CURRENTLY_NOT_AVAILABLE_LABEL}}</option>
+
+                                            <option value="{{paymentOptionConstants.PAYMENT_OPTION_WARI}}"
+                                                ng-if="isPaymentOptionEnabled(paymentOptionConstants.PAYMENT_OPTION_WARI)"
+                                                ng-disabled="!isPaymentOptionEnabled({{paymentOptionConstants.PAYMENT_OPTION_WARI}})">Wari</option>
+
+
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-sm-6" style="padding-left: 0px;">
+                                        <label for="firstName">{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}</label>
+                                        <input type="text" class="form-control" name="firstName" ng-model="formData.firstName" ng-maxlength="32" maxlength="32" ng-trim="true"
+                                            required avoid-special-chars avoid-numbers>
+                                    </div>
+
+                                    <div class="form-group col-sm-6" style="padding-right: 0px;">
+                                        <label for="lastName">{{translation.KEY_SCREEN_LAST_NAME_LABEL}}</label>
+                                        <input type="text" class="form-control" name="lastName" ng-model="formData.lastName" ng-maxlength="32" maxlength="32" ng-trim="true"
+                                            required avoid-special-chars avoid-numbers>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="mobileNumber">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                                        <div style="width: 100%;">
+                                            <input type="text" class="form-control" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber" ng-intl-tel-input
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="amountTopup">{{translation.KEY_SCREEN_TOPUP_AMOUNT_LABEL}}</label>
+                                        <input type="text" class="form-control" name="amountTopup" id="amountTopup" ng-model="formData.amountTopup" input-currency ng-maxlength="15" maxlength="15" required>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 font-size-12">
+                                            <label>{{translation.KEY_SCREEN_ELETRONIC_RECEIPT_LABEL}}</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="animate-if" ng-if="makePaymentErrorResponse !== ''">
+                                            <div class="alert alert-danger" role="alert">
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                {{makePaymentErrorResponse}}
+                                            </div>
+                                        </div>
+                                        <div class="animate-if" ng-if="makePaymentInfoResponse !== ''">
+                                            <div class="alert alert-info" role="alert">
+                                                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <span class="sr-only">Info: </span>
+                                                {{makePaymentInfoResponse}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-block" ng-click="topupAccountBalance(accountTransporter)" ng-disabled="paymentConfirmationButtonDisabled">
+                                            <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_MAKE_PAYMENT_LABEL}}
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                                <div style="padding: 0px;" ng-show="onlinePaymentRequestSubmitted && !isPaymentSuccessful && makePaymentErrorResponse === ''">
+
+                                    <div class="form-group">
+                                        <div class="alert alert-warning" role="alert">
+                                            <span>
+                                                <div>
+                                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{translation.KEY_SCREEN_PAYMENT_CONFIRMATION_WAIT}}...
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group text-center">
+                                        <img src="app/img/loadingSpinner.gif" style="max-width: 120px; padding-bottom: 20px;">
+                                    </div>
+
+                                </div>
+
+                                <div style="padding: 0px;" ng-show="onlinePaymentRequestSubmitted && !isPaymentSuccessful && makePaymentErrorResponse !== ''">
+
+                                    <div class="form-group">
+                                        <div
+                                            ng-class="{'alert alert-danger': !isOnlinePaymentStatusCheckLimitReached, 'alert alert-warning': isOnlinePaymentStatusCheckLimitReached}"
+                                            role="alert">
+                                            <span>
+                                                <div>
+                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{makePaymentErrorResponse}}
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div style="padding: 0px;"
+                                    ng-show="isPaymentSuccessful
+                                                    && (formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY + ''
+                                                    || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY + ''
+                                                    || formData.paymentOption === paymentOptionConstants.PAYMENT_OPTION_E_MONEY + '')">
+
+                                    <div class="form-group">
+                                        <div class="alert alert-success" role="alert">
+                                            <span>
+                                                <div>
+                                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{translation.KEY_SCREEN_PAYMENT_SUCCESS_LABEL}}! <br> <br>
+                                                    <br> {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}: <b>{{paymentReference}}</b> <br>
+                                                    {{translation.KEY_SCREEN_ACCOUNT_BALANCE_CREDITED_LABEL}} {{formData.amountTopup | customCurrency : 0}}
+                                                    {{getSymbolByCurrencyCode(selectedRow.currency)}}
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div style="padding: 0px;"
+                                    ng-show="isPaymentSuccessful
+                                                    && (formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_ORANGE_MONEY + ''
+                                                    && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_FREE_MONEY + ''
+                                                    && formData.paymentOption !== paymentOptionConstants.PAYMENT_OPTION_E_MONEY + '')">
+
+                                    <div class="form-group">
+                                        <div class="alert alert-warning" role="alert">
+                                            <span>
+                                                <div>
+                                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{translation.KEY_SCREEN_PAYMENT_INITIATED_LABEL}}! <br> <br>
+                                                    <br> {{translation.KEY_SCREEN_REFERENCE_NUMBER_LABEL}}: <b>{{paymentReference}}</b>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

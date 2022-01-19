@@ -1,0 +1,162 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PARKING}} {{translation.KEY_SCREEN_EXIT_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{translation.KEY_NAVBAR_PARKING}} {{translation.KEY_SCREEN_EXIT_LABEL}}</h3>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="row" ng-hide="showOverviewScreen">
+        <div class="col-md-10 col-md-offset-1">
+            <form name="vehicleRegSearchForm" autocomplete="off" novalidate>
+                <div ng-class="divRegNumExitClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                    <label class="font-size-18" for="vehicleRegNumber">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                    <input type="text" class="form-control input-lg" id="vehicleRegNumber" name="vehicleRegNumber" ng-model="formData.vehicleRegNumber" ng-disabled="proceedExit"
+                        ng-change="divRegNumExitClass = ''; spanRegNumExitClass = ''" required capitalize alphanumeric autofocus>
+                    <span style="right: 15px; top: 30px;" ng-class="spanRegNumExitClass"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" ng-show="showOverviewScreen">
+        <div class="col-md-10 col-md-offset-1">
+            <div ng-class="vehicleRegNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="vehicleRegNumberInput">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="vehicleRegNumberInput" ng-model="formData.vehicleRegNumber" ng-maxlength="16" maxlength="16"
+                    ng-disabled="showOverviewScreen" ng-change="vehicleRegNumberDivClass = ''; vehicleRegNumberSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="vehicleRegNumberSpanClass"></span>
+            </div>
+
+            <div ng-class="operatorTypeDivClass" class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="formData.parkingType == 1">
+                <label class="font-size-18" for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="operatorType" ng-model="formData.operatorType" ng-value="getOperatorName(formData.operatorType) + ' ' + formData.independentPortOperatorName" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="operatorTypeSpanClass = ''; operatorTypeSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="operatorTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="transactionTypeDivClass" class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="formData.parkingType == 1">
+                <label class="font-size-18" for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="transactionType" ng-value="getTransactionTypeName(formData.operatorType, formData.transactionType + '')" ng-maxlength="64"
+                    maxlength="64" ng-disabled="showOverviewScreen">
+                <span style="right: 15px; top: 30px;" ng-class="transactionTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="transactionTypeDivClass" class="form-group col-xs-6 col-sm-6 col-md-6" ng-show="formData.parkingType == 1">
+                <label class="font-size-18" for="gateNumber">{{translation.KEY_SCREEN_PORT_OPERATOR_GATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="gateNumber" ng-value="getGateNumberFromSelectedPortOperatorAndTransactionType(formData.operatorType, formData.transactionType)" ng-disabled="showOverviewScreen">
+                <span style="right: 15px; top: 30px;" ng-class="transactionTypeSpanClass"></span>
+            </div>
+
+            <div ng-class="referenceNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="formData.parkingType == 1">
+                <label class="font-size-18" for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="referenceNumber" ng-model="formData.referenceNumber" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="referenceNumberDivClass = ''; referenceNumberSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="referenceNumberSpanClass"></span>
+            </div>
+
+            <div ng-class="slotDateDivClass" class="form-group col-xs-12 col-sm-12 col-md-12" ng-show="formData.parkingType == 1">
+                <label class="font-size-18" for="slotDate">{{translation.KEY_SCREEN_SLOT_DATE_LABEL}}</label>
+                <input type="text" class="form-control input-lg" name="slotDate" ng-model="formData.dateSlotString" ng-maxlength="64" maxlength="64"
+                    ng-disabled="showOverviewScreen" ng-change="slotDateDivClass = ''; slotDateSpanClass = ''">
+                <span style="right: 15px; top: 30px;" ng-class="slotDateSpanClass"></span>
+            </div>
+
+            <div ng-class="mobileNumberDivClass" class="form-group col-xs-12 col-sm-12 col-md-12">
+                <label class="font-size-18" for="mobileNumber">{{translation.KEY_SCREEN_DRIVER_MOBILE_NUMBER_LABEL}}</label>
+                <div style="width: 100%;">
+                    <input type="text" class="form-control input-lg" name="mobileNumber" id="mobileNumber" ng-model="formData.mobileNumber"
+                        ng-change="mobileNumberDivClass = ''; mobileNumberSpanClass = ''" ng-intl-tel-input required ng-disabled="showOverviewScreen">
+                    <span style="top: 32px; right: 15px;" ng-class="mobileNumberSpanClass"></span>
+                </div>
+            </div>
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" style="text-align: right;" ng-show="formData.parkingType == 1 && formData.isAdHoc">
+                <span class="label label-warning">AD HOC</span>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18"
+                ng-show="(formData.accountName != '' && formData.accountName !== undefined) && (formData.companyName == '' || formData.companyName === undefined)">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_NAME_LABEL}}: {{formData.accountName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.companyName == '' || formData.companyName == undefined" style="margin-bottom: 0px;">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}: {{formData.companyName}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 font-size-18" ng-hide="formData.accountBalance == undefined" style="margin-bottom: 0px;">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <label>{{translation.KEY_SCREEN_ACCOUNT_BALANCE_LABEL}}: {{formData.accountBalance | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="form-group col-md-10 col-md-offset-1" style="margin-bottom: 0px;">
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 animate-if" ng-if="searchVehicleRegErrorResponse !== ''" style="margin-bottom: 0px;">
+                <div class="alert alert-danger font-size-18" role="alert" style="margin-bottom: 0px;">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{searchVehicleRegErrorResponse}}
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 animate-if" ng-if="searchVehicleRegSuccessResponse !== ''" style="margin-bottom: 0px;">
+                <div class="alert alert-success font-size-18" role="alert" style="margin-bottom: 0px;">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Message: </span> {{searchVehicleRegSuccessResponse}}
+                </div>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-12 col-md-12 animate-if" ng-if="searchVehicleRegSuccessWarningResponse !== ''" style="margin-bottom: 0px;">
+                <div class="alert alert-warning font-size-18" role="alert" style="margin-bottom: 0px;">
+                    <span class="sr-only">Message: </span> {{searchVehicleRegSuccessWarningResponse}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row" ng-hide="proceedExit">
+        <div class="form-group col-md-10 col-md-offset-1">
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <button ng-click="searchEnteredVehicleReg()" class="btn btn-success btn-lg btn-block">
+                    <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <br />
+    <div class="row" ng-show="isVehicleRegFound">
+        <div class="form-group col-md-10 col-md-offset-1">
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <button ng-click="exitVehicle()" class="btn btn-info btn-lg btn-block" ng-disabled="proceedExitSubmitButtonDisabled">
+                    <span class="glyphicon glyphicon-log-out"></span> {{translation.KEY_SCREEN_PROCEED_LABEL}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row" ng-show="proceedExit || isProcessFinished">
+        <div class="form-group col-md-10 col-md-offset-1">
+            <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                <button ng-click="resetRegSearch()" class="btn btn-info btn-lg btn-block">
+                    <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_NEW_SEARCH_LABEL}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

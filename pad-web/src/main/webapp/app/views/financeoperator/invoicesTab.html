@@ -1,0 +1,109 @@
+<div ng-controller="AccountsInvoicesTabController">
+    <div class="table-responsive">
+        <table class="pad-table">
+            <thead>
+            <tr>
+                <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                        ng-show="sortColumn == 'date_created' && sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                        ng-show="sortColumn == 'date_created' && !sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                </a></td>
+
+                <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span
+                        ng-show="sortColumn == 'type' && sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                        ng-show="sortColumn == 'type' && !sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                </a></td>
+
+                <td><a href="" ng-click="sort('reference');"> {{translation.KEY_SCREEN_NUMBER_LABEL}} <span
+                        ng-show="sortColumn == 'reference' && sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                        ng-show="sortColumn == 'reference' && !sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                </a></td>
+
+                <td><a href="" ng-click="sort('amount');">
+                    {{translation.KEY_SCREEN_AMOUNT_LABEL}} <span
+                        ng-show="sortColumn == 'amount' && sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                        ng-show="sortColumn == 'amount' && !sortAsc"
+                        class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                </a></td>
+
+                <td><a href="" ng-click="sort('date_due');"> {{translation.KEY_SCREEN_DATE_DUE_LABEL}}
+                    <span
+                            ng-show="sortColumn == 'date_due' && sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'date_due' && !sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                </a></td>
+
+                <td></td>
+
+            </tr>
+            </thead>
+
+            <colgroup>
+                <col width="20%">
+                <col width="17%">
+                <col width="20%">
+                <col width="17%">
+                <col width="20%">
+                <col width="6%">
+            </colgroup>
+
+            <tbody ng-repeat="row in rows = (padTable.data)">
+
+            <tr>
+
+                <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}" class="text-center">{{row.dateCreatedString}}</td>
+
+                <td title="{{translation.KEY_SCREEN_TYPE_LABEL}}" class="text-center">
+                    <span class="label label-info" ng-if="row.type == invoicesTypeConstants.INVOICES_TYPE_STATEMENT">{{translation.KEY_SCREEN_STATEMENT_LABEL | uppercase}}</span>
+                    <span class="label label-success" ng-if="row.type == invoicesTypeConstants.INVOICES_TYPE_INVOICE">{{translation.KEY_SCREEN_INVOICE_LABEL | uppercase}}</span>
+                </td>
+
+                <td title="{{translation.KEY_SCREEN_NUMBER_LABEL}}">
+                    {{row.reference}}
+                </td>
+
+                <td title="{{translation.KEY_SCREEN_AMOUNT_LABEL}}" class="text-right">
+                    <span>{{row.amount | customCurrency: 0}} {{getSymbolByCurrencyCode(account.currency)}}</span>
+                </td>
+
+                <td title="{{translation.KEY_SCREEN_DATE_DUE_LABEL}}" class="text-center">
+                    <span ng-if="row.type !== 1">{{row.dateDueString}}</span>
+                </td>
+
+                <td class="text-center">
+                    <form target="_blank" method="post" action="invoice/download" class="form-inline"
+                          ng-submit="downloadInvoice(row)">
+                        <button type="submit" class="btn btn-info btn-sm" ng-disabled="row.downloaded"
+                                title="{{translation.KEY_SCREEN_DOWNLOAD_LABEL}}">
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                        </button>
+                        <input type="hidden" name="code" ng-value="row.code"/>
+                    </form>
+                </td>
+
+            </tr>
+
+            </tbody>
+
+            <tr ng-show="padTable.count == 0">
+                <td colspan="6" class="pad-table-extension-cell text-center">
+                    {{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}
+                </td>
+            </tr>
+
+            <!-- PAD Table Pagination -->
+            <tr>
+                <td colspan="6" class="pad-table-extension-cell text-left">
+                    <pad-table-pagination></pad-table-pagination>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

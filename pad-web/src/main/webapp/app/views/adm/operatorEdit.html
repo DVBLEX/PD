@@ -1,0 +1,112 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item"><a href="" ng-click="go('/operator')">{{translation.KEY_SCREEN_OPERATORS_LABEL}}</a></li>
+        <li class="breadcrumb-item active" ng-show="operator.code === undefined">{{translation.KEY_SCREEN_ADD_LABEL}}</li>
+        <li class="breadcrumb-item active" ng-show="operator.code !== undefined">{{translation.KEY_SCREEN_EDIT_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;" ng-show="operator.code === undefined">{{translation.KEY_SCREEN_ADD_STAFF_USER_LABEL}}</h3>
+            <h3 style="margin-left: 40px;" ng-show="operator.code !== undefined">{{translation.KEY_SCREEN_UPDATE_STAFF_USER_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="unlockOperator()" type="button" class="btn btn-primary btn-md" ng-if="operator.code !== undefined && operator.isLocked" ng-disabled="disableSubmitButton">
+                <span class="glyphicon glyphicon-lock"></span> {{translation.KEY_SCREEN_UNLOCK_LABEL}}
+            </button>
+            <button ng-click="go('/operator')" type="button" class="btn btn-warning btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-arrow-left"></span> {{translation.KEY_BUTTON_BACK}}
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Content -->
+        <div class="Page-content">
+
+            <div class="col-md-12" style="padding: 0px;">
+                <form name="operatorForm" autocomplete="off" novalidate>
+                    <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="firstName">{{translation.KEY_SCREEN_FIRST_NAME_LABEL}}</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" ng-model="operator.firstName" ng-maxlength="32" maxlength="32" required>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="lastName">{{translation.KEY_SCREEN_LAST_NAME_LABEL}}</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" ng-model="operator.lastName" ng-maxlength="32" maxlength="32" required>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="email">{{translation.KEY_SCREEN_EMAIL_LABEL}} <span class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label>
+                            <input type="text" class="form-control" id="email" name="email" ng-model="operator.email" ng-pattern="emailRegexp" ng-maxlength="64" maxlength="64">
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="msisdn">{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                            <div style="width: 100%;">
+                                <input type="text" class="form-control" name="msisdn" id="msisdn" ng-model="operator.msisdn" ng-intl-tel-input required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <label for="role">{{translation.KEY_SCREEN_ROLE_LABEL}}</label>
+                            <select id="role" name="role" class="form-control" ng-init="operator.role = operator.roleId + ''" ng-model="operator.role" ng-disabled="action === 'Edit'" required>
+                                <option ng-repeat="operatorRole in operatorRoleOptions | orderBy: 'name'"
+                                        value="{{operatorRole.value}}">{{operatorRole.name}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2" ng-show="operator.role == '' + {{operatorRoleConstants.OPERATOR_ROLE_PORT_OPERATOR}}">
+                            <label for="portOperator">{{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_OPERATOR_LABEL}}</label>
+                            <select id="portOperator" name="portOperator" class="form-control" ng-init="operator.portOperator = operator.portOperatorId"
+                                    ng-model="operator.portOperator" ng-disabled="action === 'Edit'"
+                                    ng-options="operator.id as operator.name for operator in portOperatorsForAddingStaff | orderBy: 'name'" required>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2" ng-show="independentOperators.length !== 0 && operator.role == '' + {{operatorRoleConstants.OPERATOR_ROLE_PORT_OPERATOR}}">
+                            <label for="independentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label>
+                            <input type="text" class="form-control" id="independentOperatorName" name="independentOperatorName"
+                                   ng-model="independentOperatorName" ng-disabled="action === 'Edit'" required />
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2" ng-show="action === 'Add'">
+                            <label for="language">{{translation.KEY_SCREEN_LANGUAGE_LABEL}}</label>
+                            <select id="language" name="language" class="form-control" ng-model="operator.language" required>
+                                <option value="EN">{{translation.KEY_SCREEN_ENGLISH_LABEL}}</option>
+                                <option value="FR">{{translation.KEY_SCREEN_FRENCH_LABEL}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2" ng-show="action === 'Edit'">
+                            <label for="isActive">{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}?</label>
+                            <select id="isActive" name="isActive" class="form-control" ng-init="operator.isActive = operator.isActive + ''" ng-model="operator.isActive" ng-disabled="operator.password === ''" required>
+                                <option value="true">{{translation.KEY_SCREEN_YES_LABEL}}</option>
+                                <option value="false">{{translation.KEY_SCREEN_NO_LABEL}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-8 col-sm-offset-2">
+                            <div class="animate-if" ng-if="operatorFormErrorResponse !== ''">
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                    {{operatorFormErrorResponse}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center col-sm-8 col-sm-offset-2" style="padding-bottom: 30px;">
+                            <button ng-click="save()" class="btn btn-success" style="width: 100%;" ng-disabled="disableSubmitButton">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

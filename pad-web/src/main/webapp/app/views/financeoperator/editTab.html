@@ -1,0 +1,41 @@
+<div class="div-edit-form" ng-controller="AccountsEditTabController">
+
+    <div ng-form="editForm">
+        <form name="editForm" autocomplete="off">
+            <div class="form-group">
+                <label for="amountOverdraftLimit">{{translation.KEY_SCREEN_MAX_AMOUNT_OVERDRAFT_LIMIT_LABEL}}</label>
+                <input type="text" class="form-control input-width-240" name="amountOverdraftLimit" id="amountOverdraftLimit"
+                       ng-model="amountOverdraftLimit" input-currency ng-maxlength="15" maxlength="15" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="isDeleted">{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}?</label>
+                <select style="width: 160px !important;" class="form-control margin-rigth input-sm filter-input" id="isActive" name="isActive" ng-model="isActive">
+                <option value="false">{{translation.KEY_SCREEN_NO_LABEL | uppercase}}</option>
+                <option value="true">{{translation.KEY_SCREEN_YES_LABEL | uppercase}}</option>
+            </select>
+            </div>
+            
+
+            <div class="alert alert-danger alert-inline" role="alert" ng-if="accountActivateErrorResponse !==''">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                {{accountActivateErrorResponse}}
+            </div>
+
+
+            <div class="form-group font-size-12">
+                <div class="">
+                    <button ng-click="updateEditForm()" class="btn btn-success" type="submit"
+                            ng-disabled="disableSubmitButton || editForm.$invalid || editForm.$pristine">
+                        {{translation.KEY_BUTTON_SAVE}}
+                    </button>
+                    <button ng-click="restoreValue()" class="btn btn-info" type="submit"
+                            ng-disabled="disableSubmitButton || editForm.$pristine">
+                        {{translation.KEY_SCREEN_CANCEL_MESSAGE}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>

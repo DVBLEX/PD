@@ -1,0 +1,131 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_MISSIONS}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_MISSIONS}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="missionsFilterButton" data-toggle="collapse" data-target="#missionSearchCollapse"
+                aria-expanded="false" aria-controls="missionSearchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="missionSearchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="missionFiltersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label> <input type="text" class="form-control margin-rigth input-sm filter-input"
+                            name="referenceNumber" ng-model="filterReferenceNumber" ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH"
+                            maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}" ng-disabled="filtersDisabled" capitalize alphanumeric>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="searchMission()" class="btn btn-success" style="width: 100%;" ng-disabled="searchMissionSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearchMission()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_BAD_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_mission_start');"> {{translation.KEY_SCREEN_START_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_mission_start' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_mission_start' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_mission_end');"> {{translation.KEY_SCREEN_END_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_mission_end' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_mission_end' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td>{{translation.KEY_SCREEN_TRIPS_BOOKED_LABEL}} / {{translation.KEY_SCREEN_COMPLETED_LABEL}}</td>
+
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="10%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col width="12%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{getOperatorName(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 2)}}">
+                            {{getOperatorNameShort(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 1)}}
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}">{{row.referenceNumber}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}">
+                            <span class="label label-info">{{getTransactionTypeName(row.portOperatorId, row.transactionType) | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td title="{{translation.KEY_SCREEN_START_DATE_LABEL}}">{{row.dateMissionStartString}}</td>
+                        <td title="{{translation.KEY_SCREEN_END_DATE_LABEL}}">{{row.dateMissionEndString}}</td>
+                        <td title="{{translation.KEY_SCREEN_TRIPS_BOOKED_LABEL}} / {{translation.KEY_SCREEN_COMPLETED_LABEL}}">{{row.tripsBookedCount}} / {{row.tripsCompletedCount}}</td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="7" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_MISSION_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="7" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,212 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_LANES_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>{{translation.KEY_SCREEN_LANES_LABEL}}</h3>
+        </div>
+
+        <div class="col-md-6 text-right">
+            <button ng-click="addLaneModal();" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('lane_id');"> {{translation.KEY_SCREEN_LANE_ID_LABEL}} <span
+                                ng-show="sortColumn == 'lane_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'lane_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('lane_number');"> {{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}} <span
+                                ng-show="sortColumn == 'lane_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'lane_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('zone_id');"> {{translation.KEY_SCREEN_ZONE_ID_LABEL}} <span
+                                ng-show="sortColumn == 'zone_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'zone_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('device_id');"> {{translation.KEY_SCREEN_DEVICE_LABEL}} <span
+                                ng-show="sortColumn == 'device_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'device_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('device_name');"> {{translation.KEY_SCREEN_DEVICE_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'device_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'device_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('allowed_hosts');"> {{translation.KEY_SCREEN_ALLOWED_HOSTS_LABEL}} <span
+                                ng-show="sortColumn == 'allowed_hosts' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'allowed_hosts' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('printer_ip');"> {{translation.KEY_SCREEN_PRINTER_IP_LABEL}} <span
+                                ng-show="sortColumn == 'printer_ip' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'printer_ip' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_last_request');"> {{translation.KEY_SCREEN_DATE_LAST_REQUEST_LABEL}} <span
+                                ng-show="sortColumn == 'date_last_request' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_last_request' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}?</td>
+                        <td></td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="8%">
+                    <col width="9%">
+                    <col width="8%">
+                    <col width="13%">
+                    <col width="13%">
+                    <col width="13%">
+                    <col width="10">
+                    <col width="13%">
+                    <col width="8%">
+                    <col width="5%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{translation.KEY_SCREEN_LANE_ID_LABEL}}">{{row.laneId}}</td>
+                        <td title="{{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}}">{{row.laneNumber}}</td>
+                        <td title="{{translation.KEY_SCREEN_ZONE_ID_LABEL}}">{{row.zoneId}}</td>
+                        <td title="{{translation.KEY_SCREEN_DEVICE_LABEL}}">{{row.deviceId}}</td>
+                        <td title="{{translation.KEY_SCREEN_DEVICE_NAME_LABEL}}">{{row.deviceName}}</td>
+                        <td title="{{translation.KEY_SCREEN_ALLOWED_HOSTS_LABEL}}">{{row.allowedHosts}}</td>
+                        <td title="{{translation.KEY_SCREEN_PRINTER_IP_LABEL}}">{{row.printerIp}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_LAST_REQUEST_LABEL}}" class="text-center">{{row.dateLastRequestString}}</td>
+                        <td class="text-center">
+                            <label class="switch-small" style="margin-top: 10px;">
+                                <input type="checkbox" class="form-control" name="isActive" ng-model="row.isActive" ng-checked="row.isActive" ng-change="activateLane(row)">
+                                <span class="slider-small round"></span>
+                            </label>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-primary btn-sm" ng-click="updateLaneModal(row); $event.stopPropagation();" title="{{translation.KEY_BUTTON_UPDATE}}">
+                                <span class="glyphicon glyphicon-pencil"> </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="10" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="10" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal fade" id="laneModal" tabindex="-1" role="dialog" aria-labelledby="laneModalLabel" ng-form="laneForm">
+            <fieldset>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeLaneModal()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="laneModalLabel">{{modalTitle}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form name="laneForm" autocomplete="off" novalidate>
+                                        <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                            <div class="form-group col-md-6">
+                                                <label for="laneId">{{translation.KEY_SCREEN_LANE_ID_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.laneId.$invalid && laneForm.laneId.$dirty}">
+                                                    <input type="text" class="form-control" name="laneId" ng-model="formData.laneId" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="laneNumber">{{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.laneNumber.$invalid && laneForm.laneNumber.$dirty}">
+                                                    <input type="text" class="form-control" name="laneNumber" ng-model="formData.laneNumber" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="zoneId">{{translation.KEY_SCREEN_ZONE_ID_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.zoneId.$invalid && laneForm.zoneId.$dirty}">
+                                                    <input type="text" class="form-control" name="zoneId" ng-model="formData.zoneId" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="deviceId">{{translation.KEY_SCREEN_DEVICE_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.deviceId.$invalid && laneForm.deviceId.$dirty}">
+                                                    <input type="text" class="form-control" name="deviceId" ng-model="formData.deviceId" ng-pattern="regexMacAddress" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="deviceName">{{translation.KEY_SCREEN_DEVICE_NAME_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.deviceName.$invalid && laneForm.deviceName.$dirty}">
+                                                    <input type="text" class="form-control" name="deviceName" ng-model="formData.deviceName" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="allowedHosts">{{translation.KEY_SCREEN_ALLOWED_HOSTS_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.allowedHosts.$invalid && laneForm.allowedHosts.$dirty}">
+                                                    <input type="text" class="form-control" name="allowedHosts" ng-model="formData.allowedHosts" required>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group col-md-6">
+                                                <label for="printerIp">{{translation.KEY_SCREEN_PRINTER_IP_LABEL}}</label>
+                                                <div ng-class="{'has-error': laneForm.printerIp.$invalid && laneForm.printerIp.$dirty}">
+                                                    <input type="text" class="form-control" name="printerIp" ng-model="formData.printerIp" ng-pattern="regexIpAddress">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <div class="animate-if" ng-if="laneErrorResponse !== ''">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Error: </span> {{laneErrorResponse}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-center">
+                            <button ng-click="saveOrUpdate();" class="btn btn-success" ng-disabled="buttonsDisabled || laneForm.$invalid || laneForm.$pristine">
+                                <span class="glyphicon glyphicon-ok"></span> {{modalButtonLabel}}
+                            </button>
+                            <button type="button" class="btn btn-danger" ng-click="closeLaneModal()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

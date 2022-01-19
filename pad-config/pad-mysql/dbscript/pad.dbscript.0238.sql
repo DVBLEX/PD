@@ -1,0 +1,27 @@
+USE pad;
+
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Chauffeurs' WHERE (`id` = '8');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Véhicules et Chauffeurs' WHERE (`id` = '130');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Choisissez un chauffeur' WHERE (`id` = '134');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Chauffeur' WHERE (`id` = '142');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Numéro du permis de conduire' WHERE (`id` = '176');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Aucun chauffeur retourné' WHERE (`id` = '178');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Ajouter un chauffeur' WHERE (`id` = '180');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Entrer le numéro du permis de conduire du chauffeur' WHERE (`id` = '192');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Numéro d\'immatriculation' WHERE (`id` = '258');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Marque' WHERE (`id` = '262');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Nom du chauffeur' WHERE (`id` = '286');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Immatriculation' WHERE (`id` = '324');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Numéro de portable du chauffeur' WHERE (`id` = '460');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Mission non trouvée. Veuillez saisir le numéro de portable du chauffeur et la date et l’heure pour créer le voyage ad hoc' WHERE (`id` = '470');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Mission trouvée. Veuillez saisir le numéro de portable du chauffeur et la date et l’heure pour créer le voyage ad hoc' WHERE (`id` = '472');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Chauffeur notifié' WHERE (`id` = '722');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Veuillez entrer un autre numéro de portable du chauffeur afin de le mettre à jour' WHERE (`id` = '768');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Le chauffeur a déjà été associé à ce compte de transporteur' WHERE (`id` = '996');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Chauffeur ajouté avec succès' WHERE (`id` = '998');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Modifier le chauffeur' WHERE (`id` = '1004');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Êtes-vous sûr de vouloir supprimer l\'association à ce chauffeur?' WHERE (`id` = '1008');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Aviser le chauffeur qu\'il est autorisé à se rendre immédiatement à l\'entrée du port' WHERE (`id` = '1158');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Informez le chauffeur qu\'il n\'a pas été autorisé à entrer dans le port pour le moment. Une amende sera appliquée au chauffeur s’il tente d’entrer dans le port. Ils doivent regagner l\'aire de stationnement pour attendre l\'autorisation d\'entrer dans le port. Ils doivent être de retour dans l\'aire de stationnement dans les 45 prochaines minutes, sans quoi des frais supplémentaires seront appliqués' WHERE (`id` = '1160');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Informez le chauffeur qu\'il n\'a pas été autorisé à entrer dans le port pour le moment. Une amende sera appliquée au chauffeur s\'il tente d\'entrer dans le port' WHERE (`id` = '1162');
+UPDATE `pad`.`language_keys` SET `translate_value` = 'Supprimer l\'association de chauffeur' WHERE (`id` = '1208');

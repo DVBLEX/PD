@@ -1,0 +1,360 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_ACCOUNT_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_ACCOUNT_LABEL}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel-body" ng-cloak>
+            <form name="submitDataForm" autocomplete="off" novalidate>
+            
+                <div class="col-sm-3 form-group margin-top panel panel-default" style="padding: 20px;" ng-if="transporterAccountPaymentTermsType == accountPaymentTermsTypeConstants.ACCOUNT_PAYMENT_TERMS_TYPE_PREPAY">
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_CURRENT_ACCOUNT_BALANCE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.balanceAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_COSTS_APPROVED_TRIPS_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.amountApprovedTrips | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_EXPECTED_BALANCE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.balanceAmount - formData.amountApprovedTrips | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                    <hr>
+                    <div class="row" style="display: none;">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_LIMIT_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.amountOverdraftLimit | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                    <hr style="display: none;">
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <button ng-click="go('/topupTransporter')" class="btn btn-primary btn-md" style="margin-right: 10px;"><span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_TOPUP_LABEL}}</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-3 form-group margin-top panel panel-default" style="padding: 20px;" ng-if="transporterAccountPaymentTermsType != accountPaymentTermsTypeConstants.ACCOUNT_PAYMENT_TERMS_TYPE_PREPAY">
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_CURRENT_ACCOUNT_BALANCE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.balanceAmount | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                    <hr>
+                    <div class="row" style="display: none;">
+                        <div class="col-sm-6" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_LIMIT_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6 font-size-25">{{formData.amountOverdraftLimit | customCurrency : 0}} {{getSymbolByCurrencyCode(formData.currency)}}</div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5 form-group margin-top panel panel-default" style="padding: 20px; margin-left: 30px;">
+                    
+                    <div class="row">
+                        <div class="col-sm-5" style="padding-top: 5px;">
+                            <label>{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7 font-size-25"><b>{{formData.number}}</b></div>
+                    </div>
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_ACCOUNT_TYPE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">{{getAccountTypeText(formData.type)}}</div>
+                    </div>
+                    <hr>
+                    <div class="row" ng-hide="formData.type == 2">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_TRANSPORTER_COMPANY_NAME_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">{{formData.companyName}}</div>
+                    </div>
+                    <hr ng-hide="formData.type == 2">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_ACCOUNT_HOLDER_NAME_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">{{formData.firstName}} {{formData.lastName}}</div>
+                    </div>
+                    <hr>
+                    <div class="row" ng-hide="formData.type == 2">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_COMPANY_RESGISTRATION_NUMBER_MESSAGE}}</label>
+                        </div>
+                        <div class="col-sm-7">{{formData.companyRegistration}}</div>
+                    </div>
+                    <hr ng-hide="formData.type == 2">
+
+                    <div class="row" ng-init="editEmailListInvoiceStatement = false;">
+                        <div class="col-sm-5">
+                            <label ng-show="formData.paymentTermsType == accountPaymentTermsTypeConstants.ACCOUNT_PAYMENT_NO_TERMS_TYPE">{{translation.KEY_SCREEN_ACCOUNT_UPDATE_EMAIL_LIST_LABEL}}</label>
+                            <label ng-show="formData.paymentTermsType == accountPaymentTermsTypeConstants.ACCOUNT_PAYMENT_TERMS_TYPE_PREPAY">{{translation.KEY_SCREEN_ACCOUNT_UPDATE_STATEMENT_EMAIL_LIST_LABEL}}</label>
+                            <label ng-show="formData.paymentTermsType == accountPaymentTermsTypeConstants.ACCOUNT_PAYMENT_TERMS_TYPE_POSTPAY">{{translation.KEY_SCREEN_ACCOUNT_UPDATE_INVOICE_EMAIL_LIST_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input ng-show="editEmailListInvoiceStatement" type="text" class="form-control" name="newEmail" ng-model="newEmail" required>
+                            <hr ng-show="editEmailListInvoiceStatement" class="hr-margin-1">
+                            <div ng-repeat="email in formData.emailListInvoiceStatement">
+                                <div class="emails-content-wrapper">
+                                    <span class="padding-right-5px">
+                                        {{email}}
+                                    </span>
+                                    <button ng-click="removeEmail($index)" ng-show="editEmailListInvoiceStatement" class="btn btn-danger btn-xsm"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                                <hr ng-show="editEmailListInvoiceStatement" class="hr-margin-2">
+                            </div>
+                        </div>
+                        <div class="col-sm-1" ng-show="editEmailListInvoiceStatement" style="padding-left: 0">
+                            <button ng-click="addEmail()" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                        <div class="col-sm-2" ng-show="editEmailListInvoiceStatement">
+                            <button ng-click="updateEmailListInvoiceStatement()" class="btn btn-success btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button ng-click="closeEditEmailListInvoiceStatement()" class="btn btn-danger btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-1" ng-hide="editEmailListInvoiceStatement">
+                            <button ng-click="editEmailListInvoiceStatement = true" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row" ng-hide="formData.type == 2" ng-init="editCompanyTelephone = false;">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_TELEPHONE_NUMBER_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-4" ng-hide="editCompanyTelephone">{{formData.companyTelephone}}</div>
+                        <div class="col-sm-offset-2 col-sm-1" ng-hide="editCompanyTelephone">
+                            <button ng-click="editCompanyTelephone = true" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                        </div>
+                        
+                        <div class="col-sm-4" ng-show="editCompanyTelephone">
+                            <input type="text" class="form-control" name="companyTelephone" ng-model="companyTelephone" ng-intl-tel-input required>
+                        </div>
+                        <div class="col-sm-offset-1 col-sm-2" ng-show="editCompanyTelephone">
+                            <button ng-click="updateCompanyTelephone()" class="btn btn-success btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button ng-click="editCompanyTelephone = false; companyTelephone = '';" class="btn btn-danger btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                    </div>
+
+                    <hr ng-hide="formData.type == 2">
+                    <div class="row" ng-hide="formData.type == 1" ng-init="editMsisdn = false;">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_MOBILE_NUMBER_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6" ng-hide="editMsisdn">{{formData.msisdn}}</div>
+                        <div class="col-sm-1" ng-hide="editMsisdn">
+                            <button ng-click="editMsisdn = true" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                        </div>
+                        
+                        <div class="col-sm-5" ng-show="editMsisdn">
+                            <input type="text" class="form-control" name="msisdn" ng-model="msisdn" ng-intl-tel-input required>
+                        </div>
+                        <div class="col-sm-2" ng-show="editMsisdn">
+                            <button ng-click="updateMsisdn()" class="btn btn-success btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button ng-click="editMsisdn = false" class="btn btn-danger btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                    </div>
+                    <hr ng-hide="formData.type == 1">
+                    <div class="row" ng-hide="formData.type == 2">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_SPECIAL_TAX_STATUS_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <span ng-show="formData.specialTaxStatus">{{translation.KEY_SCREEN_YES_LABEL}}</span><span ng-show="!formData.specialTaxStatus">{{translation.KEY_SCREEN_NO_LABEL}}</span>
+                        </div>
+                    </div>
+                    <hr ng-hide="formData.type == 2">
+                    <div class="row" ng-hide="formData.type == 2">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_COMPANY_ADDRESS_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <span ng-bind-html="address | to_trusted_html"></span>
+                        </div>
+                        <div class="col-sm-1"><button ng-click="showAddressModal()" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button></div>
+                    </div>
+                    
+                    <div class="row" ng-hide="formData.type == 1">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_ADDRESS_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <span ng-bind-html="address | to_trusted_html"></span>
+                        </div>
+                        <div class="col-sm-1"><button ng-click="showAddressModal()" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button></div>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5" style="padding-top: 10px;">
+                            <label>{{translation.KEY_SCREEN_ACCOUNT_DEDUCT_CREDIT_REGISTERED_VEHICLES_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="switch-small" style="margin-top: 10px;">
+                                <input type="checkbox" class="form-control" ng-model="formData.isDeductCreditRegisteredTrucks" ng-checked="formData.isDeductCreditRegisteredTrucks"
+                                       ng-change="updateIsDeductCreditRegisteredTrucks()" ng-disabled="isUpdatingDeductCreditRegisteredTrucks">
+                                <span class="slider-small round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5" style="padding-top: 10px;">
+                            <label>{{translation.KEY_SCREEN_RECEIVE_TRIP_APPROVED_EMAIL_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="switch-small" style="margin-top: 10px;">
+                                <input type="checkbox" class="form-control" ng-model="formData.isTripApprovedEmail" ng-checked="formData.isTripApprovedEmail" ng-change="updateIsTripApprovedEmail()" ng-disabled="isUpdating">
+                                <span class="slider-small round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5" style="padding-top: 10px;">
+                            <label>{{translation.KEY_SCREEN_SEND_WARN_FOR_LOW_ACCOUNT_BALANCE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="switch-small" style="margin-top: 10px;">
+                                <input type="checkbox" class="form-control" ng-model="formData.isSendLowAccountBalanceWarn" ng-change="sendWarnMessage(true)"
+                                       ng-checked="formData.isSendLowAccountBalanceWarn" ng-disabled="isUpdatingWarnMessage || editAmountLowAccountBalanceWarn">
+                                <span class="slider-small round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr ng-hide="!formData.isSendLowAccountBalanceWarn">
+                    <div class="row" ng-hide="!formData.isSendLowAccountBalanceWarn">
+                        <div class="col-sm-5">
+                            <label>{{translation.KEY_SCREEN_AMOUNT_LOW_ACCOUNT_BALANCE_LABEL}}</label>
+                        </div>
+                        <div class="col-sm-4" ng-hide="editAmountLowAccountBalanceWarn">{{formData.amountLowAccountBalanceWarn}}</div>
+                        <div class="col-sm-offset-2 col-sm-1" ng-hide="editAmountLowAccountBalanceWarn">
+                            <button ng-click="editAmountLowAccountBalanceWarn = true" class="btn btn-primary btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                        </div>
+
+                        <div class="col-sm-4" ng-show="editAmountLowAccountBalanceWarn">
+                            <input type="text" class="form-control" name="newAmountLowAccountBalance" ng-model="newAmountLowAccountBalance" input-currency required>
+                        </div>
+                        <div class="col-sm-offset-1 col-sm-2" ng-show="editAmountLowAccountBalanceWarn">
+                            <button ng-click="sendWarnMessage(false)" class="btn btn-success btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button ng-click="closeAmountLowAccountBalance()" class="btn btn-danger btn-sm" style="margin-right: 10px;"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+            <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel">
+                <fieldset>
+                    <div class="modal-dialog modal-dialog-record" role="document">
+                        <div class="modal-content" style="width: 800px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" ng-click="closeAddressDialog()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="reportIssueModalLabel">{{translation.KEY_SCREEN_ADDRESS_LABEL}}</h4>
+
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+
+                                        <form name="addressForm" autocomplete="off" novalidate>
+                                            <div class="col-md-12 panel panel-default" style="padding-top: 10px;">
+                                                <div class="form-group col-sm-6">
+                                                    <label for="address1" ng-show="formData.type == 1">{{translation.KEY_SCREEN_REGISTERED_ADDRESS_LINE_LABEL}} 1</label> <label
+                                                        for="address1" ng-show="formData.type == 2">{{translation.KEY_SCREEN_ADDRESS_LINE_LABEL}} 1</label>
+                                                    <input type="text" class="form-control" name="address1" ng-model="addressData.address1" ng-maxlength="64" maxlength="64" ng-trim="true"
+                                                        avoid-special-chars required>
+                                                </div>
+        
+                                                <div class="form-group col-sm-6">
+                                                    <label for="address2" ng-show="formData.type == 1">{{translation.KEY_SCREEN_REGISTERED_ADDRESS_LINE_LABEL}} 2</label> <label
+                                                        for="address2" ng-show="formData.type == 2">{{translation.KEY_SCREEN_ADDRESS_LINE_LABEL}} 2</label>
+                                                    <input type="text" class="form-control" name="address2" ng-model="addressData.address2" ng-maxlength="64" maxlength="64" ng-trim="true"
+                                                        avoid-special-chars required>
+                                                </div>
+        
+                                                <div class="form-group col-sm-6">
+                                                    <label for="address3" ng-show="formData.type == 1">{{translation.KEY_SCREEN_REGISTERED_ADDRESS_LINE_LABEL}} 3 <span
+                                                        class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label> <label for="address3" ng-show="formData.type == 2">{{translation.KEY_SCREEN_ADDRESS_LINE_LABEL}}
+                                                        3 <span class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" name="address3" ng-model="addressData.address3" ng-maxlength="64" maxlength="64" ng-trim="true"
+                                                        avoid-special-chars>
+                                                </div>
+        
+                                                <div class="form-group col-sm-6">
+                                                    <label for="address4" ng-show="formData.type == 1">{{translation.KEY_SCREEN_REGISTERED_ADDRESS_LINE_LABEL}} 4 <span
+                                                        class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span></label> <label for="address4" ng-show="formData.type == 2">{{translation.KEY_SCREEN_ADDRESS_LINE_LABEL}}
+                                                        4 <span class="optional">- {{translation.KEY_SCREEN_OPTIONAL_LABEL}}</span>
+                                                    </label>
+                                                    <input type="text" class="form-control" name="address4" ng-model="addressData.address4" ng-maxlength="64" maxlength="64" ng-trim="true"
+                                                        avoid-special-chars>
+                                                </div>
+        
+                                                <div class="form-group col-sm-6">
+                                                    <label for="postcode">{{translation.KEY_SCREEN_POSTCODE_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="postcode" ng-model="addressData.postcode" ng-maxlength="16" maxlength="16" ng-trim="true"
+                                                        avoid-special-chars required>
+                                                </div>
+        
+                                                <div class="form-group col-sm-6">
+                                                    <label for="country">{{translation.KEY_SCREEN_COUNTRY_LABEL}}</label>
+                                                    <select class="form-control" name="country" ng-model="addressData.country" ng-init="formData.country='SN'" required>
+                                                        <option value="SN" ng-if="language === 'EN'">Senegal</option>
+                                                        <option value="SN" ng-if="language === 'FR'">Sénégal</option>
+                                                        <option value="ML" ng-if="language === 'EN'">Mali</option>
+                                                        <option value="ML" ng-if="language === 'FR'">Mali</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer text-alight-center">
+                                <button ng-click="submitForm()" class="btn btn-success" ng-disabled="addressSubmitButtonDisabled || addressForm.$pristine || addressForm.$invalid">
+                                    <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                                </button>
+
+                                <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeAddressDialog()">
+                                    <span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_VEHICLES}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_VEHICLES}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="go('/addVehicle')" class="btn btn-primary btn-md" style="margin-right: 10px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('registration_country_iso');"> {{translation.KEY_SCREEN_COUNTRY_REGISTRATION_LABEL}} <span
+                                ng-show="sortColumn == 'registration_country_iso' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'registration_country_iso' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('vehicle_registration');"> {{translation.KEY_SCREEN_REGISTRATION_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('make');"> {{translation.KEY_SCREEN_MAKE_LABEL}} <span
+                                ng-show="sortColumn == 'make' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'make' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('color');">{{translation.KEY_SCREEN_COLOR_LABEL}}<span
+                                ng-show="sortColumn == 'color' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'color' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>{{translation.KEY_SCREEN_IS_ACTIVE_LABEL}}</td>
+
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="24%">
+                    <col width="24%">
+                    <col width="23%">
+                    <col width="23%">
+                    <col width="6%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="Country of Registration">{{getCountryNameByISOCode(row.registrationCountryISO)}}</td>
+                        <td title="Registration Number">{{row.vehicleRegistration}}</td>
+                        <td title="Make">{{row.make}}</td>
+                        <td title="Colour">{{row.color}}</td>
+                        <td title="is Active" class="text-center"><label class="switch-small" style="margin-bottom: 0px; margin-top: 5px;"> <input type="checkbox"
+                                    class="form-control" name="isActive" ng-model="row.isActive" ng-checked="row.isActive" ng-change="activateVehicle(row.code, row.isActive)">
+                                <span class="slider-small round"></span>
+                        </label></td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="5" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_VEHICLE_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="5" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

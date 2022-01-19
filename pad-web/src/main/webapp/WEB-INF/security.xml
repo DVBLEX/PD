@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <http use-expressions="true">
+
+        <csrf disabled="true" />
+
+        <!-- FrontEnd NOAUTH -->
+        <!-- FrontEnd Assets -->
+        <intercept-url pattern="/lib/**" access="permitAll" />
+        <intercept-url pattern="/app/**" access="permitAll" />
+
+        <!-- FrontEnd htm -->
+        <intercept-url pattern="/login.htm" access="permitAll" />
+        <intercept-url pattern="/denied.htm" access="permitAll" />
+        <intercept-url pattern="/logout.htm" access="permitAll" />
+        <intercept-url pattern="/registration.htm" access="permitAll" />
+        <intercept-url pattern="/passwordForgot.htm" access="permitAll" />
+        <intercept-url pattern="/passwordForgotChange.htm" access="permitAll" />
+        <intercept-url pattern="/passwordSetUp.htm" access="permitAll" />
+        <intercept-url pattern="/operatorPasswordSetUp.htm" access="permitAll" />
+        <intercept-url pattern="/credentialsExpired.htm" access="permitAll" />
+        <intercept-url pattern="/userGuide.htm" access="permitAll" />
+        <intercept-url pattern="/errorPage.htm" access="permitAll" />
+        <intercept-url pattern="/receipt.htm" access="permitAll" />
+
+        <!-- FrontEnd AUTH -->
+        <!-- FrontEnd htm -->
+        <intercept-url pattern="/index.htm" access="hasAnyRole('1', '2', '3', '4', '5', '6', '7', '8', '9', '50', '100')" />
+
+        <!-- FrontEnd Angular Views htm -->
+        <intercept-url pattern="/app/views/directives/padTablePager.html" access="hasAnyRole('1', '2', '3', '4', '5', '6', '7', '50', '100')" />
+        <intercept-url pattern="/app/views/home.html" access="hasAnyRole('1', '2', '3', '4', '5', '6', '7', '8', '9', '50', '100')" />
+        <intercept-url pattern="/app/views/trip.html" access="hasAnyRole('6','100')" />
+
+        <intercept-url pattern="/app/views/changePassword.html" access="hasAnyRole('1', '2', '3', '4', '5', '6', '7', '8', '9', '50', '100')" />
+        <intercept-url pattern="/app/views/transporter/missionTrip.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/mission.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/vehicle.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/driver.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/account.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/vehicleAdd.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/driverAdd.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/invoice.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/payment.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/operator.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/operatorEdit.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/transporter/topup.html" access="hasAnyRole('1')" />
+        <intercept-url pattern="/app/views/portoperator/trip.html" access="hasAnyRole('2')" />
+        <intercept-url pattern="/app/views/portoperator/mission.html" access="hasAnyRole('2')" />
+        <intercept-url pattern="/app/views/portoperator/portWhitelist.html" access="hasAnyRole('2')" />
+        <intercept-url pattern="/app/views/parkingoperator/parkingEntry.html" access="hasAnyRole('3')" />
+        <intercept-url pattern="/app/views/parkingoperator/parkingExit.html" access="hasAnyRole('3')" />
+        <intercept-url pattern="/app/views/parkingoperator/parkingAuthorizedExit.html" access="hasAnyRole('3')" />
+        <intercept-url pattern="/app/views/parkingkioskoperator/payment.html" access="hasAnyRole('4')" />
+        <intercept-url pattern="/app/views/parkingkioskoperator/exitOnly.html" access="hasAnyRole('4')" />
+        <intercept-url pattern="/app/views/portentryoperator/portEntry.html" access="hasAnyRole('7')" />
+        <intercept-url pattern="/app/views/parkingofficeoperator/parking.html" access="hasAnyRole('5')" />
+        <intercept-url pattern="/app/views/parkingofficeoperator/port.html" access="hasAnyRole('5')" />
+        <intercept-url pattern="/app/views/parkingofficeoperator/account.html" access="hasAnyRole('5')" />
+        <intercept-url pattern="/app/views/parkingofficeoperator/trip.html" access="hasAnyRole('5')" />
+        <intercept-url pattern="/app/views/parkingofficeoperator/mission.html" access="hasAnyRole('5')" />
+        <intercept-url pattern="/app/views/bookingLimit.html" access="hasAnyRole('5', '100')" />
+        <intercept-url pattern="/app/views/portexitoperator/portExit.html" access="hasAnyRole('8')" />
+        <intercept-url pattern="/app/views/parkingReleaseView.html" access="hasAnyRole('5','9')" />
+        <intercept-url pattern="/app/views/adm/operator.html" access="hasAnyRole('100')" />
+        <intercept-url pattern="/app/views/adm/operatorEdit.html" access="hasAnyRole('100')" />
+        <intercept-url pattern="/app/views/adm/anpr.html" access="hasAnyRole('100')" />
+        <intercept-url pattern="/app/views/adm/vehicleCounter.html" access="hasAnyRole('100')" />
+        <intercept-url pattern="/app/views/adm/lane.html" access="hasAnyRole('100')" />
+        <intercept-url pattern="/app/views/financeoperator/invoice.html" access="hasAnyRole('50')" />
+        <intercept-url pattern="/app/views/financeoperator/kioskSession.html" access="hasAnyRole('50')" />
+        <intercept-url pattern="/app/views/financeoperator/payment.html" access="hasAnyRole('50')" />
+
+        <!-- BackEnd NOAUTH -->
+        <!-- Login RestController -->
+        <intercept-url pattern="/login/password/forgot/send" access="permitAll" />
+        <intercept-url pattern="/login/password/forgot/change" access="permitAll" />
+        <intercept-url pattern="/login/password/setup" access="permitAll" />
+        <intercept-url pattern="/login/password/expired/update" access="permitAll" />
+
+        <!-- Counter RestControllers -->
+        <intercept-url pattern="/counter/vehicle/log" access="permitAll" />
+        <intercept-url pattern="/counter/vehicle/count" access="hasAnyRole('100')" />
+        <intercept-url pattern="/counter/vehicle/list" access="hasAnyRole('100')" />
+        <intercept-url pattern="/counter/vehicle/session/list" access="hasAnyRole('100')" />
+        <intercept-url pattern="/counter/vehicle/export" access="hasAnyRole('100')" />
+
+        <!-- OnlinePayments RestControllers -->
+        <intercept-url pattern="/onlinepayment/cotizel/payment/response/callback" access="permitAll" />
+
+        <!-- SystemCheck -->
+        <intercept-url pattern="/system/check.htm" access="permitAll" />
+
+        <!-- Translation RestController -->
+        <intercept-url pattern="/translate/get" access="permitAll" />
+
+        <!-- BackEnd AUTH -->
+        <!-- Account RestController -->
+        <intercept-url pattern="/account/get" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/activate" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/count" access="hasAnyRole('5', '1', '50')" />
+        <intercept-url pattern="/account/list" access="hasAnyRole('5', '1', '50')" />
+        <intercept-url pattern="/account/getActiveAccountNames" access="hasAnyRole('2', '5', '6', '50', '100')" />
+        <intercept-url pattern="/account/deny" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/update/companyTelephone" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/companyEmail" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/msisdn" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/address" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/isTripApprovedEmail" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/isDeductCreditRegisteredTrucks" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update/lowAccountBalanceWarn" access="hasAnyRole('1')" />
+        <intercept-url pattern="/account/update" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/statement/count" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/statement/list" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/payment/count" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/payment/list" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/invoice/count" access="hasAnyRole('50')" />
+        <intercept-url pattern="/account/invoice/list" access="hasAnyRole('50')" />
+
+
+        <!-- Anpr RestController -->
+        <intercept-url pattern="/anpr/parameter/get" access="hasAnyRole('100')" />
+        <intercept-url pattern="/anpr/parameter/update" access="hasAnyRole('100')" />
+
+        <!-- Driver RestController -->
+        <intercept-url pattern="/driver/count" access="hasAnyRole('1')" />
+        <intercept-url pattern="/driver/list" access="hasAnyRole('1')" />
+        <intercept-url pattern="/driver/save" access="hasAnyRole('1')" />
+        <intercept-url pattern="/driver/remove/association" access="hasAnyRole('1')" />
+
+        <!-- Invoice RestController -->
+        <intercept-url pattern="/invoice/count" access="hasAnyRole('1', '50')" />
+        <intercept-url pattern="/invoice/list" access="hasAnyRole('1', '50')" />
+        <intercept-url pattern="/invoice/download" access="hasAnyRole('1', '50')" />
+        <intercept-url pattern="/invoice/payment/confirm" access="hasAnyRole('50')" />
+
+        <!-- Invoice RestController -->
+        <intercept-url pattern="/lane/count" access="hasAnyRole('100')" />
+        <intercept-url pattern="/lane/list" access="hasAnyRole('100')" />
+        <intercept-url pattern="/lane/save" access="hasAnyRole('100')" />
+        <intercept-url pattern="/lane/update" access="hasAnyRole('100')" />
+        <intercept-url pattern="/lane/activate" access="hasAnyRole('100')" />
+        <intercept-url pattern="/lane/parking/entry/list" access="hasAnyRole('50')" />
+
+        <!-- Mission RestController -->
+        <intercept-url pattern="/mission/count" access="hasAnyRole('1', '2', '5')" />
+        <intercept-url pattern="/mission/list" access="hasAnyRole('1', '2', '5')" />
+        <intercept-url pattern="/mission/create" access="hasAnyRole('2', '5')" />
+        <intercept-url pattern="/mission/cancel" access="hasAnyRole('2', '5')" />
+
+        <intercept-url pattern="/mission/save" access="hasAnyRole('1')" />
+        <intercept-url pattern="/mission/trip/get" access="hasAnyRole('1')" />
+
+        <!-- Operator RestController -->
+        <intercept-url pattern="/operator/list" access="hasAnyRole('100', '1')" />
+        <intercept-url pattern="/operator/count" access="hasAnyRole('100', '1')" />
+        <intercept-url pattern="/operator/password/change" access="hasAnyRole('1', '2', '3', '4', '5', '6', '7', '8', '9', '100')" />
+        <intercept-url pattern="/operator/add" access="hasAnyRole('100', '1')" />
+        <intercept-url pattern="/operator/update" access="hasAnyRole('100', '1')" />
+        <intercept-url pattern="/operator/unlock" access="hasAnyRole('100')" />
+        <intercept-url pattern="/operator/password/reset/send" access="hasAnyRole('100', '1')" />
+        <intercept-url pattern="/operator/getKioskOperatorNames" access="hasAnyRole('5', '50')" />
+
+        <!-- Parking RestController -->
+        <intercept-url pattern="/parking/entered/vehicle/registration/get" access="hasAnyRole('3')" />
+        <intercept-url pattern="/parking/exited/vehicle/registration/get" access="hasAnyRole('3', '7')" />
+        <intercept-url pattern="/parking/vehicle/exit" access="hasAnyRole('3')" />
+        <intercept-url pattern="/parking/entered/vehicle/registration/list" access="hasAnyRole('3')" />
+        <intercept-url pattern="/parking/exited/vehicle/registration/list" access="hasAnyRole('7')" />
+        <intercept-url pattern="/parking/save" access="hasAnyRole('4')" />
+        <intercept-url pattern="/parking/exitonly" access="hasAnyRole('4')" />
+        <intercept-url pattern="/parking/count" access="hasAnyRole('3','5')" />
+        <intercept-url pattern="/parking/list" access="hasAnyRole('3','5')" />
+        <intercept-url pattern="/parking/export" access="hasAnyRole('5')" />
+        <intercept-url pattern="/parking/portoperator/count" access="hasAnyRole('5')" />
+        <intercept-url pattern="/parking/send/exit/sms" access="hasAnyRole('5')" />
+        <intercept-url pattern="/parking/toggle/auto/release" access="hasAnyRole('5','9')" />
+        <intercept-url pattern="/parking/trigger/manual/release" access="hasAnyRole('5','9')" />
+        <intercept-url pattern="/parking/update/parkingsupervisor/readonly/flag" access="hasAnyRole('5')" />
+        <intercept-url pattern="/parking/update/vehicle/state" access="hasAnyRole('5')" />
+
+        <!-- Payment RestController -->
+        <intercept-url pattern="/payment/topup" access="hasAnyRole('4')" />
+        <intercept-url pattern="/payment/topup/account" access="hasAnyRole('1', '50')" />
+        <intercept-url pattern="/payment/status/check" access="hasAnyRole('4', '1', '50')" />
+        <intercept-url pattern="/payment/reference/get" access="hasAnyRole('1', '50')" />
+        <intercept-url pattern="/payment/save/online/payment/parameter" access="hasAnyRole('100')" />
+        <intercept-url pattern="/payment/company/get" access="hasAnyRole('50')" />
+        <intercept-url pattern="/payment/online/payment/parameter/list" access="hasAnyRole('100')" />
+
+        <!-- Port RestController -->
+        <intercept-url pattern="/port/access/vehicle/entry" access="hasAnyRole('7')" />
+        <intercept-url pattern="/port/access/vehicle/deny" access="hasAnyRole('7')" />
+        <intercept-url pattern="/port/access/vehicle/checkLastEntry" access="hasAnyRole('7')" />
+        <intercept-url pattern="/port/access/vehicle/exit" access="hasAnyRole('8')" />
+        <intercept-url pattern="/port/access/entered/vehicle/registration/list" access="hasAnyRole('8')" />
+        <intercept-url pattern="/port/access/entered/vehicle/registration/get" access="hasAnyRole('8')" />
+        <intercept-url pattern="/port/access/whitelist/count" access="hasAnyRole('2')" />
+        <intercept-url pattern="/port/access/whitelist/list" access="hasAnyRole('2')" />
+        <intercept-url pattern="/port/access/whitelist/create" access="hasAnyRole('2')" />
+        <intercept-url pattern="/port/access/whitelist/delete" access="hasAnyRole('2')" />
+        <intercept-url pattern="/port/access/vehicle/whitelist/entry" access="hasAnyRole('7')" />
+        <intercept-url pattern="/port/access/entry/count" access="hasAnyRole('5')" />
+        <intercept-url pattern="/port/access/entry/list" access="hasAnyRole('5')" />
+        <intercept-url pattern="/port/access/entry/export" access="hasAnyRole('5')" />
+        <intercept-url pattern="/port/access/entry/portoperator/count" access="hasAnyRole('5')" />
+        <intercept-url pattern="/port/access/entry/selectZone" access="hasAnyRole('7')" />
+
+        <!-- Receipt RestController -->
+        <intercept-url pattern="/receipt/count" access="hasAnyRole('1')" />
+        <intercept-url pattern="/receipt/list" access="hasAnyRole('1')" />
+        <intercept-url pattern="/receipt/download/transporter" access="hasAnyRole('1')" />
+        <intercept-url pattern="/receipt/validate/msisdn" access="permitAll" />
+        <intercept-url pattern="/receipt/download/link" access="permitAll" />
+        <intercept-url pattern="/receipt/print" access="hasAnyRole('4')" />
+
+        <!-- Registration RestController -->
+        <intercept-url pattern="/registration/sendemailcode" access="permitAll" />
+        <intercept-url pattern="/registration/verifyemailcode" access="permitAll" />
+        <intercept-url pattern="/registration/sendsmscode" access="permitAll" />
+        <intercept-url pattern="/registration/verifysmscode" access="permitAll" />
+        <intercept-url pattern="/registration/processregistration" access="permitAll" />
+
+        <!-- System RestController -->
+        <intercept-url pattern="/system/list/accountdriversandvehicles" access="hasAnyRole('1')" />
+        <intercept-url pattern="/system/save/system/parameter" access="hasAnyRole('100')" />
+        <intercept-url pattern="/system/getPortOperators" access="permitAll" />
+        <intercept-url pattern="/system/getParkingReleaseStats" access="hasAnyRole('5','9')" />
+        <intercept-url pattern="/system/booking/slot/limit/map" access="hasAnyRole('5', '100')" />
+        <intercept-url pattern="/system/booking/slot/limit/save" access="hasAnyRole('5', '100')" />
+        <intercept-url pattern="/system/booking/slot/limit/periods/get" access="hasAnyRole('5', '100')" />
+        <intercept-url pattern="/system/update/transaction/type/flags" access="hasAnyRole('100')" />
+        <intercept-url pattern="/system/report/port/issue" access="hasAnyRole('2')" />
+        <intercept-url pattern="/system/report/port/issue/count" access="hasAnyRole('2')" />
+        <intercept-url pattern="/system/report/port/issue/list" access="hasAnyRole('2')" />
+        <intercept-url pattern="/system/report/port/issue/update" access="hasAnyRole('2')" />
+        <intercept-url pattern="/system/report/port/issue/resolve" access="hasAnyRole('2')" />
+        <intercept-url pattern="/system/getPortOperatorGates" access="permitAll" />
+
+        <!-- Trip RestController -->
+        <intercept-url pattern="/trip/count" access="hasAnyRole('1','2','5','6','100')" />
+        <intercept-url pattern="/trip/list" access="hasAnyRole('1','2','5','6','100')" />
+        <intercept-url pattern="/trip/add" access="hasAnyRole('1')" />
+        <intercept-url pattern="/trip/cancel" access="hasAnyRole('1','4')" />
+        <intercept-url pattern="/trip/approve" access="hasAnyRole('1')" />
+        <intercept-url pattern="/trip/reject" access="hasAnyRole('1')" />
+        <intercept-url pattern="/trip/get" access="hasAnyRole('3','4', 5)" />
+        <intercept-url pattern="/trip/adhoc/create" access="hasAnyRole('3','4')" />
+        <intercept-url pattern="/trip/balance/check" access="hasAnyRole('3','4')" />
+        <intercept-url pattern="/trip/vehicle/registration/list" access="hasAnyRole('3','4')" />
+        <intercept-url pattern="/trip/calc/amount/due" access="hasAnyRole('4')" />
+        <intercept-url pattern="/trip/update/driver/mobile" access="hasAnyRole('3')" />
+        <intercept-url pattern="/trip/update/vehicle/country/iso" access="hasAnyRole('3','4')" />
+        <intercept-url pattern="/trip/update" access="hasAnyRole('5')" />
+        <intercept-url pattern="/trip/validate/referencenumber" access="hasAnyRole('1')" />
+        <intercept-url pattern="/trip/get/available/booking/hours" access="hasAnyRole('1','3','4')" />
+        <intercept-url pattern="/trip/cancel/adhoc" access="hasAnyRole('4')" />
+        <intercept-url pattern="/trip/charge/fee" access="hasAnyRole('4')" />
+
+        <!-- Vehicle RestController -->
+        <intercept-url pattern="/vehicle/count" access="hasAnyRole('1')" />
+        <intercept-url pattern="/vehicle/list" access="hasAnyRole('1')" />
+        <intercept-url pattern="/vehicle/save" access="hasAnyRole('1')" />
+        <intercept-url pattern="/vehicle/update" access="hasAnyRole('1')" />
+        <intercept-url pattern="/vehicle/activate" access="hasAnyRole('1')" />
+
+        <!-- Session RestController -->
+        <intercept-url pattern="/session/count" access="hasAnyRole('5', '50')" />
+        <intercept-url pattern="/session/list" access="hasAnyRole('5', '50')" />
+        <intercept-url pattern="/session/add" access="hasAnyRole('5', '50')" />
+        <intercept-url pattern="/session/end" access="hasAnyRole('4', '50')" />
+        <intercept-url pattern="/session/validate" access="hasAnyRole('50')" />
+
+        <!-- Statistics RestController -->
+        <intercept-url pattern="/statistics/get" access="hasAnyRole('6')" />
+
+        <!-- If there is no match, it is rejected -->
+        <intercept-url pattern="/**" access="denyAll" />
+
+        <http-basic />
+
+        <headers>
+            <!-- DENY – It is the default value. With this the page cannot be displayed in a frame, regardless of the site attempting to do so. SAMEORIGIN – The page will be (and can 
+                be) displayed in a frame on the same origin as the page itself ALLOW-FROM – Allows you to specify an origin, where the page can be displayed in a frame. -->
+            <frame-options policy="SAMEORIGIN" />
+        </headers>
+
+        <form-login login-page="/login.htm?tp" authentication-success-handler-ref="mySuccessHandler" authentication-failure-handler-ref="myFailureHandler"
+            username-parameter="input1" password-parameter="input2" login-processing-url="/processLogin" />
+
+        <logout invalidate-session="true" success-handler-ref="myLogoutSuccessHandler" logout-url="/logout.htm" delete-cookies="JSESSIONID" />
+
+        <custom-filter before="FORM_LOGIN_FILTER" ref="myLoginParameterFilter" />
+
+        <session-management invalid-session-url="/login.html?timeout">
+            <concurrency-control max-sessions="1" />
+        </session-management>
+    </http>
+
+    <beans:bean id="myLoginParameterFilter" class="com.pad.server.web.security.MyLoginParameterFilter" />
+
+    <beans:bean id="mySuccessHandler" class="com.pad.server.web.security.MySuccessHandler" />
+
+    <beans:bean id="myFailureHandler" class="com.pad.server.web.security.MyFailureHandler" />
+
+    <beans:bean id="myLogoutSuccessHandler" class="com.pad.server.web.security.MyLogoutSuccessHandler" />
+
+    <beans:bean id="myUserDetailsService" class="com.pad.server.web.security.MyUserDetailsService" />
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+    <authentication-manager>
+        <authentication-provider user-service-ref="myUserDetailsService">
+            <password-encoder ref="passwordEncoder" />
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>

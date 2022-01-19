@@ -1,0 +1,482 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_KIOSK_SESSIONS_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_SCREEN_KIOSK_SESSIONS_LABEL}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="openKioskSessionAddModal()" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_CREATE_LABEL}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="sessionsFilterButton" data-toggle="collapse" data-target="#sessionSearchCollapse"
+                aria-expanded="false" aria-controls="sessionSearchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="sessionSearchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="sessionFiltersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="filterStaffName">{{translation.KEY_SCREEN_KIOSK_OPERATOR_NAME_LABEL}}</label>
+                        <input type="text"
+                               style="width: 100px;"
+                               class="form-control margin-rigth input-sm filter-input"
+                               id="filterStaffName"
+                               ng-model="filterStaffName"
+                               aria-describedby="staffName"/>
+                    </div>
+
+
+                    <div class="form-group font-size-12">
+                        <label for="filterType">{{translation.KEY_SCREEN_TYPE_LABEL}} </label>
+                        <select style="width: 150px !important;" class="form-control margin-rigth input-sm filter-input" id="filterType" name="filterType" ng-model="filterType">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="type in typeKioskSessionOptions | orderBy: 'name'"
+                                    value="{{type.value}}">{{type.name | uppercase}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterLaneNumber">{{translation.KEY_SCREEN_ENTRY_LANE_LABEL}}</label>
+                        <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterLaneNumber" name="filterLaneNumber" ng-model="filterLaneNumber">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="lane in entryLanesList | orderBy: 'laneNumber'"
+                                    value="{{lane.laneNumber}}">{{lane.laneNumber}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterStatus">{{translation.KEY_SCREEN_STATUS_LABEL}}</label>
+                        <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterStatus" name="filterStatus" ng-model="filterStatus">
+                            <!-- <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>  -->
+                            <option ng-repeat="status in statusKioskSessionOptions | orderBy: 'name'"
+                                    value="{{status.value}}">{{status.name | uppercase}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterStartDateString">{{translation.KEY_SCREEN_START_DATE_LABEL}}</label>
+                        <div class="filter_date_start date input-group margin-rigth">
+                            <input type="text" class="pad-datepicker-input form-control input-sm filter-input"
+                                   id="filterStartDateString"
+                                   name="filterStartDateString" ng-model="filterStartDateString" readonly>
+                            <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="searchSession()" class="btn btn-success" style="width: 100%;" ng-disabled="searchSessionSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearchSession()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('first_name, last_name');"> {{translation.KEY_SCREEN_KIOSK_OPERATOR_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'first_name, last_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'first_name, last_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('lane_number');"> {{translation.KEY_SCREEN_ENTRY_LANE_LABEL}} <span
+                                ng-show="sortColumn == 'lane_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'lane_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('status');"> {{translation.KEY_SCREEN_STATUS_LABEL}} <span
+                                ng-show="sortColumn == 'status' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'status' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('cash_bag_number');"> {{translation.KEY_SCREEN_CASH_BAG_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'cash_bag_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'cash_bag_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('cash_amount_start');"> {{translation.KEY_SCREEN_AMOUNT_START_LABEL}} <span
+                                ng-show="sortColumn == 'cash_amount_start' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'cash_amount_start' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('cash_amount_end');"> {{translation.KEY_SCREEN_AMOUNT_END_LABEL}} <span
+                                ng-show="sortColumn == 'cash_amount_end' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'cash_amount_end' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('amount_end_expected');"> {{translation.KEY_SCREEN_AMOUNT_END_EXPECTED_LABEL}} <span
+                                ng-show="sortColumn == 'amount_end_expected' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'amount_end_expected' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_start');"> {{translation.KEY_SCREEN_START_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_start' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_start' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_end');"> {{translation.KEY_SCREEN_END_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_end' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_end' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="15%">
+                    <col width="5%">
+                    <col width="8%">
+                    <col width="5%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="5%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = (padTable.data)">
+                    <tr>
+                        <td title="{{translation.KEY_SCREEN_KIOSK_OPERATOR_NAME_LABEL}}">{{row.kioskOperatorName}}</td>
+                        <td title="{{translation.KEY_SCREEN_TYPE_LABEL}}" class="text-center">
+                            <span class="label label-primary" ng-if="row.type === kioskSessionTypeConstants.KIOSK_SESSION_TYPE_PARKING">{{translation.KEY_SCREEN_OPERATOR_TYPE_PARKING_KIOSK_LABEL | uppercase}}</span>
+                            <span class="label label-primary" ng-if="row.type === kioskSessionTypeConstants.KIOSK_SESSION_TYPE_VIRTUAL">{{translation.KEY_SCREEN_OPERATOR_TYPE_VIRTUAL_KIOSK_LABEL | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_ENTRY_LANE_LABEL}}"><span ng-if="row.laneNumber !== -1">{{row.laneNumber}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_STATUS_LABEL}}" class="text-center"><span class="label label-primary"
+                            ng-if="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_ASSIGNED">{{translation.KEY_SCREEN_STATUS_ASSIGNED_LABEL | uppercase}}</span> <span
+                            class="label label-info" ng-if="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_START">{{translation.KEY_SCREEN_START_LABEL |
+                                uppercase}}</span> <span class="label label-danger" ng-if="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_END">{{translation.KEY_SCREEN_END_LABEL
+                                | uppercase}}</span> <span class="label label-success" ng-if="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_VALIDATED">{{translation.KEY_SCREEN_STATUS_VALIDATED_LABEL
+                                | uppercase}}</span></td>
+                        <td title="{{translation.KEY_SCREEN_CASH_BAG_NUMBER_LABEL}}">{{row.cashBagNumber}}</td>
+                        <td title="{{translation.KEY_SCREEN_AMOUNT_START_LABEL}}">{{row.cashAmountStart | customCurrency : 0}} {{getSymbolByCurrencyCode('')}}</td>
+                        <td title="{{translation.KEY_SCREEN_AMOUNT_END_LABEL}}">{{row.cashAmountEnd | customCurrency : 0}} {{getSymbolByCurrencyCode('')}}</td>
+                        <td title="{{translation.KEY_SCREEN_AMOUNT_END_EXPECTED_LABEL}}">{{row.cashAmountEndExpected | customCurrency : 0}} {{getSymbolByCurrencyCode('')}}</td>
+                        <td title="{{translation.KEY_SCREEN_START_DATE_LABEL}}">{{row.dateStartString}}</td>
+                        <td title="{{translation.KEY_SCREEN_END_DATE_LABEL}}">{{row.dateEndString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}">{{row.dateCreatedString}}</td>
+                        <td class="text-center nowrap">
+                            <button class="btn btn-primary btn-sm" ng-show="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_END"
+                                ng-click="openKioskSessionValidateModal(row); $event.stopPropagation();" title="{{translation.KEY_SCREEN_VALIDATE_SESSION_LABEL}}">
+                                <span class="glyphicon glyphicon-check"></span>
+                            </button>
+
+                            <button class="btn btn-danger btn-sm" ng-show="row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_START || row.status == kioskSessionConstants.KIOSK_SESSION_STATUS_ASSIGNED"
+                                ng-click="endKioskSession(row); $event.stopPropagation();" title="{{translation.KEY_SCREEN_END_KIOSK_SESSION_LABEL}}">
+                                <span class="glyphicon glyphicon-ban-circle"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="12" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_SESSION_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="12" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal fade" id="kioskSessionModal" tabindex="-1" role="dialog" aria-labelledby="kioskSessionModalLabel" ng-form="kioskSessionForm">
+            <fieldset>
+                <div class="modal-dialog modal-dialog-record" role="document" style="width: 70%;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeKioskSessionDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="kioskSessionModalLabel">{{modalTitle}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="panel-body" style="padding: 0px;">
+                                        <form name="kioskSessionForm" autocomplete="off" novalidate>
+
+                                            <div class="col-md-12 form-group" style="padding: 0px;" ng-show="action === 'Add'">
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="kioskOperatorCode">{{translation.KEY_SCREEN_SELECT_OPERATOR_LABEL}}</label>
+                                                    <select class="form-control" name="kioskOperatorCode" ng-model="formData.kioskOperatorCode" required>
+                                                        <option ng-repeat="kioskOperator in kioskOperatorNamesList | orderBy: 'name'"
+                                                                value="{{kioskOperator.code}}">{{kioskOperator.name}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="type">{{translation.KEY_SCREEN_TYPE_LABEL}} </label>
+                                                    <select class="form-control" name="type" ng-model="formData.type" required>
+                                                        <option ng-repeat="type in typeKioskSessionOptions | orderBy: 'name'"
+                                                                value="{{type.value}}">{{type.name | uppercase}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6" ng-show="formData.type === kioskSessionTypeConstants.KIOSK_SESSION_TYPE_PARKING + ''">
+                                                    <label for="laneId">{{translation.KEY_SCREEN_LANE_NUMBER_LABEL}}</label>
+                                                    <select class="form-control" name="laneId" ng-model="formData.laneId" required>
+                                                        <option ng-repeat="lane in entryLanesList | orderBy: 'laneNumber'"
+                                                                value="{{lane.laneId}}">{{lane.laneNumber}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="cashAmountStart">{{translation.KEY_SCREEN_AMOUNT_START_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="cashAmountStart" id="cashAmountStart" ng-model="formData.cashAmountStart" input-currency ng-maxlength="15" maxlength="15" required>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="cashBagNumber">{{translation.KEY_SCREEN_CASH_BAG_NUMBER_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="cashBagNumber" ng-model="formData.cashBagNumber" minlength="1" ng-minlength="1"
+                                                        ng-maxlength="16" maxlength="16" required>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="submitKioskSessionFormErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{submitKioskSessionFormErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-md-12 form-group" style="padding: 0px;" ng-show="action === 'Validate'">
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashBagNumber">{{translation.KEY_SCREEN_CASH_BAG_NUMBER_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="cashBagNumber" ng-model="selectedSession.cashBagNumber" minlength="1"
+                                                        ng-minlength="1" ng-maxlength="16" maxlength="16" readonly>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashAmountEnd">{{translation.KEY_SCREEN_AMOUNT_END_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountEnd" ng-model="formData.cashAmountEnd" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency ng-disabled="selectedSession.validationStep === 1" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashAmountEndConfirm">{{translation.KEY_SCREEN_CONFIRM_LABEL}} {{translation.KEY_SCREEN_AMOUNT_END_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountEndConfirm" ng-model="formData.cashAmountEndConfirm" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency ng-disabled="selectedSession.validationStep === 1" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div>
+                                                        <label class="pad-label-checkbox"> <input type="checkbox" name="confirmValidate" ng-model="formData.confirmValidate"
+                                                                required> {{translation.KEY_SCREEN_CONFIRM_AMOUNT_IS_COUNTED_MESSAGE}}
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="submitKioskSessionFormErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{submitKioskSessionFormErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-md-12 form-group" style="padding: 0px;" ng-show="action === 'Validate Step 2'">
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashBagNumber">{{translation.KEY_SCREEN_CASH_BAG_NUMBER_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="cashBagNumber" ng-model="selectedSession.cashBagNumber" minlength="1"
+                                                        ng-minlength="1" ng-maxlength="16" maxlength="16" readonly>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashAmountStartReadOnly">{{translation.KEY_SCREEN_AMOUNT_START_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountStartReadOnly" ng-model="selectedSession.cashAmountStart" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4">
+                                                    <label for="cashAmountEnd">{{translation.KEY_SCREEN_AMOUNT_END_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountEnd" ng-model="formData.cashAmountEnd" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4" ng-show="kioskSessionStats !== null && kioskSessionStats.cashAmountEndExpected !== undefined">
+                                                    <label for="cashAmountEndExpected">{{translation.KEY_SCREEN_AMOUNT_END_EXPECTED_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountEndExpected" ng-model="kioskSessionStats.cashAmountEndExpected" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-4" ng-show="kioskSessionStats !== null && kioskSessionStats.cashAmountStartToEndDifference !== undefined">
+                                                    <label for="cashAmountStartToEndDifference">{{translation.KEY_SCREEN_DIFFERENCE_LABEL}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{getSymbolByCurrencyCode('')}}</div>
+                                                        <input type="text" class="form-control" name="cashAmountStartToEndDifference" ng-model="kioskSessionStats.cashAmountStartToEndDifference" minlength="1"
+                                                            ng-minlength="1" ng-maxlength="15" maxlength="15" input-currency readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12" ng-show="unexpectedEndAmountWarning !== ''">
+                                                    <div class="animate-if">
+                                                        <div class="alert alert-warning font-size-15" role="alert">
+                                                            <span class="sr-only">Message: </span> {{unexpectedEndAmountWarning}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12" ng-show="unexpectedEndAmountWarning !== ''">
+                                                    <label for="reason">{{translation.KEY_SCREEN_REASON_LABEL}}</label>
+                                                    <input type="text" class="form-control" name="reason" ng-model="formData.reason" minlength="1" ng-minlength="1"
+                                                        ng-maxlength="128" maxlength="128" required>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="animate-if" ng-if="submitKioskSessionFormErrorResponse !== ''">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                            {{submitKioskSessionFormErrorResponse}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12" ng-show="kioskSessionStats !== null">
+                                                    <table class="table table-sm">
+                                                      <thead>
+                                                        <tr>
+                                                          <th scope="col"></th>
+                                                          <th scope="col">{{translation.KEY_SCREEN_COUNT_LABEL}}</th>
+                                                          <th scope="col">{{translation.KEY_SCREEN_TOTAL_TRANSACTION_AMOUNT_LABEL}}</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_CASH_LABEL}} ({{translation.KEY_SCREEN_NO_LABEL}} {{translation.KEY_SCREEN_ACCOUNT_LABEL}})</th>
+                                                          <td>{{kioskSessionStats.noAccountCashTransactionCount}}</td>
+                                                          <td>{{kioskSessionStats.noAccountCashTransactionTotalAmount}} {{getSymbolByCurrencyCode('')}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_CASH_LABEL}} ({{translation.KEY_SCREEN_ACCOUNT_LABEL}})</th>
+                                                          <td>{{kioskSessionStats.accountCashTransactionCount}}</td>
+                                                          <td>{{kioskSessionStats.accountCashTransactionTotalAmount}} {{getSymbolByCurrencyCode('')}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_ONLINE_LABEL}} ({{translation.KEY_SCREEN_NO_LABEL}} {{translation.KEY_SCREEN_ACCOUNT_LABEL}})</th>
+                                                          <td>{{kioskSessionStats.noAccountOnlineTransactionCount}}</td>
+                                                          <td>{{kioskSessionStats.noAccountOnlineTransactionTotalAmount}} {{getSymbolByCurrencyCode('')}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_ONLINE_LABEL}} ({{translation.KEY_SCREEN_ACCOUNT_LABEL}})</th>
+                                                          <td>{{kioskSessionStats.accountOnlineTransactionCount}}</td>
+                                                          <td>{{kioskSessionStats.accountOnlineTransactionTotalAmount}} {{getSymbolByCurrencyCode('')}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_PAYMENT_NOT_REQUIRED_LABEL}}</th>
+                                                          <td>{{kioskSessionStats.accountDeductTransactionCount}}</td>
+                                                          <td>{{kioskSessionStats.accountDeductTransactionTotalAmount}} {{getSymbolByCurrencyCode('')}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_AD_HOC_TRIPS_CREATED_LABEL}}</th>
+                                                          <td>{{kioskSessionStats.adhocTripsCreatedCount}}</td>
+                                                          <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                          <th scope="row">{{translation.KEY_SCREEN_AD_HOC_TRIPS_CANCELLED_LABEL}}</th>
+                                                          <td>{{kioskSessionStats.adhocTripsCancelledCount}}</td>
+                                                          <td></td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-center">
+                            <button ng-click="saveKioskSession();" ng-show="action === 'Add'" class="btn btn-success outline-none width-modal-btn"
+                                ng-disabled="createKioskSessionButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_SUBMIT_LABEL}}
+                            </button>
+
+                            <button ng-click="validateKioskSession();" ng-show="action === 'Validate'" class="btn btn-success outline-none width-modal-btn"
+                                ng-disabled="validateKioskSessionButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_VALIDATE_SESSION_LABEL}}
+                            </button>
+
+                            <button ng-click="validateKioskSessionStep2();" ng-show="action === 'Validate Step 2'" class="btn btn-success outline-none width-modal-btn"
+                                ng-disabled="validateKioskSessionButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_VALIDATE_SESSION_LABEL}}
+                            </button>
+
+                            <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeKioskSessionDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+    </div>
+</div>

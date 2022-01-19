@@ -1,0 +1,4 @@
+USE pad;
+
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1493', '1', 'KEY_SCREEN_FLAG_UPDATE_ALERT_MESSAGE', 'Are you sure you want to update the flags? Once updated, the change will take immediate effect for new trips. This would also apply to existing trips with status \"APPROVED\" and slot date & time is at least 4 hours in the future.');
+-- INSERT INTO `pad`.`language_keys` (`id`, `language_id`, `translate_key`, `translate_value`) VALUES ('1494', '2', 'KEY_SCREEN_FLAG_UPDATE_ALERT_MESSAGE', 'Voulez-vous vraiment mettre à jour les indicateurs? Une fois mis à jour, le changement prendra effet immédiatement pour les nouveaux voyages. Cela s\'appliquerait également aux voyages existants avec le statut \"APPROUVÉ\" et la date et l\'heure des créneaux horaires sont d\'au moins 4 heures à l\'avenir.');

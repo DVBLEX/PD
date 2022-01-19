@@ -1,0 +1,209 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_SCREEN_VEHICLE_COUNTER_LABEL}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>{{translation.KEY_SCREEN_VEHICLE_COUNTER_LABEL}}</h3>
+        </div>
+
+        <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-primary" name="filterButton" id="filterButton" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false"
+                aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+            <button ng-click="refreshTableData();" class="btn btn-primary" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+            <form target="_blank" method="post" action="counter/vehicle/export" style="display: inline;" class="form-inline" ng-submit="exportData()">
+                    <button style="margin-right: 40px;" type="submit" class="btn btn-primary" ng-disabled="isExportRequested || padTable.data.length === 0">
+                        <span class="glyphicon glyphicon-export"></span> {{translation.KEY_SCREEN_EXPORT_LABEL}}
+                    </button>
+                    <input type="hidden" name="dateCountStartString" ng-value="filterDateCountStart" />
+                    <input type="hidden" name="dateCountEndString" ng-value="filterDateCountEnd" />
+                    <input type="hidden" name="device" ng-value="filterDevice" />
+                    <input type="hidden" name="lane" ng-value="filterLane" />
+                    <input type="hidden" name="session" ng-value="filterSession" />
+                    <input type="hidden" name="type" ng-value="filterType" />
+                    <input type="hidden" name="isShowDefaultDates" ng-value="filterIsShowDefaultDates" />
+                </form>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form class="form-inline" name="filtersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="filterDateCountStart">{{translation.KEY_SCREEN_DATE_COUNT_FROM_LABEL}}</label>
+                        <div class="count_from_date date input-group margin-rigth">
+                            <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateCountStart" name="filterDateCountStart"
+                                ng-model="filterDateCountStart">
+                            <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterDateCountEnd">{{translation.KEY_SCREEN_DATE_COUNT_TO_LABEL}}</label>
+                        <div class="count_to_date date input-group margin-rigth">
+                            <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateCountEnd" name="filterDateCountEnd"
+                                ng-model="filterDateCountEnd">
+                            <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group font-size-12">
+                        <label for="filterDevice">{{translation.KEY_SCREEN_DEVICE_LABEL}} </label>
+                        <select class="form-control margin-rigth input-sm filter-input" id="filterDevice" name="filterDevice" ng-model="filterDevice">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL}}</option>
+                            <option ng-repeat="lane in lanesList | orderBy: 'deviceName'"
+                                    value="{{lane.deviceId}}">{{lane.deviceName}}
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group font-size-12">
+                        <label for="filterLane">{{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}} </label>
+                        <select class="form-control margin-rigth input-sm filter-input" id="filterLane" name="filterLane" ng-model="filterLane">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL}}</option>
+                            <option ng-repeat="lane in lanesList | unique:'laneNumber' | orderBy: 'laneNumber'"
+                                    value="{{lane.laneNumber}}">{{lane.laneNumber}}
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group font-size-12">
+                        <label for="filterType">{{translation.KEY_SCREEN_TYPE_LABEL}} </label>
+                        <select class="form-control margin-rigth input-sm filter-input" id="filterType" name="filterType" ng-model="filterType" style="width: 160px !important;">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="type in typeOptions | orderBy: 'name'"
+                                    value="{{type.value}}">{{type.name | uppercase}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterSession">{{translation.KEY_SCREEN_SESSION_LABEL}} </label>
+                        <select class="form-control margin-rigth input-sm filter-input" id="filterSession" name="filterSession" ng-model="filterSession">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL}}</option>
+                            <option ng-repeat="session in sessionList | orderBy: 'value'"
+                                    value="{{session.name}}">{{session.value}}
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group font-size-12 margin-rigth">
+                        <label class="pad-label-checkbox"> <input type="checkbox" name="filterIsShowDefaultDates" ng-model="filterIsShowDefaultDates"> 
+                            {{translation.KEY_SCREEN_SHOW_DEFAULT_DATES_LABEL}}
+                        </label>
+                    </div>
+                    
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="refreshTableData()" class="btn btn-success" style="width: 100%;" ng-disabled="searchTripSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearch()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('date_count');"> {{translation.KEY_SCREEN_DATE_COUNT_LABEL}} <span
+                                ng-show="sortColumn == 'date_count' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_count' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('device_id');"> {{translation.KEY_SCREEN_DEVICE_LABEL}} <span
+                                ng-show="sortColumn == 'device_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'device_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        
+                        <td><a href="" ng-click="sort('device_name');"> {{translation.KEY_SCREEN_DEVICE_NAME_LABEL}} <span
+                                ng-show="sortColumn == 'device_name' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'device_name' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        
+                        <td><a href="" ng-click="sort('lane_number');"> {{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}} <span
+                                ng-show="sortColumn == 'lane_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'lane_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('session_id');"> {{translation.KEY_SCREEN_SESSION_LABEL}} <span
+                                ng-show="sortColumn == 'session_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'session_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span
+                                ng-show="sortColumn == 'date_created' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_created' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="13%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="24%">
+                    <col width="13%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{translation.KEY_SCREEN_DATE_COUNT_LABEL}}">{{row.dateCountString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DEVICE_ID_LABEL}}">{{row.deviceId}}</td>
+                        <td title="{{translation.KEY_SCREEN_DEVICE_NAME_LABEL}}">{{row.deviceName}}</td>
+                        <td title="{{translation.KEY_SCREEN_LANE_NUMBER_FILTER_LABEL}}">{{row.laneNumber}}</td>
+                        <td title="{{translation.KEY_SCREEN_TYPE_LABEL}}" class="text-center">
+                            <span class="label label-primary" ng-if="row.type == vehicleCounterTypeConstants.VEHICLE_COUNTER_TYPE_AUTOMATIC">{{translation.KEY_SCREEN_AUTOMATICT_LABEL | uppercase}}</span> 
+                            <span class="label label-default" ng-if="row.type == vehicleCounterTypeConstants.VEHICLE_COUNTER_TYPE_MANUAL">{{translation.KEY_SCREEN_MANUAL_LABEL | uppercase}}</span>
+                            <span class="label label-warning" ng-if="row.type == vehicleCounterTypeConstants.VEHICLE_COUNTER_TYPE_UNKNOWN">{{translation.KEY_SCREEN_UNKNOWN_LABEL | uppercase}}</span>
+                            <span class="label label-info" ng-if="row.type == vehicleCounterTypeConstants.VEHICLE_COUNTER_TYPE_HEARTBEAT">{{translation.KEY_SCREEN_HEARTBEAT_LABEL | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_SESSION_LABEL}}">{{row.sessionDisplay}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_CREATED_LABEL}}" class="text-center">{{row.dateCreatedString}}</td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="7" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="7" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <count-from-d-p> </count-from-d-p>
+        <count-to-d-p> </count-to-d-p>
+    </div>
+</div>

@@ -1,0 +1,345 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_MISSIONS}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_MISSIONS}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="showCreateMissionModal();" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_CREATE_LABEL}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="missionsFilterButton" data-toggle="collapse" data-target="#missionSearchCollapse"
+                aria-expanded="false" aria-controls="missionSearchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="missionSearchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="missionFiltersForm">
+
+                    <div class="form-group font-size-12">
+                        <label for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                        <input type="text" class="form-control margin-rigth input-sm filter-input" id="referenceNumber" name="referenceNumber" ng-model="filterReferenceNumber"
+                            ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH" maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}"
+                            ng-disabled="filtersDisabled" capitalize alphanumeric>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="portOperator">{{translation.KEY_SCREEN_OPERATOR_LABEL}} </label>
+                        <select ng-click="clearTransactionType()" style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="portOperator" ng-model="filterPortOperator" aria-describedby="portOperator">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="operator in portOperatorList | orderBy: 'name'"
+                                    value="{{operator.id}}">{{operator.name}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterTransactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} </label>
+                        <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterTransactionType" ng-model="filterTransactionType" aria-describedby="filterTransactionType"
+                            ng-disabled="filterPortOperator === undefined || filterPortOperator === ''">
+                            <option ng-repeat="entry in getTransactionTypesForPortOperator(filterPortOperator) | orderBy: 'translateKey'"
+                                    value="{{entry.transactionType}}">{{entry.translateKey | translate}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterStatus">{{translation.KEY_SCREEN_STATUS_LABEL}} </label>
+                        <select style="width: 100px;" class="form-control margin-rigth input-sm filter-input" id="filterStatus" name="filterStatus" ng-model="filterStatus">
+                            <option value="">{{translation.KEY_SCREEN_ALL_LABEL | uppercase}}</option>
+                            <option ng-repeat="status in statusMissionOptions | orderBy: 'name'"
+                                    value="{{status.value}}">{{status.name | uppercase}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="searchMission()" class="btn btn-success" style="width: 100%;" ng-disabled="searchMissionSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearchMission()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td>{{translation.KEY_SCREEN_OPERATOR_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_BAD_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                                ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_mission_start');"> {{translation.KEY_SCREEN_START_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_mission_start' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_mission_start' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_mission_end');"> {{translation.KEY_SCREEN_END_DATE_LABEL}} <span
+                                ng-show="sortColumn == 'date_mission_end' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_mission_end' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td>{{translation.KEY_SCREEN_STATUS_LABEL}}</td>
+
+                        <td>{{translation.KEY_SCREEN_TRANSPORTER_LABEL}}</td>
+
+                        <td><a href="" ng-click="sort('accounts.number');"> {{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}} <span
+                                ng-show="sortColumn == 'accounts.number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'accounts.number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td>&nbsp;</td>
+
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="11%">
+                    <col width="10%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col width="5%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{getOperatorName(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 2)}}">
+                            {{getOperatorNameShort(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorCode, 1)}}
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}">{{row.referenceNumber}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}">
+                            <span class="label label-info">{{getTransactionTypeName(row.portOperatorId, row.transactionType) | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_START_DATE_LABEL}}">{{row.dateMissionStartString}}</td>
+                        <td title="{{translation.KEY_SCREEN_END_DATE_LABEL}}">{{row.dateMissionEndString}}</td>
+                        <td class="text-center" title="{{translation.KEY_SCREEN_STATUS_LABEL}}">
+                            <span class="label label-success" ng-if="row.status == missionConstants.MISSION_STATUS_TRIPS_PENDING">{{translation.KEY_SCREEN_TRIPS_PENDING_MESSAGE | uppercase}}</span>
+                            <span class="label label-info" ng-if="row.status == missionConstants.MISSION_STATUS_TRIPS_BOOKED">{{translation.KEY_SCREEN_TRIPS_BOOKED_LABEL | uppercase}}</span>
+                            <span class="label label-danger" ng-if="row.status == missionConstants.MISSION_STATUS_EXPIRED">{{translation.KEY_SCREEN_EXPIRED_LABEL | uppercase}}</span>
+                            <span class="label label-danger" ng-if="row.status == missionConstants.MISSION_STATUS_CANCELLED">{{translation.KEY_SCREEN_CANCELLED_LABEL   | uppercase}}</span>
+                        </td>
+                        <td title="{{translation.KEY_SCREEN_COMPANY_LABEL}}">{{row.transporterAccountName}}</td>
+                        <td title="{{translation.KEY_SCREEN_ACCOUNT_NUMBER_LABEL}}"><span ng-if="row.transporterAccountNumber > 0">{{row.transporterAccountNumber}}</span></td>
+                        <td class="text-center" title="">
+                            <button class="btn btn-danger btn-sm" ng-click="cancelMission(row); $event.stopPropagation();" ng-if="row.status == missionConstants.MISSION_STATUS_TRIPS_PENDING" title="{{translation.KEY_SCREEN_CANCEL_MESSAGE}}">
+                                <span class="glyphicon glyphicon-remove"> </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="9" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_MISSION_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="9" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal fade" id="createMissionModal" tabindex="-1" role="dialog" aria-labelledby="createMissionModalLabel" ng-form="missionCreateForm">
+            <fieldset>
+                <div class="modal-dialog modal-dialog-record" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeCreateMissionDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="createMissionModalLabel">{{translation.KEY_SCREEN_CREATE_MISSION_LABEL}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <form name="missionCreateForm" autocomplete="off" novalidate>
+                                        <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                            <div class="form-group col-md-6">
+                                                <label for="operatorType">{{translation.KEY_SCREEN_OPERATOR_LABEL}}</label>
+                                                <select id="operatorType" name="operatorType" class="form-control" ng-model="operatorType"
+                                                    ng-options="operator.id as operator.name for operator in portOperatorList | orderBy: 'name'" required>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-md-6" ng-show="independentOperators.length !== 0">
+                                                <label for="independentOperatorName">{{translation.KEY_SCREEN_INDEPENDENT_PORT_OPERATOR_LABEL}}</label>
+                                                <input type="text" class="form-control" id="independentOperatorName" name="independentOperatorName"
+                                                    ng-model="formData.independentOperatorName" required />
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="transactionType">{{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}}</label>
+                                                <select id="transactionType" name="transactionType" class="form-control" ng-model="formData.transactionType"
+                                                        ng-disabled="operatorType === undefined || operatorType === ''"
+                                                        required autofocus>
+                                                    <option ng-repeat="entry in portOperatorTransactionTypes | orderBy: 'translateKey'"
+                                                            value="{{entry.transactionType}}">{{entry.translateKey | translate}}
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="gateNumber">{{translation.KEY_SCREEN_PORT_OPERATOR_GATE_LABEL}}</label>
+                                                <input type="text" class="form-control" id="gateNumber" name="gateNumber" ng-model="formData.gateNumber" ng-disabled="true" capitalize>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label for="referenceNumber">{{translation.KEY_SCREEN_BAD_NUMBER_LABEL}}</label>
+                                                <input type="text" class="form-control" name="referenceNumber" ng-model="formData.referenceNumber"
+                                                    ng-maxlength="validationConstants.REFERENCE_VALIDATION_LENGTH" maxlength="{{validationConstants.REFERENCE_VALIDATION_LENGTH}}"
+                                                    capitalize alphanumeric required>
+                                            </div>
+
+                                            <div class="col-md-12 zero-padding">
+                                                <div class="form-group col-md-6">
+                                                    <label for="dateFrom">{{translation.KEY_SCREEN_START_DATE_LABEL}}</label>
+                                                    <div class="mission_date_from date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="dateFrom" name="dateFrom" ng-model="dateFrom" required>
+                                                        <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="dateTo">{{translation.KEY_SCREEN_END_DATE_LABEL}}</label>
+                                                    <div class="mission_date_to date input-group pad-datepicker-container margin-rigth">
+                                                        <input type="text" class="pad-datepicker-input form-control input-sm" id="dateTo" name="dateTo" ng-model="dateTo"
+                                                        ng-disabled="formData.transactionType === transactionTypeConstants.TRANSACTION_TYPE_DROP_OFF_EMPTY_NIGHT
+                                                        || formData.transactionType === transactionTypeConstants.TRANSACTION_TYPE_DROP_OFF_EMPTY_TRIANGLE" required>
+                                                        <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <div class="animate-if" ng-if="createMissionInfoMessage !== ''">
+                                                    <div class="alert alert-warning" style="margin-bottom: 0px;" role="alert">
+                                                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <span class="sr-only">Error: </span> <span>{{createMissionInfoMessage}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-10">
+                                                <label for="companyAccountCode">{{translation.KEY_SCREEN_TRANSPORTER_LABEL}}</label>
+                                                <input type="text" list="accounts" class="form-control" id="companyAccountCode" name="companyAccountCode"
+                                                    ng-model="formData.companyAccountCode" required />
+                                                <datalist id="accounts">
+                                                    <option ng-repeat="account in accountNamesList | orderBy: 'name'" data-value="{{account.name}}" value="{{account.code}}"></option>
+                                                </datalist>
+                                            </div>
+
+                                            <div class="form-group col-md-2" style="margin-top: 25px; padding-left: 5px;">
+                                                <button ng-click="addTranporter(formData.companyAccountCode);" class="btn btn-success outline-none width-modal-btn"
+                                                    ng-disabled="!formData.companyAccountCode">
+                                                    <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+                                                </button>
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <div style="height: 160px; overflow-y: scroll;">
+                                                    <div class="table-responsive">
+                                                        <table class="pad-table">
+                                                            <colgroup>
+                                                                <col width="90%">
+                                                                <col width="10%">
+                                                            </colgroup>
+
+                                                            <tbody ng-repeat="row in selectedTransporters">
+                                                                <tr ng-click="padTable.selectRow($event)">
+                                                                    <td>{{accountNamesMap[row]}}</td>
+                                                                    <td class="text-center nowrap">
+                                                                        <button class="btn btn-danger btn-xsm"
+                                                                            ng-click="padTable.selectRowByElement($event.currentTarget.parentElement.parentNode); removeTransporter($index); $event.stopPropagation();"
+                                                                            title="{{translation.KEY_SCREEN_REMOVE_LABEL}}">
+                                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <div class="animate-if" ng-if="createMissionErrorResponse !== ''">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span> <span>{{createMissionErrorResponse}}</span>
+                                                        <br> <span ng-if="createMissionErrorCompanyName" style="margin-left: 18px;">{{translation.KEY_SCREEN_TRANSPORTER_LABEL}}:
+                                                            {{createMissionErrorCompanyName}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="animate-if" ng-if="createMissionSuccessResponse !== ''">
+                                                    <div class="alert alert-success" role="alert">
+                                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                        {{createMissionSuccessResponse}}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-center">
+                            <button ng-click="createMission();" class="btn btn-success outline-none width-modal-btn" ng-disabled="createMissionButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_CREATE_LABEL}}
+                            </button>
+                            <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeCreateMissionDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <mission-date-from-d-p></mission-date-from-d-p>
+        <mission-date-to-d-p></mission-date-to-d-p>
+
+    </div>
+
+</div>

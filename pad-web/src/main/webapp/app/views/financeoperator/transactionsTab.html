@@ -1,0 +1,138 @@
+<div ng-controller="AccountsTransactionsTabController">
+    <!-- Filters -->
+    <div class="div-filter">
+        <form style="margin-bottom: 20px;" class="form-inline" name="accountFiltersForm">
+
+            <div class="form-group font-size-12">
+                <label for="filterDateFromString">{{translation.KEY_SCREEN_DATE_FROM_LABEL}}</label>
+                <div class="filter_date_from date input-group">
+                    <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateFromString" name="filterDateFromString"
+                        ng-model="filterDateFromString" readonly> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group font-size-12">
+                <label for="filterDateToString">{{translation.KEY_SCREEN_DATE_TO_LABEL}}</label>
+                <div class="filter_date_to date input-group margin-rigth">
+                    <input type="text" class="pad-datepicker-input form-control input-sm filter-input" id="filterDateToString" name="filterDateToString"
+                        ng-model="filterDateToString" readonly> <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group font-size-12">
+                <div class="text-center" style="padding-bottom: 10px;">
+                    <button ng-click="searchStatements()" class="btn btn-success" style="width: 100%;">
+                        <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group font-size-12">
+                <div class="text-center" style="padding-bottom: 10px;">
+                    <button ng-click="clearSearchStatements()" class="btn btn-primary" style="width: 100%;">
+                        <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="pad-table">
+            <thead>
+                <tr>
+                    <td><a href="" ng-click="sort('date_created');"> {{translation.KEY_SCREEN_DATE_CREATED_LABEL}} <span ng-show="sortColumn == 'date_created' && sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'date_created' && !sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('type');"> {{translation.KEY_SCREEN_TYPE_LABEL}} <span ng-show="sortColumn == 'type' && sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'type' && !sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('port_operator_id');"> {{translation.KEY_SCREEN_OPERATOR_TYPE_PORT_OPERATOR_LABEL}} <span
+                            ng-show="sortColumn == 'port_operator_id' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'port_operator_id' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('reference_number');"> {{translation.KEY_SCREEN_REFERENCE_LABEL}} <span
+                            ng-show="sortColumn == 'reference_number' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'reference_number' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('transaction_type');"> {{translation.KEY_SCREEN_TRANSACTION_TYPE_LABEL}} <span
+                            ng-show="sortColumn == 'transaction_type' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'transaction_type' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('vehicle_registration');"> {{translation.KEY_SCREEN_REGISTRATION_LABEL}} <span
+                            ng-show="sortColumn == 'vehicle_registration' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'vehicle_registration' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('vehicle_registration_country_iso');"> {{translation.KEY_SCREEN_COUNTRY_LABEL}} <span
+                            ng-show="sortColumn == 'vehicle_registration_country_iso' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'vehicle_registration_country_iso' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('amount_credit');"> {{translation.KEY_SCREEN_CREDIT_LABEL}} <span ng-show="sortColumn == 'amount_credit' && sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'amount_credit' && !sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('amount_debit');"> {{translation.KEY_SCREEN_DEBIT_LABEL}} <span ng-show="sortColumn == 'amount_debit' && sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'amount_debit' && !sortAsc"
+                            class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                    <td><a href="" ng-click="sort('amount_running_balance');"> {{translation.KEY_SCREEN_BALANCE_LABEL}} <span
+                            ng-show="sortColumn == 'amount_running_balance' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                            ng-show="sortColumn == 'amount_running_balance' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                    </a></td>
+
+                </tr>
+            </thead>
+
+            <colgroup>
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+            </colgroup>
+
+            <tbody ng-repeat="row in rows = (padTable.data)">
+
+                <tr>
+                    <td title="Date Created">{{row.dateCreatedString}}</td>
+                    <td title="Type" class="text-center">{{getPaymentTypeText(row.type)}}<span ng-if="row.openingBalance">{{translation.KEY_SCREEN_OPENING_BALANCE_LABEL}}</span></td>
+                    <td title="Port Operator">{{getOperatorNameShort(row.portOperatorId)}} {{getIndependentOperatorName(row.portOperatorId, row.independentPortOperatorId, 1)}}</td>
+                    <td title="Reference Number" class="text-center">{{row.referenceNumber}}</td>
+                    <td title="Transaction Type" class="text-center"><span class="label label-info" ng-if="row.transactionType">{{getTransactionTypeName(row.portOperatorId,
+                            row.transactionType) | uppercase}} </span></td>
+                    <td title="Registration" class="text-center">{{row.registration}}</td>
+                    <td title="Country">{{getCountryNameByISOCode(row.country)}}</td>
+                    <td title="Credit"><span ng-if="!row.openingBalance">{{row.credit | customCurrency: 0}} {{getSymbolByCurrencyCode(account.currency)}}</span></td>
+                    <td title="Debit"><span ng-if="!row.openingBalance">{{row.debit | customCurrency: 0}} {{getSymbolByCurrencyCode(account.currency)}}</span></td>
+                    <td title="Balance">{{row.balance | customCurrency: 0}} {{getSymbolByCurrencyCode(account.currency)}}</td>
+                </tr>
+
+            </tbody>
+
+            <tr ng-show="padTable.count == 0">
+                <td colspan="10" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+            </tr>
+
+            <!-- PAD Table Pagination -->
+            <tr>
+                <td colspan="10" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+            </tr>
+        </table>
+    </div>
+</div>

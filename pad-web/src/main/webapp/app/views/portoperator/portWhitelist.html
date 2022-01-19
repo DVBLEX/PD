@@ -1,0 +1,310 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="" ng-click="go('/')">{{translation.KEY_NAVBAR_HOME}}</a></li>
+        <li class="breadcrumb-item active">{{translation.KEY_NAVBAR_PORT_WHITELIST}}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h3 style="margin-left: 40px;">{{translation.KEY_NAVBAR_PORT_WHITELIST}}</h3>
+        </div>
+        <div class="col-md-9 text-right">
+            <button ng-click="showCreateModal();" class="btn btn-primary btn-md" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_CREATE_LABEL}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-md" name="filterButton" id="filterButton" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false"
+                aria-controls="searchCollapse" aria-pressed="false" ng-class="{ 'tcFilterIsActive': isFilterActive}" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-filter"></span> {{translation.KEY_SCREEN_FILTER_LABEL}} <span ng-show="isFilterActive">*</span>
+            </button>
+
+            <button ng-click="refreshTableData();" class="btn btn-primary btn-md" style="margin-right: 40px;" ng-disabled="disableControls">
+                <span class="glyphicon glyphicon-refresh"></span> {{translation.KEY_SCREEN_REFRESH_LABEL}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="Page-content">
+
+        <!-- Filters -->
+        <div class="collapse" id="searchCollapse">
+            <div class="div-filter">
+                <form style="margin-bottom: 20px;" class="form-inline" name="filtersForm">
+
+                    <div class="form-group font-size-12">
+
+                        <label for="filterDateFromString">{{translation.KEY_SCREEN_DATE_FROM_LABEL}}</label>
+                        <input type="text"
+                            class="pad-datepicker-input form-control input-sm filter-input filter_whitelist_date_from date form-control input-group pad-datepicker-container margin-rigth "
+                            id="filterDateFromString" name="filterDateFromString" ng-model="filterDateFromString">
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="filterDateToString">{{translation.KEY_SCREEN_DATE_TO_2_LABEL}}</label>
+                        <input type="text"
+                            class="pad-datepicker-input form-control input-sm filter-input filter_whitelist_date_to date form-control input-group pad-datepicker-container margin-rigth"
+                            id="filterDateToString" name="filterDateToString" ng-model="filterDateToString">
+
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <label for="referenceNumber">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                        <input type="text" class="form-control margin-rigth input-sm filter-input" name="referenceNumber" ng-model="filterVehicleRegistration"
+                            ng-disabled="filtersDisabled" capitalize alphanumeric>
+                    </div>
+
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="search();" class="btn btn-success" style="width: 100%;" ng-disabled="searchSubmitButtonDisabled">
+                                <span class="glyphicon glyphicon-search"></span> {{translation.KEY_SCREEN_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group font-size-12">
+                        <div class="text-center" style="padding-bottom: 10px;">
+                            <button ng-click="clearSearch()" class="btn btn-primary" style="width: 100%;">
+                                <span class="glyphicon glyphicon-erase"></span> {{translation.KEY_SCREEN_CLEAR_SEARCH_LABEL}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="pad-table">
+                <thead>
+                    <tr>
+                        <td><a href="" ng-click="sort('date_from');"> {{translation.KEY_SCREEN_DATE_FROM_LABEL}} <span
+                                ng-show="sortColumn == 'date_from' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_from' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('date_to');"> {{translation.KEY_SCREEN_DATE_TO_2_LABEL}} <span
+                                ng-show="sortColumn == 'date_to' && sortAsc" class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span
+                                ng-show="sortColumn == 'date_to' && !sortAsc" class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+
+                        <td><a href="" ng-click="sort('vehicle_registration');">
+                                {{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}} <span ng-show="sortColumn == 'vehicle_registration' && sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes font-size-10"></span> <span ng-show="sortColumn == 'vehicle_registration' && !sortAsc"
+                                class="glyphicon glyphicon-sort-by-attributes-alt font-size-10"></span>
+                        </a></td>
+                        <td></td>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col width="31%">
+                    <col width="31%">
+                    <col width="31%">
+                    <col width="7%">
+                </colgroup>
+
+                <tbody ng-repeat="row in rows = padTable.data">
+                    <tr ng-click="padTable.selectRow($event)">
+                        <td title="{{translation.KEY_SCREEN_DATE_FROM_LABEL}}">{{row.dateFromString}}</td>
+                        <td title="{{translation.KEY_SCREEN_DATE_TO_2_LABEL}}">{{row.dateToString}}</td>
+                        <td title="{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}">{{row.vehicleRegistration}}</td>
+                        <td title="" class="text-center">
+                            <button class="btn btn-danger btn-sm" ng-click="deleteWhitelist(row.code); $event.stopPropagation();">
+                                <span class="glyphicon glyphicon-remove"> </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr ng-show="padTable.count == 0">
+                    <td colspan="4" class="pad-table-extension-cell text-center">{{translation.KEY_SCREEN_NO_DATA_RETURNED_MESSAGE}}</td>
+                </tr>
+
+                <!-- PAD Table Pagination -->
+                <tr>
+                    <td colspan="4" class="pad-table-extension-cell text-left"><pad-table-pagination></pad-table-pagination></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" ng-form="createForm">
+            <fieldset>
+                <div class="modal-dialog modal-dialog-whitelist" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" ng-click="closeCreateDialog()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="createModalLabel">{{translation.KEY_SCREEN_CREATE_PORT_WHITELIST_LABEL}}</h4>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading font-size-18"></div>
+                                        <div class="panel-body">
+                                            <form name="createForm" autocomplete="off" novalidate>
+                                                <div class="col-md-12 form-group" style="padding: 0px;">
+
+                                                    <div class="form-group col-md-3">
+                                                        <label for="dateFrom">{{translation.KEY_SCREEN_DATE_FROM_LABEL}}</label>
+                                                        <div class="whitelist_date_from date input-group pad-datepicker-container margin-rigth">
+                                                            <input type="text" class="pad-datepicker-input form-control input-sm" id="dateFrom" name="dateFrom" ng-model="dateFrom"
+                                                                required>
+                                                            <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group col-md-3">
+                                                        <label for="timeFrom">{{translation.KEY_SCREEN_TIME_FROM_LABEL}}</label>
+                                                        <select id="timeFrom" name="timeFrom" class="form-control" ng-model="formData.timeFrom" required>
+                                                            <option value="0000">00:00</option>
+                                                            <option value="0100">01:00</option>
+                                                            <option value="0200">02:00</option>
+                                                            <option value="0300">03:00</option>
+                                                            <option value="0400">04:00</option>
+                                                            <option value="0500">05:00</option>
+                                                            <option value="0600">06:00</option>
+                                                            <option value="0700">07:00</option>
+                                                            <option value="0800">08:00</option>
+                                                            <option value="0900">09:00</option>
+                                                            <option value="1000">10:00</option>
+                                                            <option value="1100">11:00</option>
+                                                            <option value="1200">12:00</option>
+                                                            <option value="1300">13:00</option>
+                                                            <option value="1400">14:00</option>
+                                                            <option value="1500">15:00</option>
+                                                            <option value="1600">16:00</option>
+                                                            <option value="1700">17:00</option>
+                                                            <option value="1800">18:00</option>
+                                                            <option value="1900">19:00</option>
+                                                            <option value="2000">20:00</option>
+                                                            <option value="2100">21:00</option>
+                                                            <option value="2200">22:00</option>
+                                                            <option value="2300">23:00</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group col-md-3">
+                                                        <label for="dateTo">{{translation.KEY_SCREEN_DATE_TO_2_LABEL}}</label>
+                                                        <div class="whitelist_date_to date input-group pad-datepicker-container margin-rigth">
+                                                            <input type="text" class="pad-datepicker-input form-control input-sm" id="dateTo" name="dateTo" ng-model="dateTo"
+                                                                required>
+                                                            <span class="input-group-addon pad-datepicker-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group col-md-3">
+                                                        <label for="timeTo">{{translation.KEY_SCREEN_TIME_TO_LABEL}}</label>
+                                                        <select id="timeTo" name="timeTo" class="form-control" ng-model="formData.timeTo" required>
+                                                            <option value="0000">00:00</option>
+                                                            <option value="0100">01:00</option>
+                                                            <option value="0200">02:00</option>
+                                                            <option value="0300">03:00</option>
+                                                            <option value="0400">04:00</option>
+                                                            <option value="0500">05:00</option>
+                                                            <option value="0600">06:00</option>
+                                                            <option value="0700">07:00</option>
+                                                            <option value="0800">08:00</option>
+                                                            <option value="0900">09:00</option>
+                                                            <option value="1000">10:00</option>
+                                                            <option value="1100">11:00</option>
+                                                            <option value="1200">12:00</option>
+                                                            <option value="1300">13:00</option>
+                                                            <option value="1400">14:00</option>
+                                                            <option value="1500">15:00</option>
+                                                            <option value="1600">16:00</option>
+                                                            <option value="1700">17:00</option>
+                                                            <option value="1800">18:00</option>
+                                                            <option value="1900">19:00</option>
+                                                            <option value="2000">20:00</option>
+                                                            <option value="2100">21:00</option>
+                                                            <option value="2200">22:00</option>
+                                                            <option value="2300">23:00</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group col-md-12">
+                                                        <label for="gateId">{{translation.KEY_SCREEN_PORT_OPERATOR_GATE_LABEL}}</label>
+                                                        <select class="form-control" name="gateId" ng-model="formData.gateId"
+                                                            ng-options="gate.id as gate.gateNumber for gate in portOperatorGates" ng-disabled="portOperatorGates.length < 2"
+                                                            required>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group col-md-10">
+                                                        <label for="vehicleRegistration">{{translation.KEY_SCREEN_VEHICLE_REGISTRATION_NUMBER_LABEL}}</label>
+                                                        <input type="text" class="form-control" id="vehicleRegistration" name="vehicleRegistration"
+                                                            ng-model="formData.vehicleRegistration" capitalize alphanumeric>
+                                                    </div>
+
+                                                    <div class="form-group col-md-2 text-align-left">
+                                                        <button style="margin-top: 25px;" ng-click="addVehicle();" class="btn btn-info"
+                                                            ng-disabled="formData.vehicleRegistration.length <= 4">
+                                                            <span class="glyphicon glyphicon-plus"></span> {{translation.KEY_SCREEN_ADD_LABEL}}
+                                                        </button>
+                                                    </div>
+
+                                                    <div style="height: 220px; overflow-y: scroll;" class="form-group col-md-12">
+                                                        <div class="table-responsive">
+                                                            <table class="pad-table">
+                                                                <colgroup>
+                                                                    <col width="90%">
+                                                                    <col width="10%">
+                                                                </colgroup>
+
+                                                                <tbody ng-repeat="row in selectedVehicles track by $index">
+                                                                    <tr ng-click="padTable.selectRow($event)">
+                                                                        <td title="Vehicle">{{row}}</td>
+                                                                        <td class="text-center" title="">
+                                                                            <button class="btn btn-danger btn-xsm" ng-click="deleteVehicle(row); $event.stopPropagation();" title="">
+                                                                                <span class="glyphicon glyphicon-remove"> </span>
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="form-group col-md-12">
+                                                        <div class="animate-if" ng-if="createErrorResponse !== ''">
+                                                            <div class="alert alert-danger" role="alert">
+                                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span class="sr-only">Error: </span>
+                                                                {{createErrorResponse}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-alight-center">
+                            <button ng-click="create();" class="btn btn-success outline-none width-modal-btn" ng-disabled="createForm.$pristine || createButtonDisabled">
+                                <span class="glyphicon glyphicon-ok"></span> {{translation.KEY_SCREEN_CREATE_LABEL}}
+                            </button>
+                            <button type="button" class="btn btn-danger outline-none width-modal-btn" ng-click="closeCreateDialog()">
+                                <b><span class="glyphicon glyphicon-remove"></span> {{translation.KEY_SCREEN_CANCEL_MESSAGE}}</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <filter-whitelist-date-from-d-p></filter-whitelist-date-from-d-p>
+        <filter-whitelist-date-to-d-p></filter-whitelist-date-to-d-p>
+
+        <whitelist-date-from-d-p></whitelist-date-from-d-p>
+        <whitelist-date-to-d-p></whitelist-date-to-d-p>
+
+
+    </div>
+
+</div>

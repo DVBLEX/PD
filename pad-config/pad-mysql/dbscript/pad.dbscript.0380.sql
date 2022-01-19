@@ -1,0 +1,85 @@
+USE pad;
+
+ALTER TABLE `pad`.`activity_log`
+ADD INDEX `activity_id_ik` (`activity_id` ASC),
+ADD INDEX `operator_id_ik` (`operator_id` ASC),
+ADD INDEX `account_id_ik` (`account_id` ASC),
+ADD INDEX `mission_id_ik` (`mission_id` ASC),
+ADD INDEX `trip_id_ik` (`trip_id` ASC),
+ADD INDEX `parking_id_ik` (`parking_id` ASC),
+ADD INDEX `port_access_id_ik` (`port_access_id` ASC),
+ADD INDEX `port_access_whitelist_id_ik` (`port_access_whitelist_id` ASC),
+ADD INDEX `statement_id_ik` (`statement_id` ASC),
+ADD INDEX `session_id_ik` (`session_id` ASC),
+ADD INDEX `new_updated_operator_id_ik` (`new_updated_operator_id` ASC),
+ADD INDEX `vehicle_registration_ik` (`vehicle_registration` ASC),
+ADD INDEX `port_operator_id_ik` (`port_operator_id` ASC),
+ADD INDEX `transaction_type_ik` (`transaction_type` ASC),
+ADD INDEX `reference_number_ik` (`reference_number` ASC),
+ADD INDEX `date_log_ik` (`date_log` ASC);
+
+ALTER TABLE `pad`.`anpr_entry_log`
+ADD INDEX `date_created_ik` (`date_created` ASC),
+ADD INDEX `is_processed_ik` (`is_processed` ASC),
+ADD INDEX `retry_count_ik` (`retry_count` ASC),
+ADD INDEX `response_code_ik` (`response_code` ASC),
+ADD INDEX `trip_id_ik` (`trip_id` ASC),
+ADD INDEX `mission_id_ik` (`mission_id` ASC),
+ADD INDEX `entry_log_id_ik` (`entry_log_id` ASC),
+ADD INDEX `lane_id_ik` (`lane_id` ASC),
+ADD INDEX `plate_number_ik` (`plate_number` ASC),
+ADD INDEX `recognized_plate_number_ik` (`recognized_plate_number` ASC),
+ADD INDEX `parking_permission_id_ik` (`parking_permission_id` ASC),
+ADD INDEX `entering_direction_id_ik` (`entering_direction_id` ASC),
+ADD INDEX `car_id_ik` (`car_id` ASC),
+ADD INDEX `entering_event_id_ik` (`entering_event_id` ASC),
+ADD INDEX `zone_id_from_ik` (`zone_id_from` ASC),
+ADD INDEX `zone_id_to_ik` (`zone_id_to` ASC);
+
+ALTER TABLE `pad`.`anpr_entry_scheduler`
+ADD INDEX `date_created_ik` (`date_created` ASC),
+ADD INDEX `is_processed_ik` (`is_processed` ASC),
+ADD INDEX `retry_count_ik` (`retry_count` ASC),
+ADD INDEX `response_code_ik` (`response_code` ASC),
+ADD INDEX `trip_id_ik` (`trip_id` ASC),
+ADD INDEX `mission_id_ik` (`mission_id` ASC),
+ADD INDEX `entry_log_id_ik` (`entry_log_id` ASC),
+ADD INDEX `lane_id_ik` (`lane_id` ASC),
+ADD INDEX `plate_number_ik` (`plate_number` ASC),
+ADD INDEX `recognized_plate_number_ik` (`recognized_plate_number` ASC),
+ADD INDEX `parking_permission_id_ik` (`parking_permission_id` ASC),
+ADD INDEX `entering_direction_id_ik` (`entering_direction_id` ASC),
+ADD INDEX `car_id_ik` (`car_id` ASC),
+ADD INDEX `entering_event_id_ik` (`entering_event_id` ASC),
+ADD INDEX `zone_id_from_ik` (`zone_id_from` ASC),
+ADD INDEX `zone_id_to_ik` (`zone_id_to` ASC);
+
+ALTER TABLE `pad`.`anpr_log`
+ADD INDEX `is_processed_ik` (`is_processed` ASC),
+ADD INDEX `request_type_ik` (`request_type` ASC),
+ADD INDEX `zone_id_ik` (`zone_id` ASC),
+ADD INDEX `port_access_whitelist_id_ik` (`port_access_whitelist_id` ASC),
+ADD INDEX `vehicle_registration_ik` (`vehicle_registration` ASC),
+ADD INDEX `parking_permission_id_ik` (`parking_permission_id` ASC),
+ADD INDEX `date_valid_from_ik` (`date_valid_from` ASC),
+ADD INDEX `date_valid_to_ik` (`date_valid_to` ASC),
+ADD INDEX `priority_ik` (`priority` ASC),
+ADD INDEX `date_created_ik` (`date_created` ASC),
+ADD INDEX `retry_count_ik` (`retry_count` ASC),
+ADD INDEX `date_processed_ik` (`date_processed` ASC),
+ADD INDEX `response_code_ik` (`response_code` ASC);
+
+ALTER TABLE `pad`.`anpr_scheduler`
+ADD INDEX `request_type_ik` (`request_type` ASC),
+ADD INDEX `zone_id_ik` (`zone_id` ASC),
+ADD INDEX `mission_id_ik` (`mission_id` ASC),
+ADD INDEX `trip_id_ik` (`trip_id` ASC),
+ADD INDEX `port_access_whitelist_id_ik` (`port_access_whitelist_id` ASC),
+ADD INDEX `vehicle_registration_ik` (`vehicle_registration` ASC),
+ADD INDEX `parking_permission_id_ik` (`parking_permission_id` ASC),
+ADD INDEX `date_valid_from_ik` (`date_valid_from` ASC),
+ADD INDEX `date_valid_to_ik` (`date_valid_to` ASC),
+ADD INDEX `date_created_ik` (`date_created` ASC),
+ADD INDEX `retry_count_ik` (`retry_count` ASC),
+ADD INDEX `date_processed_ik` (`date_processed` ASC),
+ADD INDEX `response_code_ik` (`response_code` ASC);
